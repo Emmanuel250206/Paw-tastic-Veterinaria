@@ -1,0 +1,25 @@
+# --- Carpetas de compilación (Basura que no se sube) ---
+target/
+bin/
+build/
+
+# --- Archivos de configuración local de NetBeans ---
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+nbactions.xml
+nb-configuration.xml
+
+# --- Archivos de sistema y temporales ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+
+# --- Archivos de usuario (Ubuntu/Linux) ---
+*~
+.fuse_hidden*
+.directory

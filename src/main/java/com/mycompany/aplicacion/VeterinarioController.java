@@ -1,0 +1,83 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.aplicacion;
+
+import java.io.IOException;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
+import javafx.stage.Stage;
+
+public class VeterinarioController {
+
+    @FXML
+private PasswordField txtContrasenaOculta;
+    
+    
+    @FXML
+    private void switchToPrimary() throws IOException {
+        // Asegúrate de que el nombre aquí coincida con tu FXML principal
+        App.setRoot("fxml/VeterinariaP1"); 
+    }
+    
+@FXML
+private void iniciarSesion() throws IOException {
+    // 1. Cambias la interfaz
+    App.setRoot("fxml/InterfazVeterinario");
+    
+    // 2. Ejecutas el maximizado "un momento después" de que cargue la interfaz
+    javafx.application.Platform.runLater(() -> {
+        Stage stage = App.getStage();
+        if (stage != null) {
+            stage.setResizable(true); // Desbloqueas el tamaño
+            stage.setMaximized(true); // Lo haces grande
+        }
+    });
+
+}
+
+@FXML
+private void cerrarSesion() throws IOException {
+    App.setRoot("fxml/VeterinariaP1");
+    Stage stage = (Stage) App.getScene().getWindow(); // Asegúrate de tener el getter en App.java
+    stage.setMaximized(false);
+    stage.setResizable(false);
+    stage.setWidth(836);  // El tamaño de tu login
+    stage.setHeight(496);
+}
+
+@FXML private Button bDashboard, bMascotas, bCitas, bInventario; // Agrega todos tus IDs
+
+    private void limpiarSeleccion() {
+        // Creamos una lista con todos los botones del menú
+        Button[] botones = {bDashboard, bMascotas, bCitas, bInventario}; 
+        
+        for (Button b : botones) {
+            if (b != null) {
+                // Quitamos la clase de "activo" y nos aseguramos de que tenga la normal
+                b.getStyleClass().remove("boton-menu-activo");
+                if (!b.getStyleClass().contains("boton-menu")) {
+                    b.getStyleClass().add("boton-menu");
+                }
+            }
+        }
+    }
+
+    @FXML
+    private void gestionarSeleccion(ActionEvent event) {
+        // 1. Limpiamos todos los botones primero
+        limpiarSeleccion();
+
+        // 2. Identificamos cuál botón se pulsó
+        Button botonPulsado = (Button) event.getSource();
+
+        // 3. Le ponemos el estilo oscuro
+        botonPulsado.getStyleClass().remove("boton-menu");
+        botonPulsado.getStyleClass().add("boton-menu-activo");
+        
+        // Aquí puedes agregar el cambio de pantallas (Dashboard, Mascotas, etc.)
+    }
+}

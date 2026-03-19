@@ -1,0 +1,125 @@
+    /*
+    Created on : 12 mar 2026
+    Author     : emmanuel
+    Project    : APLICACION Paw-tastic
+*/
+
+/* --- CONTENEDORES DE TEXTO (Nombre y Contraseña) --- */
+
+.text-field, .password-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-padding: 5 0 5 0;
+    /* Color gris uniforme para el texto escrito y prompt */
+    -fx-text-fill: #555555; 
+    -fx-prompt-text-fill: #888888; 
+}
+
+/* Solo los puntos de la contraseña serán verdes al escribir */
+.password-field {
+    -fx-text-fill: #3D8D7A; 
+    -fx-highlight-fill: #3D8D7A;
+    -fx-highlight-text-fill: white;
+}
+
+/* Quitar el borde azul de enfoque de JavaFX */
+.text-field:focused, .password-field:focused {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-focused-color: transparent;
+}
+
+/* --- BOTONES PRINCIPALES --- */
+
+.boton-verde {
+    -fx-background-color: linear-gradient(to bottom, #3D8D7A, #2A6355);
+    -fx-background-radius: 25;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 25 8 25;
+    -fx-cursor: hand;
+}
+
+.boton-verde:hover {
+    -fx-background-color: linear-gradient(to bottom, #4CA68E, #3D8D7A);
+}
+
+.boton-transparente {
+    -fx-background-color: white;
+    -fx-background-radius: 25;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 25;
+    -fx-border-width: 1;
+    -fx-text-fill: #888888;
+    -fx-padding: 8 25 8 25;
+    -fx-cursor: hand;
+}
+
+.boton-transparente:hover {
+    -fx-background-color: #f4f4f4;
+}
+
+/* --- BOTONES TIPO LINK (Olvidé mi contraseña / Registrarse texto) --- */
+
+.boton-link {
+    -fx-background-color: transparent;
+    -fx-text-fill: #a3d1c6;
+    -fx-cursor: hand;
+    -fx-padding: 0; /* Evita que se mueva a la derecha */
+    -fx-alignment: center-left;
+}
+
+/* --- TEXTOS --- */
+
+.titulo-bienvenida {
+    -fx-fill: #3D8D7A;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+/* Estilo para el VBox de la barra lateral */
+.barra-lateral {
+-fx-background-color: white;
+    -fx-background-radius: 40 40 40 40;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 15, 0, 5, 0);
+}
+
+.boton-menu {
+    -fx-background-color: transparent;
+    -fx-text-fill: #3d8d7a;
+    -fx-font-weight: bold;
+    -fx-alignment: center-left;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+}
+
+.boton-menu:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+    -fx-background-radius: 0;
+}
+
+/* Clase para el fondo de toda la ventana */
+.fondo-principal {
+    -fx-background-color: #deffcb;
+}
+
+/* --- BOTONES DEL MENÚ LATERAL --- */
+
+/* Estilo para el botón cuando está seleccionado (como Dashboard) */
+.boton-menu-activo {
+    -fx-background-color: #3D8D7A; /* El verde oscuro de tu logo */
+    -fx-text-fill: white;
+    -fx-background-radius: 0; /* Bordes redondeados como en la imagen */
+    -fx-font-weight: bold;
+    -fx-alignment: center-left;
+    -fx-padding: 12 20;
+    -fx-cursor: hand;
+}
+
+/* Mejora para el hover (cuando pasas el mouse por encima) */
+.boton-menu:hover {
+    -fx-background-color: #e9f5f2; /* Un verde muy clarito para que resalte */
+    -fx-background-radius: o;
+}

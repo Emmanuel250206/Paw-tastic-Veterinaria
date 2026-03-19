@@ -105,9 +105,10 @@
     -fx-background-color: #deffcb;
 }
 
-/* --- BOTONES DEL MENÚ LATERAL --- */
+/* --- BOTONES DEL MENÚ LATERAL IZQUIERDO INTERFAZ VETERINARIO --- */
 
-/* Estilo para el botón cuando está seleccionado (como Dashboard) */
+/* Estilo para el botón cuando está seleccionado (como Dash
+/board) */
 .boton-menu-activo {
     -fx-background-color: #3D8D7A; /* El verde oscuro de tu logo */
     -fx-text-fill: white;

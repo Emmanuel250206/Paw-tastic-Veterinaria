@@ -12,7 +12,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="496.0" prefWidth="836.0" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.PrimaryController">
+<AnchorPane prefHeight="496.0" prefWidth="836.0" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.PrimaryController">
     <children>
         <BorderPane prefHeight="496.0" prefWidth="836.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <right>
@@ -20,7 +20,7 @@
                     <children>
                         <ImageView fitHeight="496.0" fitWidth="420.0" layoutX="-171.0">
                             <image>
-                                <Image url="@fondoInicioPaw.png" />
+                                <Image url="@../images/fondoInicioPaw.png" />
                             </image>
                         </ImageView>
                     </children>
@@ -47,7 +47,7 @@
                         <Button layoutX="100.0" layoutY="300.0" mnemonicParsing="false" onAction="#iniciarSesion" prefHeight="34.0" prefWidth="140.0" styleClass="boton-verde" text="Iniciar sesión" />                        <TextField id="txtContrasenaVisible" fx:id="txtContrasenaVisible" layoutX="100.0" layoutY="215.0" prefHeight="30.0" prefWidth="290.0" promptText="Contraseña" style="-fx-background-color: transparent;" styleClass="text-field" visible="false" />
                         <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="361.0" layoutY="219.0" onMousePressed="#mostrarContrasena" onMouseReleased="#ocultarContrasena">
                             <image>
-                                <Image url="@OjoContrasena.png" />
+                                <Image url="@../images/OjoContrasena.png" />
                             </image>
                         </ImageView>
                     </children>

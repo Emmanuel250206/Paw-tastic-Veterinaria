@@ -1,5 +1,6 @@
-package com.mycompany.aplicacion;
+package com.mycompany.aplicacion.controllers;
 
+import com.mycompany.aplicacion.App;
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;

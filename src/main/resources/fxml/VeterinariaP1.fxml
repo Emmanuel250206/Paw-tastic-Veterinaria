@@ -36,7 +36,7 @@
                             </font>
                         </Text>
                         
-                        <TextField layoutX="100.0" layoutY="175.0" prefHeight="30.0" prefWidth="290.0" promptText="Nombre" style="-fx-background-color: transparent;" styleClass="text-field" />
+                        <TextField fx:id="txtNombre" layoutX="100.0" layoutY="175.0" prefHeight="30.0" prefWidth="290.0" promptText="Nombre" style="-fx-background-color: transparent;" styleClass="text-field" />
                         <Line endX="190.0" layoutX="200.0" layoutY="205.0" startX="-100.0" stroke="#30cd9e" />
                         
                         <PasswordField id="txtContrasenaOculta" fx:id="txtContrasenaOculta" layoutX="100.0" layoutY="215.0" prefHeight="30.0" prefWidth="290.0" promptText="Contraseña" style="-fx-background-color: transparent;" styleClass="password-field" />

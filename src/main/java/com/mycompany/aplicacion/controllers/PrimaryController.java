@@ -2,13 +2,14 @@ package com.mycompany.aplicacion.controllers;
 
 import com.mycompany.aplicacion.App;
 import java.io.IOException;
+import java.util.ArrayList;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class PrimaryController {
-
+    
     @FXML
     private void switchToSecondary() throws IOException {
         App.setRoot("secondary");
@@ -34,6 +35,12 @@ public class PrimaryController {
     private PasswordField txtContrasenaOculta;
     @FXML
     private TextField txtContrasenaVisible;
+    @FXML
+    private TextField txtNombre;
+    @FXML
+    private TextField txtContraseña;
+    
+    private ArrayList<String> errores;
 
     // Este método se asegura de sincronizar el texto mientras presionas el ojo
     @FXML
@@ -54,6 +61,15 @@ public class PrimaryController {
     private void switchToRegistro() throws IOException {
         // Asegúrate de que el nombre coincida con tu nuevo archivo fxml
         App.setRoot("fxml/Registro");
+    }
+    
+    //validacion de los campos nombre y contraseña
+    public void validar (){
+        if (txtNombre.getText().isEmpty() || txtContraseña.getText().isEmpty()){
+            errores.add("Debes rellenar todos los campos");
+        } else {
+            
+        }
     }
     
 @FXML
@@ -88,7 +104,6 @@ private void iniciarSesion() throws IOException {
         }
     });
 }
-    
     
     
 }

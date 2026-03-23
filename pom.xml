@@ -4,11 +4,13 @@
     <groupId>com.mycompany</groupId>
     <artifactId>APLICACION</artifactId>
     <version>1.0-SNAPSHOT</version>
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -21,7 +23,23 @@
             <version>17.0.10</version>
         </dependency>
     </dependencies>
+
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*.fxml</include>
+                    <include>**/*.css</include>
+                    <include>**/*.png</include>
+                    <include>**/*.jpg</include>
+                    <include>**/*.jpeg</include>
+                    <include>**/*.gif</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

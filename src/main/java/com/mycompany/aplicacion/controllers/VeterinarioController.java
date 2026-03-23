@@ -91,27 +91,34 @@ public class VeterinarioController {
 @FXML
 private void onCerrarSesionClick(ActionEvent event) {
     try {
-        // 1. Cambiamos el FXML primero
+        // 1. Cambiamos el contenido de la escena
         App.setRoot("fxml/VeterinariaP1");
 
-        // 2. Usamos Platform.runLater para darle tiempo a la ventana de reaccionar
+        // 2. Esperamos a que el sistema operativo procese el cambio
         javafx.application.Platform.runLater(() -> {
             Stage stage = (Stage) App.getScene().getWindow();
             
-            // IMPORTANTE: Primero quitamos el maximizado
+            // Quitamos maximizado y permitimos redimensión temporal
             stage.setMaximized(false);
-            
-            // Luego aplicamos el tamaño (le sumamos un poquito por los bordes de Windows)
-            stage.setResizable(false);
-            stage.setWidth(852); // 836 + bordes
-            stage.setHeight(535); // 496 + barra de título
-            
-            // Finalmente centramos
-            stage.centerOnScreen();
-        });
+            stage.setResizable(true); 
 
-    } catch (IOException e) {
-        System.err.println("Error: " + e.getMessage());
+            // DEJA QUE JAVAFX CALCULE EL TAMAÑO SEGÚN EL FXML (Vital para Ubuntu)
+            stage.sizeToScene(); 
+
+            // Si fuerzas el tamaño, hazlo DESPUÉS de sizeToScene
+            stage.setWidth(852); 
+            stage.setHeight(535);
+            
+            // Bloqueamos el tamaño
+            stage.setResizable(false);
+            
+            // EL TRUCO PARA LINUX: Centrar al final de la cola de eventos
+            javafx.application.Platform.runLater(() -> {
+                stage.centerOnScreen();
+            });
+        });
+    } catch (Exception e) {
+        e.printStackTrace();
     }
 }
 }

@@ -9,7 +9,7 @@
 .text-field, .password-field {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
-    -fx-font-size: 14px;
+    -fx-font-size: 14;
     -fx-font-weight: normal;
     -fx-padding: 5 0 5 0;
     /* Color gris uniforme para el texto escrito y prompt */
@@ -75,7 +75,7 @@
 
 .titulo-bienvenida {
     -fx-fill: #3D8D7A;
-    -fx-font-size: 28px;
+    -fx-font-size: 28;
     -fx-font-weight: bold;
 }
 
@@ -122,5 +122,5 @@
 /* Mejora para el hover (cuando pasas el mouse por encima) */
 .boton-menu:hover {
     -fx-background-color: #e9f5f2; /* Un verde muy clarito para que resalte */
-    -fx-background-radius: o;
+    -fx-background-radius: 0;
 }

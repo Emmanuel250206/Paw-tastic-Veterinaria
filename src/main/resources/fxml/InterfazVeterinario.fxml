@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="728.0" prefWidth="1357.0" style="-fx-background-color: #deffcb;;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.VeterinarioController">
+<BorderPane prefHeight="728.0" prefWidth="1357.0" style="-fx-background-color: #deffcb;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.VeterinarioController">
    <left>
       <VBox maxHeight="1.7976931348623157E308" prefWidth="150.0" styleClass="barra-lateral" stylesheets="@estilos.css" BorderPane.alignment="CENTER">
          <BorderPane.margin>

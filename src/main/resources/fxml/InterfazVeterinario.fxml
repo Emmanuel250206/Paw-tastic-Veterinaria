@@ -78,7 +78,7 @@
             <Region prefHeight="352.0" prefWidth="199.0" VBox.vgrow="ALWAYS" />
             <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Button mnemonicParsing="false" prefHeight="53.0" prefWidth="182.0" styleClass="boton-verde" text="  Cerrar Sesión">
+                  <Button fx:id="btnCerrarSesion" mnemonicParsing="false" onAction="#onCerrarSesionClick" prefHeight="53.0" prefWidth="182.0" styleClass="boton-verde" text="  Cerrar Sesión">
                      <HBox.margin>
                         <Insets bottom="20.0" />
                      </HBox.margin>

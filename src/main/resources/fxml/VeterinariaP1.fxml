@@ -47,7 +47,7 @@
                         <Button layoutX="100.0" layoutY="300.0" mnemonicParsing="false" onAction="#iniciarSesion" prefHeight="34.0" prefWidth="140.0" styleClass="boton-verde" text="Iniciar sesión" />                        <TextField id="txtContrasenaVisible" fx:id="txtContrasenaVisible" layoutX="100.0" layoutY="215.0" prefHeight="30.0" prefWidth="290.0" promptText="Contraseña" style="-fx-background-color: transparent;" styleClass="text-field" visible="false" />
                         <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="361.0" layoutY="219.0" onMousePressed="#mostrarContrasena" onMouseReleased="#ocultarContrasena">
                             <image>
-                                <Image url="@../images/ojoContrasena.png" />
+                                <Image url="@../images/OjoContrasena.png" />
                             </image>
                         </ImageView>
                     </children>

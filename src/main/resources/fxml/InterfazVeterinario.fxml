@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="728.0" prefWidth="1357.0" style="-fx-background-color: #deffcb;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.VeterinarioController">
+<BorderPane fx:id="bpPrincipal" prefHeight="728.0" prefWidth="1357.0" style="-fx-background-color: #deffcb;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.VeterinarioController">
    <left>
       <VBox maxHeight="1.7976931348623157E308" prefWidth="150.0" styleClass="barra-lateral" stylesheets="@estilos.css" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -26,7 +26,7 @@
                   <Insets top="-90.0" />
                </VBox.margin>
             </ImageView>
-            <Button fx:id="bDashboard" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#gestionarSeleccion" prefHeight="38.0" prefWidth="91.0" styleClass="boton-menu" text="       Dashboard">
+            <Button fx:id="bDashboard" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaDashboard" prefHeight="38.0" prefWidth="91.0" styleClass="boton-menu" text="       Dashboard">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
@@ -41,7 +41,7 @@
                   <Font size="14.0" />
                </font>
             </Button>
-            <Button fx:id="bMascotas" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#gestionarSeleccion" styleClass="boton-menu" text="       Citas">
+            <Button fx:id="bCitas" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaCitas" styleClass="boton-menu" text="       Citas">
                <graphic>
                   <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -52,7 +52,7 @@
                <font>
                   <Font size="14.0" />
                </font></Button>
-            <Button fx:id="bInventario" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#gestionarSeleccion" styleClass="boton-menu" text="       Mascotas">
+            <Button fx:id="bMascotas" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaMascotas" styleClass="boton-menu" text="       Mascotas">
                <graphic>
                   <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -63,7 +63,7 @@
                <font>
                   <Font size="14.0" />
                </font></Button>
-            <Button fx:id="bDashboard1" layoutX="10.0" layoutY="120.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#gestionarSeleccion" prefHeight="38.0" prefWidth="91.0" styleClass="boton-menu" text="       Inventario">
+            <Button fx:id="bInventario" layoutX="10.0" layoutY="120.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaInventario" prefHeight="38.0" prefWidth="91.0" styleClass="boton-menu" text="       Inventario">
                <graphic>
                   <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -75,6 +75,22 @@
                   <Font size="14.0" />
                </font>
             </Button>
+            <Button fx:id="bStaff" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaStaff" styleClass="boton-menu" text="       Staff">
+               <graphic>
+                  <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/Icon_Staff.png" />
+                     </image></ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="bReportes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaReportes" styleClass="boton-menu" text="       Reportes">
+               <graphic>
+                  <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/Icon_Reporte.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
             <Region prefHeight="352.0" prefWidth="199.0" VBox.vgrow="ALWAYS" />
             <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>

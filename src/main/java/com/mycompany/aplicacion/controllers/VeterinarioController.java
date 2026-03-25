@@ -69,7 +69,7 @@ public class VeterinarioController implements Initializable {
 
     @FXML
     private void mostrarVistaDashboard(ActionEvent event) {
-        navegar(bDashboard, "DashboardContenido");
+        navegar(bDashboard, "SeccionDashboard");
     }
 
     @FXML
@@ -110,7 +110,7 @@ public class VeterinarioController implements Initializable {
                 stage.setResizable(true); 
                 stage.sizeToScene(); 
 
-                // Medidas estándar para tu Login en Xalapa
+                // Medidas estándar para tu Login
                 stage.setWidth(852); 
                 stage.setHeight(535);
                 stage.setResizable(false);

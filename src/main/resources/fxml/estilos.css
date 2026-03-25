@@ -74,7 +74,7 @@
 /* --- TEXTOS --- */
 
 .titulo-bienvenida {
-    -fx-fill: #3D8D7A;
+    -fx-text-fill: #3D8D7A; /* Nota el "text-" antes de "fill" */
     -fx-font-size: 28;
     -fx-font-weight: bold;
 }
@@ -123,5 +123,13 @@
 .boton-menu:hover {
     -fx-background-color: #e9f5f2; /* Un verde muy clarito para que resalte */
     -fx-background-radius: 0;
+}
+
+/* Efecto para rectangulos en las interfaces */
+.recuadros-informacion {
+    -fx-background-color: #deffcb; 
+-fx-padding: 20; 
+-fx-spacing: 10;
+
 }
 

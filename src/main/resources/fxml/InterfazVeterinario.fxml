@@ -15,7 +15,7 @@
    <left>
       <VBox maxHeight="1.7976931348623157E308" prefWidth="150.0" styleClass="barra-lateral" stylesheets="@estilos.css" BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets bottom="20.0" left="20.0" top="90.0" />
+            <Insets bottom="20.0" left="20.0" right="20.0" top="90.0" />
          </BorderPane.margin>
          <children>
             <ImageView fitHeight="200.0" fitWidth="199.0">

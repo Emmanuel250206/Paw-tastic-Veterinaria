@@ -97,6 +97,14 @@ private void iniciarSesion() throws IOException {
     if (!validarCampos()){
         return;
     }
+    
+    // Configurar rol según el nombre ingresado
+    if ("Staff".equalsIgnoreCase(txtNombre.getText().trim())) {
+        App.setRolUsuario("Staff");
+    } else {
+        App.setRolUsuario("Veterinario");
+    }
+    
     App.setRoot("fxml/InterfazVeterinario");
     
     // 2. Ejecutamos los ajustes de ventana

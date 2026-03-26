@@ -75,7 +75,7 @@
                   </Label>
                </children>
             </VBox>
-            <VBox prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css" GridPane.rowIndex="1">
+            <VBox fx:id="cardInventario" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css" GridPane.rowIndex="1">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -93,7 +93,7 @@
                   </Label>
                </children>
             </VBox>
-            <VBox prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <VBox fx:id="cardReportes" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
                   <Label onMouseClicked="#irAReportes" styleClass="titulo-bienvenida" text="Reportes">
                      <padding>

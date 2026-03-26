@@ -14,6 +14,15 @@ import java.io.IOException;
 public class App extends Application {
 
     private static Scene scene;
+    private static String rolUsuario = ""; // Puede ser "Veterinario" o "Staff"
+
+    public static String getRolUsuario() {
+        return rolUsuario;
+    }
+
+    public static void setRolUsuario(String rolUsuario) {
+        App.rolUsuario = rolUsuario;
+    }
 
     @Override
     public void start(Stage stage) throws IOException {

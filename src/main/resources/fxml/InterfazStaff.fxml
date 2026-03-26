@@ -41,7 +41,7 @@
                   <Font size="14.0" />
                </font>
             </Button>
-            <Button fx:id="bCitas" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaCitas" styleClass="boton-menu" text="       Citas">
+            <Button fx:id="bCitas" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaCitas" styleClass="boton-menu" text="       Registro">
                <graphic>
                   <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -52,7 +52,7 @@
                <font>
                   <Font size="14.0" />
                </font></Button>
-            <Button fx:id="bMascotas" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaMascotas" styleClass="boton-menu" text="       Mascotas">
+            <Button fx:id="bMascotas" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaMascotas" styleClass="boton-menu" text="       Citas">
                <graphic>
                   <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -63,7 +63,7 @@
                <font>
                   <Font size="14.0" />
                </font></Button>
-            <Button fx:id="bInventario" layoutX="10.0" layoutY="120.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaInventario" prefHeight="38.0" prefWidth="91.0" styleClass="boton-menu" text="       Inventario">
+            <Button fx:id="bInventario" layoutX="10.0" layoutY="120.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaInventario" prefHeight="38.0" prefWidth="91.0" styleClass="boton-menu" text="       Triaje">
                <graphic>
                   <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
                      <image>

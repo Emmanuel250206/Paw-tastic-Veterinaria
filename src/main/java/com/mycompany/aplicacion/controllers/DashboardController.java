@@ -25,4 +25,27 @@ public class DashboardController {
             padre.mostrarVistaMascotas(null); 
         }
     }
+    
+    @FXML
+    private void irACitas(MouseEvent event) {
+        if (padre != null) {
+            padre.navegar(padre.getbCitas(), "SeccionCitas");
+        }
+    }
+
+    @FXML
+    private void irAInventario(MouseEvent event) {
+        if (padre != null) {
+            padre.navegar(padre.getbInventario(), "SeccionInventario");
+        }
+    }
+
+    @FXML
+    private void irAReportes(MouseEvent event) {
+        if (padre != null) {
+            padre.navegar(padre.getbReportes(), "SeccionReportes");
+        }
+    }
+    
+    
 }

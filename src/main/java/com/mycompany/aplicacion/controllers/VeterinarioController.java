@@ -35,7 +35,7 @@ public void initialize(URL url, ResourceBundle rb) {
      * MÉTODO MAESTRO: Gestiona el cambio de color de los botones 
      * y carga el FXML en el centro del BorderPane.
      */
-private void navegar(Button botonPulsado, String nombreFXML) {
+void navegar(Button botonPulsado, String nombreFXML) {
     // 1. Lista de todos los botones para resetear estilos
     Button[] botonesMenu = {bDashboard, bMascotas, bCitas, bInventario, bStaff, bReportes};
 
@@ -146,4 +146,13 @@ try {
             e.printStackTrace();
         }
     }
+    
+    // Getters para que el Dashboard pueda acceder a los botones del menú
+public Button getbMascotas() { return bMascotas; }
+public Button getbCitas() { return bCitas; }
+public Button getbInventario() { return bInventario; }
+public Button getbReportes() { return bReportes; }
+    
+    
+    
 }

@@ -4,10 +4,25 @@
  */
 package com.mycompany.aplicacion.controllers;
 
+import javafx.fxml.FXML;
+import javafx.scene.input.MouseEvent;
+
 /**
  *
  * @author emmanuel
  */
 public class DashboardController {
-    
+    private VeterinarioController padre;
+
+    // Método para que el VeterinarioController se "presente"
+    public void setPadre(VeterinarioController padre) {
+        this.padre = padre;
+    }
+
+    @FXML
+    private void irAMascotas(MouseEvent event) {
+        if (padre != null) {
+            padre.mostrarVistaMascotas(null); 
+        }
+    }
 }

@@ -27,73 +27,98 @@ public class VeterinarioController implements Initializable {
     @FXML private Button bReportes;
     @FXML private Button btnCerrarSesion;
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // Opcional: Cargar el Dashboard por defecto al iniciar la interfaz
-        // navegar(bDashboard, "DashboardContenido");
-    }
-
+@Override
+public void initialize(URL url, ResourceBundle rb) {
+    navegar(bDashboard, "SeccionDashboard"); 
+}
     /**
      * MÉTODO MAESTRO: Gestiona el cambio de color de los botones 
      * y carga el FXML en el centro del BorderPane.
      */
-    private void navegar(Button botonPulsado, String nombreFXML) {
-        // 1. Lista de todos los botones para resetear estilos
-        Button[] botonesMenu = {bDashboard, bMascotas, bCitas, bInventario, bStaff, bReportes};
+private void navegar(Button botonPulsado, String nombreFXML) {
+    // 1. Lista de todos los botones para resetear estilos
+    Button[] botonesMenu = {bDashboard, bMascotas, bCitas, bInventario, bStaff, bReportes};
 
-        for (Button b : botonesMenu) {
-            if (b != null) {
-                // Quitamos la clase de "activo" y nos aseguramos de que tenga la normal
-                b.getStyleClass().remove("boton-menu-activo");
-                if (!b.getStyleClass().contains("boton-menu")) {
-                    b.getStyleClass().add("boton-menu");
-                }
+    for (Button b : botonesMenu) {
+        if (b != null) {
+            b.getStyleClass().remove("boton-menu-activo");
+            if (!b.getStyleClass().contains("boton-menu")) {
+                b.getStyleClass().add("boton-menu");
             }
         }
+    }
 
-        // 2. Aplicar estilo activo al botón que se presionó
+    // 2. Aplicar estilo activo al botón que se presionó (si existe)
+    if (botonPulsado != null) {
         botonPulsado.getStyleClass().remove("boton-menu");
         botonPulsado.getStyleClass().add("boton-menu-activo");
+    }
 
-        // 3. Cargar la nueva vista en el centro
-        try {
-            Node vista = FXMLLoader.load(getClass().getResource("/fxml/" + nombreFXML + ".fxml"));
-            bpPrincipal.setCenter(vista);
-        } catch (IOException e) {
-            System.err.println("Error al cargar la vista: " + nombreFXML);
-            e.printStackTrace();
+    // 3. Cargar la nueva vista usando una instancia de FXMLLoader
+try {
+    String ruta = "/fxml/" + nombreFXML + ".fxml";
+    URL url = getClass().getResource(ruta);
+    
+    if (url == null) {
+        System.err.println("❌ ERROR: No se encuentra el archivo en: " + ruta);
+        return;
+    }
+
+    FXMLLoader loader = new FXMLLoader(url);
+    Node vista = loader.load();
+    
+    if (bpPrincipal == null) {
+        System.err.println("❌ ERROR: bpPrincipal es NULL. Revisa el fx:id en Scene Builder.");
+        return;
+    }
+
+    if (nombreFXML.equals("SeccionDashboard")) {
+        DashboardController dashCtrl = loader.getController();
+        if (dashCtrl != null) {
+            dashCtrl.setPadre(this);
+        } else {
+            System.err.println("⚠️ ADVERTENCIA: SeccionDashboard no tiene un controlador asignado.");
         }
     }
+
+    bpPrincipal.setCenter(vista);
+    System.out.println("✅ Vista cargada con éxito: " + nombreFXML);
+
+} catch (IOException e) {
+    System.err.println("❌ ERROR CRÍTICO al cargar " + nombreFXML);
+    e.printStackTrace();
+}
+}
 
     // --- MÉTODOS ON ACTION PARA LOS BOTONES ---
 
     @FXML
-    private void mostrarVistaDashboard(ActionEvent event) {
+    public void mostrarVistaDashboard(ActionEvent event) {
         navegar(bDashboard, "SeccionDashboard");
     }
 
     @FXML
-    private void mostrarVistaMascotas(ActionEvent event) {
+    public void mostrarVistaMascotas(ActionEvent event) {
         navegar(bMascotas, "SeccionMascotas");
     }
 
     @FXML
-    private void mostrarVistaCitas(ActionEvent event) {
+    public void mostrarVistaCitas(ActionEvent event) {
         navegar(bCitas, "SeccionCitas");
     }
 
     @FXML
-    private void mostrarVistaInventario(ActionEvent event) {
+    public void mostrarVistaInventario(ActionEvent event) {
         navegar(bInventario, "SeccionInventario");
     }
 
     @FXML
-    private void mostrarVistaStaff(ActionEvent event) {
+    public void mostrarVistaStaff(ActionEvent event) {
         navegar(bStaff, "SeccionStaff");
     }
 
     @FXML
-    private void mostrarVistaReportes(ActionEvent event) {
+    public void mostrarVistaReportes(ActionEvent event) {
         navegar(bReportes, "SeccionReportes");
     }
 

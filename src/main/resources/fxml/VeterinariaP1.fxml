@@ -37,6 +37,8 @@
                         </Text>
                   <Text fx:id="txtErrorPassword" fill="RED" layoutX="100.0" layoutY="276.0" strokeType="OUTSIDE" strokeWidth="0.0" visible="false" />
                   <Text fx:id="txtErrorNombre" fill="RED" layoutX="100.0" layoutY="220.0" strokeType="OUTSIDE" strokeWidth="0.0" visible="false" />
+                  <Text fx:id="txtErrorDatos" fill="RED" layoutX="100.0" layoutY="220.0" strokeType="OUTSIDE" strokeWidth="0.0" visible="false" />
+                  <Text fx:id="txtErrorDatosContra" fill="RED" layoutX="100.0" layoutY="276.0" strokeType="OUTSIDE" strokeWidth="0.0" visible="false" />
                         
                         <TextField fx:id="txtNombre" layoutX="100.0" layoutY="175.0" prefHeight="30.0" prefWidth="290.0" promptText="Nombre" style="-fx-background-color: transparent;" styleClass="text-field" />
                         <Line endX="190.0" layoutX="200.0" layoutY="205.0" startX="-100.0" stroke="#30cd9e" />

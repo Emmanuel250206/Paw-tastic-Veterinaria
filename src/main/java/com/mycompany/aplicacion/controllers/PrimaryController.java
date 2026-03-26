@@ -43,10 +43,14 @@ public class PrimaryController {
     private TextField txtUsuario;
     @FXML
     private PasswordField txtPassword;
-   @FXML
+    @FXML
     private Text txtErrorNombre;
     @FXML
     private Text txtErrorPassword;
+    @FXML
+    private Text txtErrorDatos;
+    @FXML
+    private Text txtErrorDatosContra;
     
     // Este método se asegura de sincronizar el texto mientras presionas el ojo
     @FXML
@@ -74,6 +78,8 @@ public class PrimaryController {
 
     txtErrorNombre.setVisible(false);
     txtErrorPassword.setVisible(false);
+    txtErrorDatos.setVisible(false);
+    txtErrorDatosContra.setVisible(false);
 
     if (txtNombre.getText().isEmpty()) {
         txtErrorNombre.setText("Debes rellenar este campo");
@@ -86,6 +92,7 @@ public class PrimaryController {
         txtErrorPassword.setVisible(true);
         valido = false;
     }
+    
 
     return valido;
     }

@@ -75,14 +75,6 @@
                   <Font size="14.0" />
                </font>
             </Button>
-            <Button fx:id="bStaff" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaStaff" styleClass="boton-menu" text="       Staff">
-               <graphic>
-                  <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../images/Icon_Staff.png" />
-                     </image></ImageView>
-               </graphic>
-            </Button>
             <Button fx:id="bReportes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaReportes" styleClass="boton-menu" text="       Reportes">
                <graphic>
                   <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
@@ -91,6 +83,14 @@
                      </image>
                   </ImageView>
                </graphic></Button>
+            <Button fx:id="bStaff" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaStaff" styleClass="boton-menu" text="       Staff">
+               <graphic>
+                  <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/Icon_Staff.png" />
+                     </image></ImageView>
+               </graphic>
+            </Button>
             <Region prefHeight="352.0" prefWidth="199.0" VBox.vgrow="ALWAYS" />
             <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>

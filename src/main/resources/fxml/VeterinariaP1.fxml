@@ -35,17 +35,17 @@
                                 <Font name="System Bold" size="24.0" />
                             </font>
                         </Text>
-                  <Text fx:id="txtErrorPassword" fill="RED" layoutX="100.0" layoutY="285.0" strokeType="OUTSIDE" strokeWidth="0.0" visible="false" />
+                  <Text fx:id="txtErrorPassword" fill="RED" layoutX="100.0" layoutY="276.0" strokeType="OUTSIDE" strokeWidth="0.0" visible="false" />
                   <Text fx:id="txtErrorNombre" fill="RED" layoutX="100.0" layoutY="220.0" strokeType="OUTSIDE" strokeWidth="0.0" visible="false" />
                         
                         <TextField fx:id="txtNombre" layoutX="100.0" layoutY="175.0" prefHeight="30.0" prefWidth="290.0" promptText="Nombre" style="-fx-background-color: transparent;" styleClass="text-field" />
                         <Line endX="190.0" layoutX="200.0" layoutY="205.0" startX="-100.0" stroke="#30cd9e" />
-                        <PasswordField id="txtContrasenaOculta" fx:id="txtContrasenaOculta" layoutX="100.0" layoutY="215.0" prefHeight="30.0" prefWidth="290.0" promptText="Contraseña" style="-fx-background-color: transparent;" styleClass="password-field" />
-                        <Line endX="190.0" layoutX="200.0" layoutY="245.0" startX="-100.0" stroke="#30cd9e" />
-                        <Button layoutX="100.0" layoutY="250.0" mnemonicParsing="false" styleClass="boton-link" text="Olvidé mi contraseña" underline="true" />
+                        <PasswordField id="txtContrasenaOculta" fx:id="txtContrasenaOculta" layoutX="100.0" layoutY="231.0" prefHeight="30.0" prefWidth="290.0" promptText="Contraseña" style="-fx-background-color: transparent;" styleClass="password-field" />
+                        <Line endX="190.0" layoutX="200.0" layoutY="261.0" startX="-100.0" stroke="#30cd9e" />
+                        <Button layoutX="100.0" layoutY="297.0" mnemonicParsing="false" styleClass="boton-link" text="Olvidé mi contraseña" underline="true" />
                         
-                        <Button layoutX="100.0" layoutY="300.0" mnemonicParsing="false" onAction="#iniciarSesion" prefHeight="37.0" prefWidth="151.0" styleClass="boton-verde" text="Iniciar sesión" />                        <TextField id="txtContrasenaVisible" fx:id="txtContrasenaVisible" layoutX="100.0" layoutY="215.0" prefHeight="30.0" prefWidth="290.0" promptText="Contraseña" style="-fx-background-color: transparent;" styleClass="text-field" visible="false" />
-                        <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="361.0" layoutY="219.0" onMousePressed="#mostrarContrasena" onMouseReleased="#ocultarContrasena">
+                        <Button layoutX="100.0" layoutY="326.0" mnemonicParsing="false" onAction="#iniciarSesion" prefHeight="37.0" prefWidth="151.0" styleClass="boton-verde" text="Iniciar sesión" />                        <TextField id="txtContrasenaVisible" fx:id="txtContrasenaVisible" layoutX="100.0" layoutY="231.0" prefHeight="30.0" prefWidth="290.0" promptText="Contraseña" style="-fx-background-color: transparent;" styleClass="text-field" visible="false" />
+                        <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="361.0" layoutY="235.0" onMousePressed="#mostrarContrasena" onMouseReleased="#ocultarContrasena">
                             <image>
                                 <Image url="@../images/OjoContrasena.png" />
                             </image>

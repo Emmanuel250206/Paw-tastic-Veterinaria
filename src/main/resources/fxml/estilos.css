@@ -5,16 +5,19 @@
 */
 
 /* --- CONTENEDORES DE TEXTO (Nombre y Contraseña) --- */
-
+.panel-login {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 40 40 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 25, 0, 5, 0);
+}
 .text-field, .password-field {
     -fx-background-color: transparent;
-    -fx-border-color: transparent;
+    -fx-border-color: #3D8D7A; /* Cambié el color clarito por el verde principal para que se vea la línea */
+    -fx-border-width: 0 0 2 0;
     -fx-font-size: 14;
-    -fx-font-weight: normal;
     -fx-padding: 5 0 5 0;
-    /* Color gris uniforme para el texto escrito y prompt */
-    -fx-text-fill: #555555; 
-    -fx-prompt-text-fill: #888888; 
+    -fx-text-fill: #333333;        /* Texto escrito más oscuro */
+    -fx-prompt-text-fill: #666666; /* Texto sugerido más visible */
 }
 
 /* Solo los puntos de la contraseña serán verdes al escribir */
@@ -26,24 +29,30 @@
 
 /* Quitar el borde azul de enfoque de JavaFX */
 .text-field:focused, .password-field:focused {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-focused-color: transparent;
+    -fx-border-color: #3D8D7A;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
 }
-
 /* --- BOTONES PRINCIPALES --- */
 
 .boton-verde {
-    -fx-background-color: linear-gradient(to bottom, #3D8D7A, #2A6355);
-    -fx-background-radius: 25;
+    -fx-background-color: linear-gradient(to right, #3D8D7A, #2A6355);
+    -fx-background-radius: 30;
     -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-padding: 8 25 8 25;
+    -fx-font-size: 14; /* Un pelín más grande */
+    -fx-padding: 10 30 10 30;
     -fx-cursor: hand;
+    /* AGREGAMOS SOMBRA */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 4);
 }
 
 .boton-verde:hover {
-    -fx-background-color: linear-gradient(to bottom, #4CA68E, #3D8D7A);
+    /* Efecto de brillo al pasar el mouse */
+    -fx-background-color: linear-gradient(to right, #4CA68E, #3D8D7A);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 15, 0, 0, 6);
+    -fx-scale-x: 1.05; /* Se hace un poquito más grande al tocarlo */
+    -fx-scale-y: 1.05;
 }
 
 .boton-transparente {
@@ -75,7 +84,7 @@
 
 .titulo-bienvenida {
     -fx-text-fill: #3D8D7A; /* Nota el "text-" antes de "fill" */
-    -fx-font-size: 28;
+    -fx-font-size: 30;
     -fx-font-weight: bold;
 }
 
@@ -102,7 +111,7 @@
 
 /* Clase para el fondo de toda la ventana */
 .fondo-principal {
-    -fx-background-color: #deffcb;
+    -fx-background-color: #9ED3A9;
 }
 
 /* --- BOTONES DEL MENÚ LATERAL IZQUIERDO INTERFAZ VETERINARIO --- */
@@ -127,9 +136,10 @@
 
 /* Efecto para rectangulos en las interfaces */
 .recuadros-informacion {
-    -fx-background-color: #deffcb; 
--fx-padding: 20; 
--fx-spacing: 10;
-
+    -fx-background-color: white; 
+    -fx-background-radius: 20;
+    -fx-padding: 20; 
+    -fx-spacing: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 12, 0, 0, 5);
 }
 

@@ -28,7 +28,7 @@
             </right>
             
             <center>
-                <Pane prefHeight="496.0" prefWidth="589.0" BorderPane.alignment="CENTER">
+                <Pane prefHeight="496.0" prefWidth="589.0" styleClass="panel-login" BorderPane.alignment="CENTER">
                     <children>
                         <Text fill="#3d8d7a" layoutX="100.0" layoutY="100.0" styleClass="titulo-bienvenida" text="Bienvenido a Paw-tastic">
                             <font>
@@ -44,7 +44,7 @@
                         <Line endX="190.0" layoutX="200.0" layoutY="245.0" startX="-100.0" stroke="#30cd9e" />
                         <Button layoutX="100.0" layoutY="250.0" mnemonicParsing="false" styleClass="boton-link" text="Olvidé mi contraseña" underline="true" />
                         
-                        <Button layoutX="100.0" layoutY="300.0" mnemonicParsing="false" onAction="#iniciarSesion" prefHeight="34.0" prefWidth="140.0" styleClass="boton-verde" text="Iniciar sesión" />                        <TextField id="txtContrasenaVisible" fx:id="txtContrasenaVisible" layoutX="100.0" layoutY="215.0" prefHeight="30.0" prefWidth="290.0" promptText="Contraseña" style="-fx-background-color: transparent;" styleClass="text-field" visible="false" />
+                        <Button layoutX="100.0" layoutY="300.0" mnemonicParsing="false" onAction="#iniciarSesion" prefHeight="37.0" prefWidth="151.0" styleClass="boton-verde" text="Iniciar sesión" />                        <TextField id="txtContrasenaVisible" fx:id="txtContrasenaVisible" layoutX="100.0" layoutY="215.0" prefHeight="30.0" prefWidth="290.0" promptText="Contraseña" style="-fx-background-color: transparent;" styleClass="text-field" visible="false" />
                         <ImageView fitHeight="24.0" fitWidth="26.0" layoutX="361.0" layoutY="219.0" onMousePressed="#mostrarContrasena" onMouseReleased="#ocultarContrasena">
                             <image>
                                 <Image url="@../images/OjoContrasena.png" />

@@ -38,7 +38,8 @@
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
                </columnConstraints>
                <rowConstraints>
-                  <RowConstraints minHeight="10.0" percentHeight="100.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" percentHeight="50.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" percentHeight="50.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
                   <VBox prefHeight="486.0" prefWidth="523.0" styleClass="barra-lateral" stylesheets="@estilos.css">
@@ -49,7 +50,7 @@
                         <Insets bottom="10.0" right="10.0" />
                      </GridPane.margin>
                      <children>
-                        <Label onMouseClicked="#irACitas" styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Agendar">
+                        <Label onMouseClicked="#irACitas" styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Siguiente cita">
                            <padding>
                               <Insets left="25.0" top="5.0" />
                            </padding>
@@ -59,33 +60,68 @@
                         </Label>
                      </children>
                   </VBox>
-                  <GridPane GridPane.columnIndex="1">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
+                  <VBox prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css" GridPane.columnIndex="1">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <GridPane.margin>
+                        <Insets bottom="10.0" right="10.0" />
+                     </GridPane.margin>
                      <children>
-                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral">
-                           <GridPane.margin>
-                              <Insets bottom="10.0" right="5.0" top="10.0" />
-                           </GridPane.margin>
-                        </VBox>
-                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" GridPane.rowIndex="1">
-                           <GridPane.margin>
-                              <Insets bottom="10.0" right="5.0" top="10.0" />
-                           </GridPane.margin>
-                        </VBox>
-                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" GridPane.rowIndex="2">
-                           <GridPane.margin>
-                              <Insets bottom="5.0" top="10.0" />
-                           </GridPane.margin>
-                        </VBox>
+                        <Label onMouseClicked="#irAMascotas" styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Agendadas">
+                           <padding>
+                              <Insets left="25.0" top="5.0" />
+                           </padding>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                        <GridPane>
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                        </GridPane>
                      </children>
-                  </GridPane>
+                  </VBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css" GridPane.rowIndex="1">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <GridPane.margin>
+                        <Insets right="10.0" top="10.0" />
+                     </GridPane.margin>
+                     <children>
+                        <Label onMouseClicked="#irAInventario" styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Generar reporte">
+                           <padding>
+                              <Insets left="25.0" top="5.0" />
+                           </padding>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                     </children>
+                  </VBox>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="474.0" styleClass="barra-lateral" stylesheets="@estilos.css" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <Label onMouseClicked="#irAReportes" styleClass="titulo-bienvenida" text="RETRO WAS HERE">
+                           <padding>
+                              <Insets left="25.0" top="5.0" />
+                           </padding>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Label>
+                     </children>
+                     <GridPane.margin>
+                        <Insets left="10.0" top="10.0" />
+                     </GridPane.margin>
+                  </VBox>
                </children>
             </GridPane>
          </content>

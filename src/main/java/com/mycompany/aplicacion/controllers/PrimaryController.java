@@ -6,11 +6,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import javafx.scene.control.Alert;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Modality;
+import javafx.scene.text.Text;
 
 public class PrimaryController {
     
@@ -41,6 +39,14 @@ public class PrimaryController {
     private TextField txtContrasenaVisible;
     @FXML
     private TextField txtNombre;
+    @FXML
+    private TextField txtUsuario;
+    @FXML
+    private PasswordField txtPassword;
+   @FXML
+    private Text txtErrorNombre;
+    @FXML
+    private Text txtErrorPassword;
     
     // Este método se asegura de sincronizar el texto mientras presionas el ojo
     @FXML
@@ -63,42 +69,32 @@ public class PrimaryController {
         App.setRoot("fxml/Registro");
     }
     
-    private void mostrarMensajeError(String mensaje) {
-    try {
-        FXMLLoader loader = new FXMLLoader(
-                App.class.getResource("/com/mycompany/aplicacion/MensajeError.fxml"));
+    private boolean validarCampos() {
+    boolean valido = true;
 
-        Parent root = loader.load();
+    txtErrorNombre.setVisible(false);
+    txtErrorPassword.setVisible(false);
 
-        MensajeErrorController controller = loader.getController();
-        controller.setMensaje(mensaje);
-
-        Stage stage = new Stage();
-        stage.setTitle("Aviso del sistema");
-        stage.setScene(new Scene(root));
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.showAndWait();
-
-    } catch (Exception e) {
-        e.printStackTrace();
+    if (txtNombre.getText().isEmpty()) {
+        txtErrorNombre.setText("Debes rellenar este campo");
+        txtErrorNombre.setVisible(true);
+        valido = false;
     }
-}
-    FXMLLoader loader = new FXMLLoader(
-    getClass().getResource("/fxml/MensajeError.fxml")
-    );
-    //validacion de los campos nombre y contraseña
-    public boolean validar (){
-        if (txtNombre.getText().isEmpty() || txtContrasenaOculta.getText().isEmpty()){
-            mostrarMensajeError("Debes llenar todos los campos");
-        return false;        
-        }
-        return true;
+
+    if (txtContrasenaOculta.getText().isEmpty()) {
+        txtErrorPassword.setText("Debes rellenar este campo");
+        txtErrorPassword.setVisible(true);
+        valido = false;
     }
+
+    return valido;
+    }
+   
     
 @FXML
 private void iniciarSesion() throws IOException {
     // 1. Cambiamos la interfaz
-    if (!validar()){
+    if (!validarCampos()){
         return;
     }
     App.setRoot("fxml/InterfazVeterinario");

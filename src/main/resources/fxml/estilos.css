@@ -1,7 +1,7 @@
-    /*
-    Created on : 12 mar 2026
-    Author     : emmanuel
-    Project    : APLICACION Paw-tastic
+/*
+Created on : 12 mar 2026
+Author     : emmanuel
+Project    : APLICACION Paw-tastic
 */
 
 /* --- CONTENEDORES DE TEXTO (Nombre y Contraseña) --- */
@@ -22,7 +22,7 @@
 
 /* Solo los puntos de la contraseña serán verdes al escribir */
 .password-field {
-    -fx-text-fill: #3D8D7A; 
+    -fx-text-fill: #3D8D7A;
     -fx-highlight-fill: #3D8D7A;
     -fx-highlight-text-fill: white;
 }
@@ -90,7 +90,7 @@
 
 /* Estilo para el VBox de la barra lateral */
 .barra-lateral {
--fx-background-color: white;
+    -fx-background-color: white;
     -fx-background-radius: 40 40 40 40;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 15, 0, 5, 0);
 }
@@ -136,10 +136,35 @@
 
 /* Efecto para rectangulos en las interfaces */
 .recuadros-informacion {
-    -fx-background-color: white; 
+    -fx-background-color: white;
     -fx-background-radius: 20;
-    -fx-padding: 20; 
+    -fx-padding: 20;
     -fx-spacing: 10;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 12, 0, 0, 5);
+    .root {
+        -fx-font-family: "Segoe UI";
+    }
+
+    .label {
+        -fx-text-fill: #2E4E3F;
+    }
+
+    .button {
+        -fx-background-color: #4CAF7A;
+        -fx-text-fill: white;
+        -fx-background-radius: 8;
+    }
+
+    .button:hover {
+        -fx-background-color: #3e8f66;
+    }
+
+    .text-field {
+        -fx-background-radius: 8;
+    }
+
+    .table-view {
+        -fx-background-radius: 10;
+    }
 }
 

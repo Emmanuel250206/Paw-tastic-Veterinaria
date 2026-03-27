@@ -5,8 +5,10 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -14,110 +16,121 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="407.0" prefWidth="699.0" style="-fx-background-color: #DFF5E1;" styleClass="recuadros-informacion" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.DashboardController">
+<AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.DashboardController">
    <children>
-      <HBox prefHeight="47.0" prefWidth="560.0">
-         <children>
-            <Label prefHeight="42.0" prefWidth="342.0" styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Resumen del dia" textFill="#3d8d7a">
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <graphic>
-                  <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../images/Icon_Dashboard.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Label>
-            <Region prefHeight="47.0" prefWidth="163.0" HBox.hgrow="ALWAYS" />
-            <MenuButton alignment="CENTER_RIGHT" mnemonicParsing="false" prefHeight="26.0" prefWidth="287.0" styleClass="boton-link" text="Hola, Dr. Emmanuel-Veterinario" textOverrun="LEADING_ELLIPSIS">
-              <items>
-                <MenuItem mnemonicParsing="false" text="Configurar Perfil" />
-              </items>
-            </MenuButton>
-         </children>
-      </HBox>
-      <GridPane VBox.vgrow="ALWAYS">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" percentHeight="50.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" percentHeight="50.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-         <children>
-            <VBox prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css">
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <GridPane.margin>
-                  <Insets bottom="10.0" right="10.0" />
-               </GridPane.margin>
+      <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <content>
+            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="407.0" prefWidth="699.0" spacing="15.0" style="-fx-background-color: #DFF5E1;" styleClass="recuadros-informacion" stylesheets="@estilos.css">
                <children>
-                  <Label onMouseClicked="#irACitas" styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Citas pendientes">
-                     <padding>
-                        <Insets left="25.0" top="5.0" />
-                     </padding>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </Label>
+                  <HBox prefHeight="47.0" prefWidth="560.0">
+                     <children>
+                        <Label prefHeight="42.0" prefWidth="342.0" styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Resumen del dia" textFill="#3d8d7a">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <graphic>
+                              <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/Icon_Dashboard.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Label>
+                        <Region prefHeight="47.0" prefWidth="163.0" HBox.hgrow="ALWAYS" />
+                        <MenuButton alignment="CENTER_RIGHT" mnemonicParsing="false" prefHeight="26.0" prefWidth="287.0" styleClass="boton-link" text="Hola, Dr. Emmanuel-Veterinario" textOverrun="LEADING_ELLIPSIS">
+                          <items>
+                            <MenuItem mnemonicParsing="false" text="Configurar Perfil" />
+                          </items>
+                        </MenuButton>
+                     </children>
+                  </HBox>
+                  <GridPane hgap="20.0" vgap="20.0" VBox.vgrow="ALWAYS">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="200.0" vgrow="ALWAYS" />
+                      <RowConstraints minHeight="200.0" vgrow="ALWAYS" />
+                    </rowConstraints>
+                     <children>
+                        <VBox fx:id="cardCitas" onMouseClicked="#irACitas" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <GridPane.margin>
+                              <Insets bottom="10.0" right="10.0" />
+                           </GridPane.margin>
+                           <children>
+                              <Label fx:id="lblTotalCitas" onMouseClicked="#irACitas" styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Citas pendientes">
+                                 <padding>
+                                    <Insets left="25.0" top="5.0" />
+                                 </padding>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <VBox fx:id="cardMascotas" onMouseClicked="#irAMascotas" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css" GridPane.columnIndex="1">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <GridPane.margin>
+                              <Insets bottom="10.0" right="10.0" />
+                           </GridPane.margin>
+                           <children>
+                              <Label fx:id="lblTotalMascotas" onMouseClicked="#irAMascotas" styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Mascota">
+                                 <padding>
+                                    <Insets left="25.0" top="5.0" />
+                                 </padding>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <VBox fx:id="cardInventario" onMouseClicked="#irAInventario" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css" GridPane.rowIndex="1">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <GridPane.margin>
+                              <Insets right="10.0" top="10.0" />
+                           </GridPane.margin>
+                           <children>
+                              <Label onMouseClicked="#irAInventario" styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Inventario">
+                                 <padding>
+                                    <Insets left="25.0" top="5.0" />
+                                 </padding>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <VBox fx:id="cardStaff" onMouseClicked="#irAStaff" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Label fx:id="lblTotalPersonal" onMouseClicked="#irAReportes" styleClass="titulo-bienvenida" text="Staff">
+                                 <padding>
+                                    <Insets left="25.0" top="5.0" />
+                                 </padding>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Label>
+                           </children>
+                           <GridPane.margin>
+                              <Insets left="10.0" top="10.0" />
+                           </GridPane.margin>
+                        </VBox>
+                     </children>
+                  </GridPane>
                </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
             </VBox>
-            <VBox prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css" GridPane.columnIndex="1">
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <GridPane.margin>
-                  <Insets bottom="10.0" right="10.0" />
-               </GridPane.margin>
-               <children>
-                  <Label onMouseClicked="#irAMascotas" styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Mascotas">
-                     <padding>
-                        <Insets left="25.0" top="5.0" />
-                     </padding>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </Label>
-               </children>
-            </VBox>
-            <VBox fx:id="cardInventario" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css" GridPane.rowIndex="1">
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <GridPane.margin>
-                  <Insets right="10.0" top="10.0" />
-               </GridPane.margin>
-               <children>
-                  <Label onMouseClicked="#irAInventario" styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Inventario">
-                     <padding>
-                        <Insets left="25.0" top="5.0" />
-                     </padding>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </Label>
-               </children>
-            </VBox>
-            <VBox fx:id="cardReportes" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css" GridPane.columnIndex="1" GridPane.rowIndex="1">
-               <children>
-                  <Label onMouseClicked="#irAReportes" styleClass="titulo-bienvenida" text="Reportes">
-                     <padding>
-                        <Insets left="25.0" top="5.0" />
-                     </padding>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </Label>
-               </children>
-               <GridPane.margin>
-                  <Insets left="10.0" top="10.0" />
-               </GridPane.margin>
-            </VBox>
-         </children>
-      </GridPane>
+         </content>
+      </ScrollPane>
    </children>
-</VBox>
+</AnchorPane>

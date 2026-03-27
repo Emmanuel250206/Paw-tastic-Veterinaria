@@ -37,7 +37,21 @@ public class VeterinarioController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Verificar rol de usuario
+        // 1. Candado de tamaño para proteger el menú lateral
+        Platform.runLater(() -> {
+            Stage stage = (Stage) bpPrincipal.getScene().getWindow();
+            if (stage != null) {
+                // Bloqueamos la ventana para que no pueda ser más pequeña que el menú
+                stage.setMinWidth(1100);
+                stage.setMinHeight(760); // Se ajustó a 760 para cubrir todos los botones + márgenes reales
+
+                // Forzamos a que la ventana se ajuste a este nuevo mínimo ahora mismo
+                if (stage.getHeight() < 760) {
+                    stage.setHeight(760);
+                }
+            }
+        });
+        // 2. Verificar rol de usuario (Tu lógica actual)
         if ("Staff".equals(App.getRolUsuario())) {
             if (bInventario != null) {
                 bInventario.setVisible(false);
@@ -52,7 +66,7 @@ public class VeterinarioController implements Initializable {
                 bStaff.setManaged(false);
             }
         }
-        
+
         navegar(bDashboard, "SeccionDashboard");
     }
 

@@ -11,9 +11,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="bpPrincipal" prefHeight="728.0" prefWidth="1357.0" style="-fx-background-color: #9ED3A9;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.VeterinarioController">
+<BorderPane fx:id="bpPrincipal" minHeight="600.0" prefHeight="728.0" prefWidth="1357.0" style="-fx-background-color: #9ED3A9;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.VeterinarioController">
    <left>
-      <VBox maxHeight="1.7976931348623157E308" prefWidth="150.0" styleClass="barra-lateral" stylesheets="@estilos.css" BorderPane.alignment="CENTER">
+      <VBox maxHeight="1.7976931348623157E308" prefWidth="199.0" styleClass="barra-lateral" stylesheets="@estilos.css" BorderPane.alignment="TOP_CENTER">
          <BorderPane.margin>
             <Insets bottom="20.0" left="20.0" right="20.0" top="90.0" />
          </BorderPane.margin>
@@ -51,7 +51,8 @@
                </graphic>
                <font>
                   <Font size="14.0" />
-               </font></Button>
+               </font>
+            </Button>
             <Button fx:id="bMascotas" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaMascotas" styleClass="boton-menu" text="       Mascotas">
                <graphic>
                   <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
@@ -62,7 +63,8 @@
                </graphic>
                <font>
                   <Font size="14.0" />
-               </font></Button>
+               </font>
+            </Button>
             <Button fx:id="bInventario" layoutX="10.0" layoutY="120.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaInventario" prefHeight="38.0" prefWidth="91.0" styleClass="boton-menu" text="       Inventario">
                <graphic>
                   <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
@@ -82,19 +84,21 @@
                         <Image url="@../images/Icon_Reporte.png" />
                      </image>
                   </ImageView>
-               </graphic></Button>
+               </graphic>
+            </Button>
             <Button fx:id="bStaff" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaStaff" styleClass="boton-menu" text="       Staff">
                <graphic>
                   <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../images/Icon_Staff.png" />
-                     </image></ImageView>
+                     </image>
+                  </ImageView>
                </graphic>
             </Button>
-            <Region prefHeight="352.0" prefWidth="199.0" VBox.vgrow="ALWAYS" />
-            <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+            <Region minHeight="0.0" prefHeight="352.0" prefWidth="199.0" VBox.vgrow="ALWAYS" />
+            <HBox alignment="BOTTOM_CENTER" prefHeight="80.0" prefWidth="199.0">
                <children>
-                  <Button fx:id="btnCerrarSesion" mnemonicParsing="false" onAction="#onCerrarSesionClick" prefHeight="53.0" prefWidth="182.0" styleClass="boton-verde" text="  Cerrar Sesión">
+                  <Button fx:id="btnCerrarSesion" minHeight="50.0" mnemonicParsing="false" onAction="#onCerrarSesionClick" prefHeight="53.0" prefWidth="182.0" styleClass="boton-verde" text="  Cerrar Sesión" HBox.hgrow="ALWAYS">
                      <HBox.margin>
                         <Insets bottom="20.0" />
                      </HBox.margin>

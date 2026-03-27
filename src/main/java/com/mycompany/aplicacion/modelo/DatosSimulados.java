@@ -8,9 +8,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class DatosSimulados {
-    private static ObservableList<Mascota> mascotas = null;
-    private static ObservableList<Staff> personal = null;
-    private static ObservableList<Citas> citas = null;
+     private static ObservableList<Mascota> mascotas = null;
+     private static ObservableList<Staff> personal = null;
+     private static ObservableList<Citas> citas = null;
+     private static ObservableList<Inventario> inventario = null;
 
     public static ObservableList<Mascota> getMascotas() {
         if (mascotas == null) {
@@ -171,5 +172,26 @@ public class DatosSimulados {
         Citas c5 = new Citas(5, "2025-04-02", "12:00", "Toby", "Carlos Ruiz", "Ana López", "Urgencia", "Completada");
 
         citas.addAll(c1, c2, c3, c4, c5);
+    }
+    
+    // DATOS SIMULADOS INVENTARIO
+    
+    public static ObservableList<Inventario> getInventario() {
+        if (inventario == null) {
+            cargarInventario();
+        }
+        return inventario;
+    }
+    
+    private static void cargarInventario() {
+        inventario = FXCollections.observableArrayList();
+        
+        Inventario i1 = new Inventario(1, "Vacuna Antirrábica", "Medicamento", 50, 250.0);
+        Inventario i2 = new Inventario(2, "Alimento Premium 5kg", "Comida", 20, 450.0);
+        Inventario i3 = new Inventario(3, "Collar Antipulgas", "Accesorios", 15, 300.0);
+        Inventario i4 = new Inventario(4, "Antibiótico Amoxicilina", "Medicamento", 100, 150.0);
+        Inventario i5 = new Inventario(5, "Shampoo Medicado", "Higiene", 30, 200.0);
+        
+        inventario.addAll(i1, i2, i3, i4, i5);
     }
 }

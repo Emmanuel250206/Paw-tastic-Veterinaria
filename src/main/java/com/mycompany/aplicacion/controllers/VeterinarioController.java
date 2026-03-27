@@ -60,7 +60,7 @@ public class VeterinarioController implements Initializable {
      * MÉTODO MAESTRO: Gestiona el cambio de color de los botones
      * y carga el FXML en el centro del BorderPane.
      */
-    void navegar(Button botonPulsado, String nombreFXML) {
+    public void navegar(Button botonPulsado, String nombreFXML) {
         // 1. Lista de todos los botones para resetear estilos
         Button[] botonesMenu = { bDashboard, bMascotas, bCitas, bInventario, bStaff, bReportes };
 

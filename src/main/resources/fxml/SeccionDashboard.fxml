@@ -3,11 +3,14 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
@@ -27,6 +30,12 @@
                   </ImageView>
                </graphic>
             </Label>
+            <Region prefHeight="47.0" prefWidth="163.0" HBox.hgrow="ALWAYS" />
+            <MenuButton alignment="CENTER_RIGHT" mnemonicParsing="false" prefHeight="26.0" prefWidth="223.0" text="Hola, Dr. Emmanuel-Veterinario" textOverrun="LEADING_ELLIPSIS">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Configurar Perfil" />
+              </items>
+            </MenuButton>
          </children>
       </HBox>
       <GridPane VBox.vgrow="ALWAYS">

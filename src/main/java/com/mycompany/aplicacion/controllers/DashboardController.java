@@ -65,5 +65,6 @@ public class DashboardController {
             padre.navegar(padre.getbReportes(), "SeccionReportes");
         }
     }
+    
 
 }

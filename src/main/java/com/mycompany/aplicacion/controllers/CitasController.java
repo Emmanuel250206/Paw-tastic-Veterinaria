@@ -16,6 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.Priority;
+import com.mycompany.aplicacion.App;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -48,6 +49,27 @@ public class CitasController implements Initializable {
 
         if (!DatosSimulados.getCitas().isEmpty()) {
             cargarCitaEnPantalla(DatosSimulados.getCitas().get(0));
+        }
+
+        // Si es Staff, agregamos un reporte simulado.
+        if ("Staff".equalsIgnoreCase(App.getRolUsuario())) {
+            VBox reportCard = new VBox(5);
+            reportCard.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
+
+            Label lblFecha = new Label("26/10/2026 15:30 - Paciente: Buddy");
+            lblFecha.setStyle("-fx-font-weight: bold; -fx-text-fill: #3d8d7a; -fx-font-size: 14px;");
+
+            Label lblTemp = new Label("Temp: 38.5 °C | FC: 110 ppm | FR: 30 rpm");
+            lblTemp.setStyle("-fx-text-fill: #7f8c8d; -fx-font-size: 12px; -fx-font-style: italic;");
+
+            Label lblTexto = new Label("El perro llegó con decaimiento, se administraron fluidos y desparasitante oral.");
+            lblTexto.setStyle("-fx-text-fill: #2c3e50; -fx-font-size: 14px;");
+            lblTexto.setWrapText(true);
+
+            reportCard.getChildren().addAll(lblFecha, lblTemp, lblTexto);
+            if (vboxReportesGuardados != null) {
+                vboxReportesGuardados.getChildren().add(1, reportCard); // Debajo del titulo
+            }
         }
     }
 
@@ -180,7 +202,7 @@ public class CitasController implements Initializable {
         }
 
         String notas = txtReporteCita.getText().trim();
-
+        
         VBox reportCard = new VBox(5);
         reportCard.setStyle(
                 "-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
@@ -247,6 +269,12 @@ public class CitasController implements Initializable {
             txtTemp.clear();
             txtFreqCard.clear();
             txtFreqResp.clear();
+        }
+
+        if ("Staff".equalsIgnoreCase(App.getRolUsuario())) {
+            bAccionCita.setDisable(true);
+            bAccionCita.setText("Solo Veterinario");
+            bAccionCita.setStyle("-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold;");
         }
     }
 }

@@ -8,6 +8,7 @@ module com.mycompany.aplicacion {
     opens com.mycompany.aplicacion to javafx.fxml;
 
     opens com.mycompany.aplicacion.controllers to javafx.fxml;
+    opens com.mycompany.aplicacion.modelo to javafx.base;
 
     exports com.mycompany.aplicacion;
 }

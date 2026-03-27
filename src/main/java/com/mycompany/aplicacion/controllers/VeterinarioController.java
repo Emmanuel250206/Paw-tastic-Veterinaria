@@ -52,11 +52,9 @@ public class VeterinarioController implements Initializable {
             }
         });
         // 2. Verificar rol de usuario (Tu lógica actual)
-        if ("Staff".equals(App.getRolUsuario())) {
-            if (bInventario != null) {
-                bInventario.setVisible(false);
-                bInventario.setManaged(false);
-            }
+        if ("Staff".equalsIgnoreCase(App.getRolUsuario())) {
+            // El Staff puede ver Mascotas, Citas e Inventario.
+            // Ocultamos Reportes y Sección Staff (Admin)
             if (bReportes != null) {
                 bReportes.setVisible(false);
                 bReportes.setManaged(false);
@@ -153,6 +151,7 @@ public class VeterinarioController implements Initializable {
 
     @FXML
     public void mostrarVistaStaff(ActionEvent event) {
+        if ("Staff".equalsIgnoreCase(App.getRolUsuario())) return; // Bloqueo de seguridad a nivel router
         navegar(bStaff, "SeccionStaff");
     }
 

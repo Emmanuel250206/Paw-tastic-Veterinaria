@@ -30,11 +30,8 @@ public class DashboardController {
 
     @FXML
     private void initialize() {
-        if ("Staff".equals(App.getRolUsuario())) {
-            if (cardInventario != null) {
-                cardInventario.setVisible(false);
-                cardInventario.setManaged(false);
-            }
+        if ("Staff".equalsIgnoreCase(App.getRolUsuario())) {
+            // Solo ocultar tarjeta Staff (El inventario sí podrán verlo para recepcionar insumos)
             if (cardStaff != null) {
                 cardStaff.setVisible(false);
                 cardStaff.setManaged(false);
@@ -194,9 +191,8 @@ public class DashboardController {
 
     @FXML
     private void irAStaff(MouseEvent event) {
+        if ("Staff".equalsIgnoreCase(App.getRolUsuario())) return; // Candado adicional de seguridad
         if (padre != null) {
-            // El veterinario controller no tiene getter público getbStaff, pero invocamos
-            // su método nativo
             padre.mostrarVistaStaff(null);
         }
     }

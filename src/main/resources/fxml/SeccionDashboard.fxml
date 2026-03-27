@@ -18,7 +18,7 @@
    <children>
       <HBox prefHeight="47.0" prefWidth="560.0">
          <children>
-            <Label styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Resumen del dia" textFill="#3d8d7a">
+            <Label prefHeight="42.0" prefWidth="342.0" styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Resumen del dia" textFill="#3d8d7a">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -31,7 +31,7 @@
                </graphic>
             </Label>
             <Region prefHeight="47.0" prefWidth="163.0" HBox.hgrow="ALWAYS" />
-            <MenuButton alignment="CENTER_RIGHT" mnemonicParsing="false" prefHeight="26.0" prefWidth="223.0" text="Hola, Dr. Emmanuel-Veterinario" textOverrun="LEADING_ELLIPSIS">
+            <MenuButton alignment="CENTER_RIGHT" mnemonicParsing="false" prefHeight="26.0" prefWidth="287.0" styleClass="boton-link" text="Hola, Dr. Emmanuel-Veterinario" textOverrun="LEADING_ELLIPSIS">
               <items>
                 <MenuItem mnemonicParsing="false" text="Configurar Perfil" />
               </items>

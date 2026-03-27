@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.SplitPane?>   <!-- 🔥 AGREGAR -->
+<?import javafx.scene.control.SplitPane?>   
 <?import javafx.scene.control.TextArea?>  
 
 <VBox spacing="15" style="-fx-background-color: #EAF7EE;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.MascotasController">

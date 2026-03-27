@@ -44,10 +44,11 @@ public class StaffController implements Initializable {
 
         // Botón superior de Agregar
         Button btnAgregar = new Button("+ Agregar Miembro");
-        btnAgregar.setStyle("-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-background-radius: 5;");
+        btnAgregar.setStyle(
+                "-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-background-radius: 5;");
         btnAgregar.setCursor(javafx.scene.Cursor.HAND);
         btnAgregar.setOnAction(e -> mostrarDialogoAgregar());
-        
+
         // HBox para alinear el botón de agregar a la derecha
         HBox headerContainer = new HBox(btnAgregar);
         headerContainer.setAlignment(Pos.CENTER_RIGHT);
@@ -63,7 +64,8 @@ public class StaffController implements Initializable {
             HBox.setHgrow(tarjeta, Priority.ALWAYS);
             tarjeta.setPadding(new Insets(15, 20, 15, 20));
             // Estilos CSS integrados
-            tarjeta.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
+            tarjeta.setStyle(
+                    "-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
             tarjeta.getStyleClass().add("tarjeta-blanca");
             tarjeta.setAlignment(Pos.CENTER_LEFT);
 
@@ -94,7 +96,7 @@ public class StaffController implements Initializable {
             lblEmail.setStyle("-fx-font-size: 13px; -fx-text-fill: #34495e;");
 
             infoContacto.getChildren().addAll(lblTel, lblEmail);
-            
+
             // Botón de Eliminar
             Button btnEliminar = new Button("Eliminar");
             btnEliminar.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;");
@@ -103,7 +105,7 @@ public class StaffController implements Initializable {
                 DatosSimulados.getPersonal().remove(s);
                 cargarPersonalEnPantalla(); // Recargar visualmente
             });
-            
+
             VBox accionesContenedor = new VBox(btnEliminar);
             accionesContenedor.setAlignment(Pos.CENTER);
             accionesContenedor.setPadding(new Insets(0, 0, 0, 15));
@@ -114,12 +116,12 @@ public class StaffController implements Initializable {
             vboxContenedor.getChildren().add(tarjeta);
         }
     }
-    
+
     private void mostrarDialogoAgregar() {
         Dialog<Staff> dialog = new Dialog<>();
         dialog.setTitle("Agregar Nuevo Staff");
         dialog.setHeaderText("Introduce los datos del nuevo miembro del personal");
-        
+
         // Estilizar el Panel principal del Dialogo
         dialog.getDialogPane().setStyle("-fx-background-color: #DFF5E1; -fx-font-family: 'System';");
 
@@ -137,28 +139,33 @@ public class StaffController implements Initializable {
         TextField tfNombre = new TextField();
         tfNombre.setPromptText("Nombre");
         tfNombre.setStyle(styleTextField);
-        
+
         TextField tfApellidos = new TextField();
         tfApellidos.setPromptText("Apellidos");
         tfApellidos.setStyle(styleTextField);
-        
+
         TextField tfRol = new TextField();
         tfRol.setPromptText("Rol (ej. Veterinario)");
         tfRol.setStyle(styleTextField);
-        
+
         TextField tfEspecialidad = new TextField();
         tfEspecialidad.setPromptText("Especialidad");
         tfEspecialidad.setStyle(styleTextField);
-        
+
         TextField tfTel = new TextField();
         tfTel.setPromptText("Teléfono");
         tfTel.setStyle(styleTextField);
 
-        Label lbl1 = new Label("Nombre:"); lbl1.setStyle(styleLabel);
-        Label lbl2 = new Label("Apellidos:"); lbl2.setStyle(styleLabel);
-        Label lbl3 = new Label("Rol:"); lbl3.setStyle(styleLabel);
-        Label lbl4 = new Label("Especialidad:"); lbl4.setStyle(styleLabel);
-        Label lbl5 = new Label("Teléfono:"); lbl5.setStyle(styleLabel);
+        Label lbl1 = new Label("Nombre:");
+        lbl1.setStyle(styleLabel);
+        Label lbl2 = new Label("Apellidos:");
+        lbl2.setStyle(styleLabel);
+        Label lbl3 = new Label("Rol:");
+        lbl3.setStyle(styleLabel);
+        Label lbl4 = new Label("Especialidad:");
+        lbl4.setStyle(styleLabel);
+        Label lbl5 = new Label("Teléfono:");
+        lbl5.setStyle(styleLabel);
 
         grid.add(lbl1, 0, 0);
         grid.add(tfNombre, 1, 0);
@@ -182,16 +189,17 @@ public class StaffController implements Initializable {
         javafx.scene.Node btnGuardarNode = dialog.getDialogPane().lookupButton(btnTypeGuardar);
         if (btnGuardarNode != null && btnGuardarNode instanceof javafx.scene.control.Button) {
             javafx.scene.control.Button btnGuardar = (javafx.scene.control.Button) btnGuardarNode;
-            btnGuardar.setStyle("-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
-            
+            btnGuardar.setStyle(
+                    "-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+
             // FILTRO DE EVENTOS (VALIDACIÓN)
             btnGuardar.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
                 if (tfNombre.getText().trim().isEmpty() ||
-                    tfApellidos.getText().trim().isEmpty() ||
-                    tfRol.getText().trim().isEmpty() ||
-                    tfEspecialidad.getText().trim().isEmpty() ||
-                    tfTel.getText().trim().isEmpty()) {
-                    
+                        tfApellidos.getText().trim().isEmpty() ||
+                        tfRol.getText().trim().isEmpty() ||
+                        tfEspecialidad.getText().trim().isEmpty() ||
+                        tfTel.getText().trim().isEmpty()) {
+
                     lblError.setText("⚠ Error: Por favor, rellena todos los campos.");
                     event.consume(); // Cancela que se cierre la ventana
                 } else {
@@ -199,10 +207,11 @@ public class StaffController implements Initializable {
                 }
             });
         }
-        
+
         javafx.scene.Node btnCancelarNode = dialog.getDialogPane().lookupButton(ButtonType.CANCEL);
         if (btnCancelarNode != null) {
-            btnCancelarNode.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+            btnCancelarNode.setStyle(
+                    "-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
         }
 
         dialog.setResultConverter(dialogButton -> {

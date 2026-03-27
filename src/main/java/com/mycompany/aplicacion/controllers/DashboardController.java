@@ -97,14 +97,14 @@ public class DashboardController {
 
         tarjeta.getChildren().clear();
         tarjeta.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        
+
         // PADDING inicial.
         tarjeta.setPadding(new javafx.geometry.Insets(20, 25, 20, 25));
         tarjeta.setCursor(javafx.scene.Cursor.HAND);
 
         // Se asignan los COLORES fijos mediante CSS una sola vez.
         Label lblTitulo = new Label(titulo);
-        lblTitulo.setStyle("-fx-text-fill: #3d8d7a;"); 
+        lblTitulo.setStyle("-fx-text-fill: #3d8d7a;");
 
         Label lblCantidad = new Label(String.valueOf(cantidad));
         lblCantidad.setStyle("-fx-text-fill: #2c3e50;");
@@ -112,9 +112,9 @@ public class DashboardController {
         VBox detallesContainer = new VBox();
         Label lblSubtitulo = new Label(detallesList.isEmpty() ? "Sin registros recientes" : "Registros recientes:");
         lblSubtitulo.setStyle("-fx-text-fill: #7f8c8d;");
-        
+
         detallesContainer.getChildren().add(lblSubtitulo);
-        
+
         java.util.List<Label> labelsDetalle = new java.util.ArrayList<>();
         for (String det : detallesList) {
             Label lblDetalle = new Label(det);
@@ -126,11 +126,12 @@ public class DashboardController {
         tarjeta.getChildren().addAll(lblTitulo, lblCantidad, detallesContainer);
 
         // --- LÓGICA DE FUENTES DINÁMICAS (RESPONSIVE POR ESCALONES) ---
-        // Al usar escalones (Tiers) evitamos el recálculo circular que causa el parpadeo (jitter) en el GridPane.
+        // Al usar escalones (Tiers) evitamos el recálculo circular que causa el
+        // parpadeo (jitter) en el GridPane.
         tarjeta.widthProperty().addListener((obs, oldVal, newVal) -> {
             double w = newVal.doubleValue();
             double f = 1.0;
-            
+
             if (w > 700) {
                 f = 1.6;
             } else if (w > 500) {
@@ -138,7 +139,8 @@ public class DashboardController {
             } else if (w > 400) {
                 f = 1.15;
             }
-            // Si el factor no cambia significativamente, no recaculamos (Evita re-renderizado infinito)
+            // Si el factor no cambia significativamente, no recaculamos (Evita
+            // re-renderizado infinito)
             if (tarjeta.getUserData() != null && (double) tarjeta.getUserData() == f) {
                 return;
             }

@@ -11,7 +11,7 @@ import javafx.stage.Modality;
 import javafx.scene.text.Text;
 
 public class PrimaryController {
-    
+
     @FXML
     private void switchToSecondary() throws IOException {
         App.setRoot("secondary");
@@ -51,7 +51,7 @@ public class PrimaryController {
     private Text txtErrorDatos;
     @FXML
     private Text txtErrorDatosContra;
-    
+
     // Este método se asegura de sincronizar el texto mientras presionas el ojo
     @FXML
     private void mostrarContrasena() {
@@ -72,77 +72,79 @@ public class PrimaryController {
         // Asegúrate de que el nombre coincida con tu nuevo archivo fxml
         App.setRoot("fxml/Registro");
     }
-    
+
     private boolean validarCampos() {
-    boolean valido = true;
+        boolean valido = true;
 
-    txtErrorNombre.setVisible(false);
-    txtErrorPassword.setVisible(false);
-    txtErrorDatos.setVisible(false);
-    txtErrorDatosContra.setVisible(false);
+        txtErrorNombre.setVisible(false);
+        txtErrorPassword.setVisible(false);
+        txtErrorDatos.setVisible(false);
+        txtErrorDatosContra.setVisible(false);
 
-    if (txtNombre.getText().isEmpty()) {
-        txtErrorNombre.setText("Debes rellenar este campo");
-        txtErrorNombre.setVisible(true);
-        valido = false;
-    }
-
-    if (txtContrasenaOculta.getText().isEmpty()) {
-        txtErrorPassword.setText("Debes rellenar este campo");
-        txtErrorPassword.setVisible(true);
-        valido = false;
-    }
-    
-
-    return valido;
-    }
-   
-    
-@FXML
-private void iniciarSesion() throws IOException {
-    // 1. Cambiamos la interfaz
-    if (!validarCampos()){
-        return;
-    }
-    
-    // Configurar rol según el nombre ingresado
-    if ("Staff".equalsIgnoreCase(txtNombre.getText().trim())) {
-        App.setRolUsuario("Staff");
-    } else {
-        App.setRolUsuario("Veterinario");
-    }
-    
-    App.setRoot("fxml/InterfazVeterinario");
-    
-    // 2. Ejecutamos los ajustes de ventana
-    javafx.application.Platform.runLater(() -> {
-        Stage stage = App.getStage();
-        if (stage != null) {
-            // Desbloqueamos el redimensionamiento
-            stage.setResizable(true);
-            
-            // --- NUEVAS LÍNEAS PARA EL TAMAÑO MÍNIMO ---
-            stage.setMinWidth(836);
-            stage.setMinHeight(600);
-            // -------------------------------------------
-
-            // OBTENEMOS EL TAMAÑO DEL MONITOR
-            javafx.stage.Screen screen = javafx.stage.Screen.getPrimary();
-            javafx.geometry.Rectangle2D bounds = screen.getVisualBounds();
-
-            // FORZAMOS EL TAMAÑO MANUALMENTE PARA ASEGURAR EL CAMBIO
-            stage.setX(bounds.getMinX());
-            stage.setY(bounds.getMinY());
-            stage.setWidth(bounds.getWidth());
-            stage.setHeight(bounds.getHeight());
-            
-            // Finalmente aplicamos el maximizado nativo
-            stage.setMaximized(true);
+        if (txtNombre.getText().trim().isEmpty()) {
+            txtErrorNombre.setText("Debes rellenar este campo");
+            txtErrorNombre.setVisible(true);
+            valido = false;
+        } else {
+            String nombreTrim = txtNombre.getText().trim();
+            if (!nombreTrim.equalsIgnoreCase("Veterinario") && !nombreTrim.equalsIgnoreCase("Staff")) {
+                txtErrorNombre.setText("El usuario no es válido. Usa 'Veterinario' o 'Staff'");
+                txtErrorNombre.setVisible(true);
+                valido = false;
+            }
         }
-    });
-}
-    
-    
-}
 
+        if (txtContrasenaOculta.getText().isEmpty()) {
+            txtErrorPassword.setText("Debes rellenar este campo");
+            txtErrorPassword.setVisible(true);
+            valido = false;
+        }
 
+        return valido;
+    }
+
+    @FXML
+    private void iniciarSesion() throws IOException {
+        // 1. Cambiamos la interfaz
+        if (!validarCampos()) {
+            return;
+        }
+
+        // Configurar rol según el nombre ingresado
+        if ("Staff".equalsIgnoreCase(txtNombre.getText().trim())) {
+            App.setRolUsuario("Staff");
+        } else {
+            App.setRolUsuario("Veterinario");
+        }
+
+        App.setRoot("fxml/InterfazVeterinario");
+
+        // 2. Ejecutamos los ajustes de ventana
+        javafx.application.Platform.runLater(() -> {
+            Stage stage = App.getStage();
+            if (stage != null) {
+                // Desbloqueamos el redimensionamiento
+                stage.setResizable(true);
+
+                // --- NUEVAS LÍNEAS PARA EL TAMAÑO MÍNIMO ---
+                stage.setMinWidth(836);
+                stage.setMinHeight(600);
+                // -------------------------------------------
+
+                // OBTENEMOS EL TAMAÑO DEL MONITOR
+                javafx.stage.Screen screen = javafx.stage.Screen.getPrimary();
+                javafx.geometry.Rectangle2D bounds = screen.getVisualBounds();
+
+                // FORZAMOS EL TAMAÑO MANUALMENTE PARA ASEGURAR EL CAMBIO
+                stage.setX(bounds.getMinX());
+                stage.setY(bounds.getMinY());
+                stage.setWidth(bounds.getWidth());
+                stage.setHeight(bounds.getHeight());
+
+                // Finalmente aplicamos el maximizado nativo
+                stage.setMaximized(true);
+            }
+        });
+    }
+
+}

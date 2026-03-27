@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -16,15 +17,16 @@
 <?import javafx.scene.control.SplitPane?>   
 <?import javafx.scene.control.TextArea?>  
 
+
+
+
+
 <VBox spacing="15" style="-fx-background-color: #EAF7EE;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.MascotasController">
 
     <!-- 🔍 HEADER -->
     <HBox alignment="CENTER_LEFT" spacing="10">
-       <TextField fx:id="txtBuscar"
-           prefHeight="35"
-           promptText="🔍 Buscar mascota o escanear collar..."
-           HBox.hgrow="ALWAYS"/>
-        <MenuButton text="Dr. Emmanuel ▼">
+       <TextField fx:id="txtBuscar" prefHeight="35" promptText="🔍 Buscar mascota o escanear collar..." HBox.hgrow="ALWAYS" />
+        <MenuButton styleClass="boton-link" stylesheets="@estilos.css" text="Dr. Emmanuel ▼">
             <items>
                 <MenuItem text="Mi perfil" />
             </items>
@@ -38,50 +40,57 @@
     <!-- 🐾 CARD TABLA -->
     <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
 
-        <Label text="Resultados de búsqueda" styleClass="titulo"/>
+        <Label styleClass="titulo" text="Resultados de búsqueda" />
 
         <TableView fx:id="tablaMascotas" VBox.vgrow="ALWAYS">
             <columns>
-                <TableColumn fx:id="colNombre" text="Nombre"/>
-                <TableColumn fx:id="colEspecie" text="Especie"/>
-                <TableColumn fx:id="colEdad" text="Edad"/>
+                <TableColumn fx:id="colNombre" text="Nombre" />
+                <TableColumn fx:id="colEspecie" text="Especie" />
+                <TableColumn fx:id="colEdad" text="Edad" />
             </columns>
         </TableView>
     </VBox>
 
     <!-- 📋 CARD DETALLE -->
-    <VBox spacing="15" styleClass="card" prefWidth="350">
+    <VBox prefWidth="350" spacing="15" styleClass="card">
 
-        <Label text="Ficha de la mascota" styleClass="titulo"/>
+        <Label styleClass="titulo" text="Ficha de la mascota" />
 
         <GridPane hgap="10" vgap="10">
             <columnConstraints>
-                <ColumnConstraints prefWidth="120"/>
-                <ColumnConstraints hgrow="ALWAYS"/>
+                <ColumnConstraints prefWidth="120" />
+                <ColumnConstraints hgrow="ALWAYS" />
             </columnConstraints>
 
-            <Label text="Nombre:"/>
-            <Label fx:id="lblNombre" GridPane.columnIndex="1"/>
+            <Label text="Nombre:" />
+            <Label fx:id="lblNombre" GridPane.columnIndex="1" />
 
-            <Label text="Especie:" GridPane.rowIndex="1"/>
-            <Label fx:id="lblEspecie" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+            <Label text="Especie:" GridPane.rowIndex="1" />
+            <Label fx:id="lblEspecie" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-            <Label text="Raza:" GridPane.rowIndex="2"/>
-            <Label fx:id="lblRaza" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            <Label text="Raza:" GridPane.rowIndex="2" />
+            <Label fx:id="lblRaza" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-            <Label text="Edad:" GridPane.rowIndex="3"/>
-            <Label fx:id="lblEdad" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+            <Label text="Edad:" GridPane.rowIndex="3" />
+            <Label fx:id="lblEdad" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-            <Label text="Propietario:" GridPane.rowIndex="4"/>
-            <Label fx:id="lblPropietario" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+            <Label text="Propietario:" GridPane.rowIndex="4" />
+            <Label fx:id="lblPropietario" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <rowConstraints>
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+            </rowConstraints>
         </GridPane>
 
-        <Label text="Historial clínico" style="-fx-font-weight: bold;"/>
-        <TextArea fx:id="txtHistorial" editable="false" wrapText="true" VBox.vgrow="ALWAYS"/>
+        <Label style="-fx-font-weight: bold;" text="Historial clínico" />
+        <TextArea fx:id="txtHistorial" editable="false" wrapText="true" VBox.vgrow="ALWAYS" />
 
         <HBox spacing="10">
-            <Button text="Editar"/>
-            <Button text="Nuevo"/>
+            <Button text="Editar" />
+            <Button text="Nuevo" />
         </HBox>
 
     </VBox>

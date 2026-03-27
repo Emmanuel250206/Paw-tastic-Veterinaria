@@ -1,1 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="407.0" prefWidth="699.0" style="-fx-background-color: #DFF5E1;" styleClass="recuadros-informacion" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.DashboardController">
+   <children>
+      <HBox prefHeight="47.0" prefWidth="560.0">
+         <children>
+            <Label prefHeight="42.0" prefWidth="342.0" styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Reportes" textFill="#3d8d7a">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <graphic>
+                  <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/Icon_Reporte.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Label>
+            <Region prefHeight="47.0" prefWidth="163.0" HBox.hgrow="ALWAYS" />
+            <MenuButton alignment="CENTER_RIGHT" mnemonicParsing="false" prefHeight="26.0" prefWidth="287.0" styleClass="boton-link" text="Hola, Dr. Emmanuel-Veterinario" textOverrun="LEADING_ELLIPSIS">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="Configurar Perfil" />
+               </items>
+            </MenuButton>
+         </children>
+      </HBox>
+   </children>
+</VBox>

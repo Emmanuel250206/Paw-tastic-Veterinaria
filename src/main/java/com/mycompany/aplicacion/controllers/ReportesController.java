@@ -9,13 +9,15 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.ResourceBundle;
+import javafx.fxml.Initializable;
 
-public class ReportesController {
+public class ReportesController implements Initializable {
 
     @FXML
     private TableView<VentaSimulada> tablaCierre;
@@ -32,7 +34,8 @@ public class ReportesController {
     @FXML
     private Button btnAutorizar;
 
-    public void initialize() {
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
         // Configurar la tabla
         colConcepto.setCellValueFactory(cell
                 -> new javafx.beans.property.SimpleStringProperty(cell.getValue().getConcepto())

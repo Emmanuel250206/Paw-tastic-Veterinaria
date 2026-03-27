@@ -56,7 +56,6 @@
             <HBox fx:id="btnControlInventario" alignment="CENTER_RIGHT" spacing="15.0">
                <children>
                   <javafx.scene.control.Button mnemonicParsing="false" onAction="#mostrarDialogoAgregar" style="-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="+ Nuevo Producto" />
-                  <javafx.scene.control.Button mnemonicParsing="false" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Ajustar Stock" />
                </children>
             </HBox>
          </children>

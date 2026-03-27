@@ -1,0 +1,232 @@
+{
+    "version": "1.4.0",
+    "project": {
+        "name": "APLICACION",
+        "directory": "/home/emmanuel/Paw-tastic-Veterinaria",
+        "workspaceDir": "/home/emmanuel/Paw-tastic-Veterinaria",
+        "sources": [
+            "/home/emmanuel/Paw-tastic-Veterinaria/src/main/java"
+        ],
+        "dependencies": [
+            
+        ],
+        "classpath": [
+            "/home/emmanuel/Paw-tastic-Veterinaria/target/classes",
+            "/home/emmanuel/.m2/repository/org/openjfx/javafx-controls/17.0.10/javafx-controls-17.0.10.jar",
+            "/home/emmanuel/.m2/repository/org/openjfx/javafx-controls/17.0.10/javafx-controls-17.0.10-linux.jar",
+            "/home/emmanuel/.m2/repository/org/openjfx/javafx-graphics/17.0.10/javafx-graphics-17.0.10.jar",
+            "/home/emmanuel/.m2/repository/org/openjfx/javafx-graphics/17.0.10/javafx-graphics-17.0.10-linux.jar",
+            "/home/emmanuel/.m2/repository/org/openjfx/javafx-base/17.0.10/javafx-base-17.0.10.jar",
+            "/home/emmanuel/.m2/repository/org/openjfx/javafx-base/17.0.10/javafx-base-17.0.10-linux.jar",
+            "/home/emmanuel/.m2/repository/org/openjfx/javafx-fxml/17.0.10/javafx-fxml-17.0.10.jar",
+            "/home/emmanuel/.m2/repository/org/openjfx/javafx-fxml/17.0.10/javafx-fxml-17.0.10-linux.jar"
+        ],
+        "out": "/home/emmanuel/Paw-tastic-Veterinaria/target",
+        "classesDir": "/home/emmanuel/Paw-tastic-Veterinaria/target/classes",
+        "resources": [
+            "/home/emmanuel/Paw-tastic-Veterinaria/src/main/resources"
+        ],
+        "java": {
+            "options": [
+                "-g",
+                "-target",
+                "21",
+                "-source",
+                "21",
+                "-encoding",
+                "UTF-8"
+            ]
+        },
+        "test": {
+            "frameworks": [
+                {
+                    "names": [
+                        "com.novocode.junit.JUnitFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "org.scalatest.tools.Framework",
+                        "org.scalatest.tools.ScalaTestFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "org.scalacheck.ScalaCheckFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "org.specs.runner.SpecsFramework",
+                        "org.specs2.runner.Specs2Framework",
+                        "org.specs2.runner.SpecsFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "utest.runner.Framework"
+                    ]
+                },
+                {
+                    "names": [
+                        "munit.Framework"
+                    ]
+                },
+                {
+                    "names": [
+                        "mill.testng.TestNGFramework"
+                    ]
+                }
+            ],
+            "options": {
+                "excludes": [
+                    
+                ],
+                "arguments": [
+                    {
+                        "args": [
+                            "-v",
+                            "-a"
+                        ],
+                        "framework": {
+                            "names": [
+                                "com.novocode.junit.JUnitFramework"
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "platform": {
+            "name": "jvm",
+            "config": {
+                "home": "/usr/lib/jvm/java-21-openjdk-amd64",
+                "options": [
+                    
+                ]
+            },
+            "mainClass": [
+                
+            ]
+        },
+        "resolution": {
+            "modules": [
+                {
+                    "organization": "org.openjfx",
+                    "name": "javafx-fxml",
+                    "version": "17.0.10",
+                    "artifacts": [
+                        {
+                            "name": "javafx-fxml",
+                            "path": "/home/emmanuel/.m2/repository/org/openjfx/javafx-fxml/17.0.10/javafx-fxml-17.0.10.jar"
+                        },
+                        {
+                            "name": "javafx-fxml",
+                            "classifier": "sources",
+                            "path": "/home/emmanuel/.m2/repository/org/openjfx/javafx-fxml/17.0.10/javafx-fxml-17.0.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.openjfx",
+                    "name": "javafx-graphics",
+                    "version": "17.0.10",
+                    "artifacts": [
+                        {
+                            "name": "javafx-graphics",
+                            "path": "/home/emmanuel/.m2/repository/org/openjfx/javafx-graphics/17.0.10/javafx-graphics-17.0.10.jar"
+                        },
+                        {
+                            "name": "javafx-graphics",
+                            "classifier": "sources",
+                            "path": "/home/emmanuel/.m2/repository/org/openjfx/javafx-graphics/17.0.10/javafx-graphics-17.0.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.openjfx",
+                    "name": "javafx-controls",
+                    "version": "17.0.10",
+                    "artifacts": [
+                        {
+                            "name": "javafx-controls",
+                            "path": "/home/emmanuel/.m2/repository/org/openjfx/javafx-controls/17.0.10/javafx-controls-17.0.10.jar"
+                        },
+                        {
+                            "name": "javafx-controls",
+                            "classifier": "sources",
+                            "path": "/home/emmanuel/.m2/repository/org/openjfx/javafx-controls/17.0.10/javafx-controls-17.0.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.openjfx",
+                    "name": "javafx-controls",
+                    "version": "17.0.10",
+                    "artifacts": [
+                        {
+                            "name": "javafx-controls",
+                            "classifier": "linux",
+                            "path": "/home/emmanuel/.m2/repository/org/openjfx/javafx-controls/17.0.10/javafx-controls-17.0.10-linux.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.openjfx",
+                    "name": "javafx-fxml",
+                    "version": "17.0.10",
+                    "artifacts": [
+                        {
+                            "name": "javafx-fxml",
+                            "classifier": "linux",
+                            "path": "/home/emmanuel/.m2/repository/org/openjfx/javafx-fxml/17.0.10/javafx-fxml-17.0.10-linux.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.openjfx",
+                    "name": "javafx-base",
+                    "version": "17.0.10",
+                    "artifacts": [
+                        {
+                            "name": "javafx-base",
+                            "classifier": "linux",
+                            "path": "/home/emmanuel/.m2/repository/org/openjfx/javafx-base/17.0.10/javafx-base-17.0.10-linux.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.openjfx",
+                    "name": "javafx-base",
+                    "version": "17.0.10",
+                    "artifacts": [
+                        {
+                            "name": "javafx-base",
+                            "path": "/home/emmanuel/.m2/repository/org/openjfx/javafx-base/17.0.10/javafx-base-17.0.10.jar"
+                        },
+                        {
+                            "name": "javafx-base",
+                            "classifier": "sources",
+                            "path": "/home/emmanuel/.m2/repository/org/openjfx/javafx-base/17.0.10/javafx-base-17.0.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.openjfx",
+                    "name": "javafx-graphics",
+                    "version": "17.0.10",
+                    "artifacts": [
+                        {
+                            "name": "javafx-graphics",
+                            "classifier": "linux",
+                            "path": "/home/emmanuel/.m2/repository/org/openjfx/javafx-graphics/17.0.10/javafx-graphics-17.0.10-linux.jar"
+                        }
+                    ]
+                }
+            ]
+        },
+        "tags": [
+            "library"
+        ]
+    }
+}

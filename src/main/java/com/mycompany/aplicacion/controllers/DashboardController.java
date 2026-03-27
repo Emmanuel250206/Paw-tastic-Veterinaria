@@ -29,12 +29,18 @@ public class DashboardController {
     private VBox cardStaff;
 
     @FXML
+    private javafx.scene.control.MenuButton menuUsuario;
+
+    @FXML
     private void initialize() {
         if ("Staff".equalsIgnoreCase(App.getRolUsuario())) {
             // Solo ocultar tarjeta Staff (El inventario sí podrán verlo para recepcionar insumos)
             if (cardStaff != null) {
                 cardStaff.setVisible(false);
                 cardStaff.setManaged(false);
+            }
+            if (menuUsuario != null) {
+                menuUsuario.setText("Hola Staff");
             }
         }
 

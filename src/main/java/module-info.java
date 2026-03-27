@@ -11,4 +11,6 @@ module com.mycompany.aplicacion {
     opens com.mycompany.aplicacion.modelo to javafx.base;
 
     exports com.mycompany.aplicacion;
+    
+    // Configuración de módulos completada
 }

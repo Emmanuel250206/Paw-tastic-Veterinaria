@@ -43,8 +43,13 @@ public class MascotasController {
 
     @FXML private TextField txtBuscar;
     
+    @FXML private MenuButton menuUsuario;
+    
     @FXML
     public void initialize() {
+        if ("Staff".equalsIgnoreCase(com.mycompany.aplicacion.App.getRolUsuario()) && menuUsuario != null) {
+            menuUsuario.setText("Hola Staff");
+        }
 
         txtBuscar.textProperty().addListener((obs, oldText, newText) -> {
     tablaMascotas.setItems(DatosSimulados.buscarPorNombre(newText));

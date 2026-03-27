@@ -33,58 +33,58 @@
 
     <Separator />
 
-    <SplitPane dividerPositions="0.6" VBox.vgrow="ALWAYS">
+    <HBox spacing="20" VBox.vgrow="ALWAYS">
 
-        <!-- 🐾 TABLA -->
-        <VBox spacing="10">
-            <Label text="Resultados de búsqueda" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
+    <!-- 🐾 CARD TABLA -->
+    <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
 
-            <TableView fx:id="tablaMascotas" VBox.vgrow="ALWAYS">
-                <columns>
-                    <TableColumn fx:id="colNombre" text="Nombre" prefWidth="150"/>
-                    <TableColumn fx:id="colEspecie" text="Especie" prefWidth="120"/>
-                    <TableColumn fx:id="colEdad" text="Edad" prefWidth="80"/>
-                </columns>
-            </TableView>
-        </VBox>
+        <Label text="Resultados de búsqueda" styleClass="titulo"/>
 
-        <!-- 📋 FICHA + HISTORIAL -->
-        <VBox spacing="15">
+        <TableView fx:id="tablaMascotas" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colNombre" text="Nombre"/>
+                <TableColumn fx:id="colEspecie" text="Especie"/>
+                <TableColumn fx:id="colEdad" text="Edad"/>
+            </columns>
+        </TableView>
+    </VBox>
 
-            <Label text="Ficha de la mascota" style="-fx-font-weight: bold; -fx-font-size: 14;"/>
+    <!-- 📋 CARD DETALLE -->
+    <VBox spacing="15" styleClass="card" prefWidth="350">
 
-            <GridPane hgap="10" vgap="10">
-                <columnConstraints>
-                    <ColumnConstraints prefWidth="120"/>
-                    <ColumnConstraints hgrow="ALWAYS"/>
-                </columnConstraints>
+        <Label text="Ficha de la mascota" styleClass="titulo"/>
 
-                <Label text="Nombre:" GridPane.rowIndex="0"/>
-                <Label fx:id="lblNombre" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <GridPane hgap="10" vgap="10">
+            <columnConstraints>
+                <ColumnConstraints prefWidth="120"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
 
-                <Label text="Especie:" GridPane.rowIndex="1"/>
-                <Label fx:id="lblEspecie" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+            <Label text="Nombre:"/>
+            <Label fx:id="lblNombre" GridPane.columnIndex="1"/>
 
-                <Label text="Raza:" GridPane.rowIndex="2"/>
-                <Label fx:id="lblRaza" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            <Label text="Especie:" GridPane.rowIndex="1"/>
+            <Label fx:id="lblEspecie" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                <Label text="Edad:" GridPane.rowIndex="3"/>
-                <Label fx:id="lblEdad" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+            <Label text="Raza:" GridPane.rowIndex="2"/>
+            <Label fx:id="lblRaza" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-                <Label text="Propietario:" GridPane.rowIndex="4"/>
-                <Label fx:id="lblPropietario" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-            </GridPane>
+            <Label text="Edad:" GridPane.rowIndex="3"/>
+            <Label fx:id="lblEdad" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
-            <!-- 🔥 HISTORIAL -->
-            <Label text="Historial clínico" style="-fx-font-weight: bold;"/>
-            <TextArea fx:id="txtHistorial" editable="false" wrapText="true" VBox.vgrow="ALWAYS"/>
+            <Label text="Propietario:" GridPane.rowIndex="4"/>
+            <Label fx:id="lblPropietario" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        </GridPane>
 
-            <HBox spacing="10">
-                <Button text="Editar"/>
-                <Button text="Nuevo registro"/>
-            </HBox>
+        <Label text="Historial clínico" style="-fx-font-weight: bold;"/>
+        <TextArea fx:id="txtHistorial" editable="false" wrapText="true" VBox.vgrow="ALWAYS"/>
 
-        </VBox>
+        <HBox spacing="10">
+            <Button text="Editar"/>
+            <Button text="Nuevo"/>
+        </HBox>
 
-    </SplitPane>
+    </VBox>
+
+</HBox>
 </VBox>

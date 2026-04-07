@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.Connection;
+import javafx.scene.control.Alert;
 
 /**
  * JavaFX App
@@ -26,6 +28,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        //prueba de conexion con la base de datos
+        
         Parent root = loadFXML("fxml/VeterinariaP1");
         scene = new Scene(root);
         stage.setScene(scene);

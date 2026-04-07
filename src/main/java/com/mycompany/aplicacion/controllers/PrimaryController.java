@@ -1,12 +1,17 @@
 package com.mycompany.aplicacion.controllers;
 
 import com.mycompany.aplicacion.App;
+import com.mycompany.aplicacion.CConexion;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
 import javafx.stage.Modality;
 import javafx.scene.text.Text;
 
@@ -85,13 +90,7 @@ public class PrimaryController {
             txtErrorNombre.setText("Debes rellenar este campo");
             txtErrorNombre.setVisible(true);
             valido = false;
-        } else {
-            String nombreTrim = txtNombre.getText().trim();
-            if (!nombreTrim.equalsIgnoreCase("Veterinario") && !nombreTrim.equalsIgnoreCase("Staff")) {
-                txtErrorNombre.setText("El usuario no es válido. Usa 'Veterinario' o 'Staff'");
-                txtErrorNombre.setVisible(true);
-                valido = false;
-            }
+        
         }
 
         if (txtContrasenaOculta.getText().isEmpty()) {
@@ -102,6 +101,33 @@ public class PrimaryController {
 
         return valido;
     }
+    public String validarUsuarioBD(String usuario, String contrasena) {
+        CConexion conexion = new CConexion();
+        Connection con = conexion.estableceConexion();
+
+        try {
+            String sql = "SELECT * FROM login WHERE ingresoUsuario = ? AND ingresoContrasenia = ?";            
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, usuario);
+            ps.setString(2, contrasena);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String usuarioDB = rs.getString("ingresoUsuario");
+
+                if (usuarioDB.equalsIgnoreCase("Veterinario")) {
+                    return "Veterinario";
+                } else {
+                    return "Staff";
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    return null; 
+}
 
     @FXML
     private void iniciarSesion() throws IOException {
@@ -111,13 +137,26 @@ public class PrimaryController {
         }
 
         // Configurar rol según el nombre ingresado
-        if ("Staff".equalsIgnoreCase(txtNombre.getText().trim())) {
-            App.setRolUsuario("Staff");
-        } else {
-            App.setRolUsuario("Veterinario");
+        String usuario = txtNombre.getText();
+        String contrasenia = txtContrasenaOculta.getText();
+
+        String rol = validarUsuarioBD(usuario, contrasenia);
+
+        if (rol != null) {
+
+        App.setRolUsuario(rol);
+        // redirrecion segun el rol
+        if (rol.equalsIgnoreCase("Veterinario")) {
+            App.setRoot("fxml/InterfazVeterinario");
+        } else if (rol.equalsIgnoreCase("Staff")) {
+            App.setRoot("fxml/IfxmlnterfazStaff");
         }
 
-        App.setRoot("fxml/InterfazVeterinario");
+        } else {
+        txtErrorDatos.setText("Usuario o contraseña incorrectos");
+        txtErrorDatos.setVisible(true);
+        return;
+        }
 
         // 2. Ejecutamos los ajustes de ventana
         javafx.application.Platform.runLater(() -> {

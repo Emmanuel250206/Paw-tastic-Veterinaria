@@ -1,4 +1,5 @@
 module com.mycompany.aplicacion {
+    requires java.sql;
     requires javafx.controls;
     requires javafx.fxml;
     requires java.base;

@@ -50,9 +50,9 @@
                               <Cursor fx:constant="TEXT" />
                            </cursor>
                         </TextField>
-                        <MenuButton fx:id="menuUsuario" mnemonicParsing="false" styleClass="boton-link" stylesheets="@estilos.css" text="Hola, Dr. Emmanuel">
+                        <MenuButton fx:id="menuUsuario" alignment="CENTER_RIGHT" mnemonicParsing="false" prefHeight="26.0" prefWidth="287.0" styleClass="boton-link" stylesheets="@estilos.css" text="Hola, Dr. Emmanuel-Veterinario" textOverrun="LEADING_ELLIPSIS">
                           <items>
-                            <MenuItem mnemonicParsing="false" text="Mi Perfil" />
+                            <MenuItem mnemonicParsing="false" text="Configurar Perfil" />
                           </items>
                            <cursor>
                               <Cursor fx:constant="HAND" />

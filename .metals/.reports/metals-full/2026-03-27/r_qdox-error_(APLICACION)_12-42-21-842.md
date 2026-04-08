@@ -1,3 +1,14 @@
+error id: file://<WORKSPACE>/src/main/java/com/mycompany/aplicacion/controllers/VeterinarioController.java
+file://<WORKSPACE>/src/main/java/com/mycompany/aplicacion/controllers/VeterinarioController.java
+### com.thoughtworks.qdox.parser.ParseException: syntax error @[190,12]
+
+error in qdox parser
+file content:
+```java
+offset: 6206
+uri: file://<WORKSPACE>/src/main/java/com/mycompany/aplicacion/controllers/VeterinarioController.java
+text:
+```scala
 package com.mycompany.aplicacion.controllers;
 
 import com.mycompany.aplicacion.App;
@@ -164,23 +175,6 @@ public class VeterinarioController implements Initializable {
 
     @FXML
     private void onCerrarSesionClick(ActionEvent event) {
-        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Cerrar Sesión");
-        alert.setHeaderText(null);
-        alert.setContentText("¿Estás seguro de que deseas salir del sistema?");
-
-        try {
-            java.net.URL cssURL = getClass().getResource("/fxml/estilos.css");
-            if (cssURL != null) {
-                alert.getDialogPane().getStylesheets().add(cssURL.toExternalForm());
-                alert.getDialogPane().getStyleClass().add("recuadros-informacion");
-            }
-        } catch (Exception e) {
-            System.err.println("No se pudo cargar estilos para Alert: " + e.getMessage());
-        }
-
-        java.util.Optional<javafx.scene.control.ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == javafx.scene.control.ButtonType.OK) {
             try {
                 App.setRoot("fxml/VeterinariaP1");
 
@@ -204,7 +198,7 @@ public class VeterinarioController implements Initializable {
     }
 
     // Getters para que el Dashboard pueda acceder a los botones del menú
-    public Button getbMascotas() {
+    public B@@utton getbMascotas() {
         return bMascotas;
     }
 
@@ -221,3 +215,41 @@ public class VeterinarioController implements Initializable {
     }
 
 }
+```
+
+```
+
+
+
+#### Error stacktrace:
+
+```
+com.thoughtworks.qdox.parser.impl.Parser.yyerror(Parser.java:2025)
+	com.thoughtworks.qdox.parser.impl.Parser.yyparse(Parser.java:2147)
+	com.thoughtworks.qdox.parser.impl.Parser.parse(Parser.java:2006)
+	com.thoughtworks.qdox.library.SourceLibrary.parse(SourceLibrary.java:232)
+	com.thoughtworks.qdox.library.SourceLibrary.parse(SourceLibrary.java:190)
+	com.thoughtworks.qdox.library.SourceLibrary.addSource(SourceLibrary.java:94)
+	com.thoughtworks.qdox.library.SourceLibrary.addSource(SourceLibrary.java:89)
+	com.thoughtworks.qdox.library.SortedClassLibraryBuilder.addSource(SortedClassLibraryBuilder.java:162)
+	com.thoughtworks.qdox.JavaProjectBuilder.addSource(JavaProjectBuilder.java:174)
+	scala.meta.internal.mtags.JavaMtags.indexRoot(JavaMtags.scala:49)
+	scala.meta.internal.metals.SemanticdbDefinition$.foreachWithReturnMtags(SemanticdbDefinition.scala:99)
+	scala.meta.internal.metals.Indexer.indexSourceFile(Indexer.scala:560)
+	scala.meta.internal.metals.Indexer.$anonfun$reindexWorkspaceSources$3(Indexer.scala:691)
+	scala.meta.internal.metals.Indexer.$anonfun$reindexWorkspaceSources$3$adapted(Indexer.scala:688)
+	scala.collection.IterableOnceOps.foreach(IterableOnce.scala:630)
+	scala.collection.IterableOnceOps.foreach$(IterableOnce.scala:628)
+	scala.collection.AbstractIterator.foreach(Iterator.scala:1313)
+	scala.meta.internal.metals.Indexer.reindexWorkspaceSources(Indexer.scala:688)
+	scala.meta.internal.metals.MetalsLspService.$anonfun$onChange$2(MetalsLspService.scala:940)
+	scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.scala:18)
+	scala.concurrent.Future$.$anonfun$apply$1(Future.scala:691)
+	scala.concurrent.impl.Promise$Transformation.run(Promise.scala:500)
+	java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	java.base/java.lang.Thread.run(Thread.java:1583)
+```
+#### Short summary: 
+
+QDox parse error in file://<WORKSPACE>/src/main/java/com/mycompany/aplicacion/controllers/VeterinarioController.java

@@ -10,9 +10,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Alert;
-import javafx.stage.Modality;
 import javafx.scene.text.Text;
 
 public class PrimaryController {
@@ -102,31 +99,27 @@ public class PrimaryController {
         return valido;
     }
     public String validarUsuarioBD(String usuario, String contrasena) {
-        CConexion conexion = new CConexion();
-        Connection con = conexion.estableceConexion();
+    CConexion conexion = new CConexion();
+    Connection con = conexion.estableceConexion();
 
-        try {
-            String sql = "SELECT * FROM login WHERE ingresoUsuario = ? AND ingresoContrasenia = ?";            
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, usuario);
-            ps.setString(2, contrasena);
+    try {
+        String sql = "SELECT rol FROM login WHERE ingresoUsuario = ? AND ingresoContrasenia = ?";
+        PreparedStatement ps = con.prepareStatement(sql);
 
-            ResultSet rs = ps.executeQuery();
+        ps.setString(1, usuario);
+        ps.setString(2, contrasena);
 
-            if (rs.next()) {
-                String usuarioDB = rs.getString("ingresoUsuario");
+        ResultSet rs = ps.executeQuery();
 
-                if (usuarioDB.equalsIgnoreCase("Veterinario")) {
-                    return "Veterinario";
-                } else {
-                    return "Staff";
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (rs.next()) {
+            return rs.getString("rol");
         }
 
-    return null; 
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return null;
 }
 
     @FXML
@@ -144,18 +137,17 @@ public class PrimaryController {
 
         if (rol != null) {
 
-        App.setRolUsuario(rol);
-        // redirrecion segun el rol
-        if (rol.equalsIgnoreCase("Veterinario")) {
-            App.setRoot("fxml/InterfazVeterinario");
-        } else if (rol.equalsIgnoreCase("Staff")) {
-            App.setRoot("fxml/IfxmlnterfazStaff");
-        }
+            App.setRolUsuario(rol);
+
+            if (rol.equalsIgnoreCase("Veterinario")) {
+                App.setRoot("fxml/InterfazVeterinario");
+            } else if (rol.equalsIgnoreCase("Staff")) {
+                App.setRoot("fxml/InterfazStaff");
+            }
 
         } else {
-        txtErrorDatos.setText("Usuario o contraseña incorrectos");
-        txtErrorDatos.setVisible(true);
-        return;
+            txtErrorDatos.setText("Usuario o contraseña incorrectos");
+            txtErrorDatos.setVisible(true);
         }
 
         // 2. Ejecutamos los ajustes de ventana

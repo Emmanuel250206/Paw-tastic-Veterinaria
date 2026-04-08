@@ -10,6 +10,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -37,6 +38,8 @@ public class CitasController implements Initializable {
     private Button btnGuardarReporte;
     @FXML
     private VBox vboxReportesGuardados;
+    @FXML
+    private MenuButton menuUsuario;
 
     private Citas citaSeleccionada;
     private TextField txtTemp;
@@ -53,6 +56,9 @@ public class CitasController implements Initializable {
 
         // Si es Staff, agregamos un reporte simulado.
         if ("Staff".equalsIgnoreCase(App.getRolUsuario())) {
+            if (menuUsuario != null) {
+                menuUsuario.setText("Hola Staff");
+            }
             VBox reportCard = new VBox(5);
             reportCard.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
 
@@ -69,6 +75,10 @@ public class CitasController implements Initializable {
             reportCard.getChildren().addAll(lblFecha, lblTemp, lblTexto);
             if (vboxReportesGuardados != null) {
                 vboxReportesGuardados.getChildren().add(1, reportCard); // Debajo del titulo
+            }
+        } else {
+            if (menuUsuario != null) {
+                menuUsuario.setText("Hola, Dr. Emmanuel");
             }
         }
     }

@@ -52,7 +52,6 @@ public class PrimaryController {
     @FXML
     private Text txtErrorDatosContra;
 
-    // Este método se asegura de sincronizar el texto mientras presionas el ojo
     @FXML
     private void mostrarContrasena() {
         txtContrasenaVisible.setText(txtContrasenaOculta.getText());
@@ -69,9 +68,10 @@ public class PrimaryController {
 
     @FXML
     private void switchToRegistro() throws IOException {
-        // Asegúrate de que el nombre coincida con tu nuevo archivo fxml
         App.setRoot("fxml/Registro");
     }
+
+
 
     private boolean validarCampos() {
         boolean valido = true;
@@ -105,7 +105,6 @@ public class PrimaryController {
 
     @FXML
     private void iniciarSesion() throws IOException {
-        // 1. Cambiamos la interfaz
         if (!validarCampos()) {
             return;
         }

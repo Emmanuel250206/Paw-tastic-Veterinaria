@@ -1,7 +1,7 @@
 package com.mycompany.aplicacion.controllers;
 
 import com.mycompany.aplicacion.App;
-import com.mycompany.aplicacion.persistencia.Conexion;
+import com.mycompany.aplicacion.CConexion;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,7 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
 
-public class LoginController {
+public class PrimaryController {
 
     @FXML
     private void switchToSecondary() throws IOException {
@@ -99,7 +99,7 @@ public class LoginController {
         return valido;
     }
     public String validarUsuarioBD(String usuario, String contrasena) {
-    Conexion conexion = new Conexion();
+    CConexion conexion = new CConexion();
     Connection con = conexion.estableceConexion();
 
     try {
@@ -128,6 +128,7 @@ public class LoginController {
             return;
         }
 
+        // Configurar rol según el nombre ingresado
         String usuario = txtNombre.getText();
         String contrasenia = txtContrasenaOculta.getText();
 

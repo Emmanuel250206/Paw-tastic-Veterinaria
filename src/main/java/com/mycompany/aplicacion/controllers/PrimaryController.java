@@ -1,7 +1,7 @@
 package com.mycompany.aplicacion.controllers;
 
 import com.mycompany.aplicacion.App;
-import com.mycompany.aplicacion.CConexion;
+import com.mycompany.aplicacion.persistencia.Conexion;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -99,7 +99,7 @@ public class PrimaryController {
         return valido;
     }
     public String validarUsuarioBD(String usuario, String contrasena) {
-    CConexion conexion = new CConexion();
+    Conexion conexion = new Conexion();
     Connection con = conexion.estableceConexion();
 
     try {

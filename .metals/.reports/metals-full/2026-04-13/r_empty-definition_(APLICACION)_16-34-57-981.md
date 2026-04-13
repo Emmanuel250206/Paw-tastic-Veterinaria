@@ -1,3 +1,14 @@
+error id: file://<WORKSPACE>/src/main/java/com/mycompany/aplicacion/CConexion.java:java/lang/Throwable#printStackTrace().
+file://<WORKSPACE>/src/main/java/com/mycompany/aplicacion/CConexion.java
+empty definition using pc, found symbol in pc: java/lang/Throwable#printStackTrace().
+semanticdb not found
+empty definition using fallback
+non-local guesses:
+
+offset: 948
+uri: file://<WORKSPACE>/src/main/java/com/mycompany/aplicacion/CConexion.java
+text:
+```scala
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -28,8 +39,15 @@ public class CConexion {
             conectar = DriverManager.getConnection(cadena,usuario,contrasenia);
         } catch (Exception e) {
             conectar = null;
-            e.printStackTrace();
+            e.printSt@@ackTrace();
         }
         return conectar;
     }
 }
+
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: java/lang/Throwable#printStackTrace().

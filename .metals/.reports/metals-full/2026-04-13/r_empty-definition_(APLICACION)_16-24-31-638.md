@@ -1,0 +1,45 @@
+error id: file://<WORKSPACE>/src/main/java/com/mycompany/aplicacion/persistencia/Conexion.java:java/lang/String#
+file://<WORKSPACE>/src/main/java/com/mycompany/aplicacion/persistencia/Conexion.java
+empty definition using pc, found symbol in pc: java/lang/String#
+semanticdb not found
+empty definition using fallback
+non-local guesses:
+
+offset: 179
+uri: file://<WORKSPACE>/src/main/java/com/mycompany/aplicacion/persistencia/Conexion.java
+text:
+```scala
+package com.mycompany.aplicacion.persistencia;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+public class Conexion {
+    private Connection conectar;
+
+    private S@@tring usuario = "root";
+    private String contrasenia = "TuPasswordSegura123!";
+    private String bd = "pawtastic";
+    private String ip = "localhost";
+    private String puerto = "3306";
+
+    private String cadena = "jdbc:mysql://" + ip + ":" + puerto + "/" + bd + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+
+    public Connection estableceConexion() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conectar = DriverManager.getConnection(cadena, usuario, contrasenia);
+        } catch (Exception e) {
+            conectar = null;
+            e.printStackTrace();
+        }
+        return conectar;
+    }
+}
+
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: java/lang/String#

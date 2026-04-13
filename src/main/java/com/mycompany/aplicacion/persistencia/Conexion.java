@@ -7,7 +7,7 @@ public class Conexion {
     private Connection conectar;
 
     private String usuario = "root";
-    private String contrasenia = "TuPasswordSegura123!";
+    private String contrasenia = "";
     private String bd = "pawtastic";
     private String ip = "localhost";
     private String puerto = "3306";

@@ -11,6 +11,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Node;
+import javafx.scene.layout.AnchorPane;
+import javafx.event.ActionEvent;
 
 public class PrimaryController {
 
@@ -33,6 +38,22 @@ public class PrimaryController {
     @FXML
     private void switchToPrimary() throws IOException {
         App.setRoot("fxml/VeterinariaP1");
+    }
+
+    @FXML
+    private AnchorPane rootPane;
+
+    @FXML
+    private void mostrarRecuperarContrasena(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/RecuperarContrasena.fxml"));
+            Node overlay = loader.load();
+            rootPane.getChildren().add(overlay);
+            // Ensure it stays on top
+            overlay.toFront(); 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

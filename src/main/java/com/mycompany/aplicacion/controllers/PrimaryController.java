@@ -144,37 +144,37 @@ public class PrimaryController {
                 App.setRoot("fxml/InterfazStaff");
             }
 
+            // Ejecutamos los ajustes de ventana para maximizar después del login exitoso
+            javafx.application.Platform.runLater(() -> {
+                Stage stage = App.getStage();
+                if (stage != null) {
+                    // Desbloqueamos el redimensionamiento
+                    stage.setResizable(true);
+
+                    // --- NUEVAS LÍNEAS PARA EL TAMAÑO MÍNIMO ---
+                    stage.setMinWidth(836);
+                    stage.setMinHeight(600);
+                    // -------------------------------------------
+
+                    // OBTENEMOS EL TAMAÑO DEL MONITOR
+                    javafx.stage.Screen screen = javafx.stage.Screen.getPrimary();
+                    javafx.geometry.Rectangle2D bounds = screen.getVisualBounds();
+
+                    // FORZAMOS EL TAMAÑO MANUALMENTE PARA ASEGURAR EL CAMBIO
+                    stage.setX(bounds.getMinX());
+                    stage.setY(bounds.getMinY());
+                    stage.setWidth(bounds.getWidth());
+                    stage.setHeight(bounds.getHeight());
+
+                    // Finalmente aplicamos el maximizado nativo
+                    stage.setMaximized(true);
+                }
+            });
+
         } else {
             txtErrorDatos.setText("Usuario o contraseña incorrectos");
             txtErrorDatos.setVisible(true);
         }
-
-        // 2. Ejecutamos los ajustes de ventana
-        javafx.application.Platform.runLater(() -> {
-            Stage stage = App.getStage();
-            if (stage != null) {
-                // Desbloqueamos el redimensionamiento
-                stage.setResizable(true);
-
-                // --- NUEVAS LÍNEAS PARA EL TAMAÑO MÍNIMO ---
-                stage.setMinWidth(836);
-                stage.setMinHeight(600);
-                // -------------------------------------------
-
-                // OBTENEMOS EL TAMAÑO DEL MONITOR
-                javafx.stage.Screen screen = javafx.stage.Screen.getPrimary();
-                javafx.geometry.Rectangle2D bounds = screen.getVisualBounds();
-
-                // FORZAMOS EL TAMAÑO MANUALMENTE PARA ASEGURAR EL CAMBIO
-                stage.setX(bounds.getMinX());
-                stage.setY(bounds.getMinY());
-                stage.setWidth(bounds.getWidth());
-                stage.setHeight(bounds.getHeight());
-
-                // Finalmente aplicamos el maximizado nativo
-                stage.setMaximized(true);
-            }
-        });
     }
 
 }

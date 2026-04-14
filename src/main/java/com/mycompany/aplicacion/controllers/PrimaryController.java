@@ -124,7 +124,7 @@ public class PrimaryController {
     Connection con = conexion.estableceConexion();
 
     try {
-        String sql = "SELECT rol FROM login WHERE ingresoUsuario = ? AND ingresoContrasenia = ?";
+        String sql = "SELECT rol FROM login_pawtastic WHERE nombre = ? AND contrasenia = ?";
         PreparedStatement ps = con.prepareStatement(sql);
 
         ps.setString(1, usuario);

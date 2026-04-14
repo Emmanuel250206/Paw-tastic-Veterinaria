@@ -17,6 +17,12 @@ public class RecuperarContrasenaController {
     private StackPane rootPane;
 
     @FXML
+    private StackPane mainCard;
+
+    private double xOffset = 0;
+    private double yOffset = 0;
+
+    @FXML
     private TextField txtCorreo;
 
     @FXML
@@ -42,6 +48,18 @@ public class RecuperarContrasenaController {
      */
     @FXML
     public void initialize() {
+        // Setup dragging for the independent window
+        mainCard.setOnMousePressed(event -> {
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+
+        mainCard.setOnMouseDragged(event -> {
+            javafx.stage.Window window = mainCard.getScene().getWindow();
+            window.setX(event.getScreenX() - xOffset);
+            window.setY(event.getScreenY() - yOffset);
+        });
+
         // Process the "loading" state and alert when the button is clicked
         btnEnviar.setOnAction(event -> {
             // Disable the button and change the text to show loading state
@@ -121,19 +139,16 @@ public class RecuperarContrasenaController {
      */
     @FXML
     private void cerrarAccion(ActionEvent event) {
-        if (rootPane != null && rootPane.getParent() instanceof javafx.scene.layout.Pane) {
-            javafx.scene.layout.Pane parentPane = (javafx.scene.layout.Pane) rootPane.getParent();
-            parentPane.getChildren().remove(rootPane);
-        } else {
-            // Fail-safe approach manually handling the removal from the main rootPane via lookup
-            try {
-                javafx.scene.layout.AnchorPane mainRoot = (javafx.scene.layout.AnchorPane) ((javafx.scene.Node) event.getSource()).getScene().getRoot().lookup("#rootPane");
-                if (mainRoot != null && rootPane != null) {
-                    mainRoot.getChildren().remove(rootPane);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+        try {
+            // Close the independent window
+            javafx.stage.Window window = rootPane.getScene().getWindow();
+            if (window instanceof javafx.stage.Stage) {
+                ((javafx.stage.Stage) window).close();
+            } else {
+                window.hide();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

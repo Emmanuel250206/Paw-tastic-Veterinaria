@@ -8,84 +8,99 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
 
-<StackPane fx:id="rootPane" style="-fx-background-color: rgba(0,0,0,0.5);" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.RecuperarContrasenaController">
+<StackPane alignment="CENTER" fx:id="rootPane" style="-fx-background-color: transparent;" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.RecuperarContrasenaController">
    <children>
-      <VBox maxHeight="-Infinity" maxWidth="450.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 20px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 10);">
-         <padding>
-            <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
-         </padding>
+      <!-- Background Overlay Pane -->
+      <Pane style="-fx-background-color: radial-gradient(center 50% 50%, radius 100%, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%);" />
+      
+      <!-- Main Card -->
+      <StackPane fx:id="mainCard" maxHeight="-Infinity" prefWidth="380.0" style="-fx-background-color: white; -fx-background-radius: 20px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 25, 0, 0, 10);" StackPane.alignment="CENTER">
+         <cursor>
+            <Cursor fx:constant="MOVE" />
+         </cursor>
          <children>
-            <!-- Logo -->
-            <HBox alignment="CENTER_LEFT">
+            <!-- Background Image with "Ghost" Effect -->
+            <ImageView fitWidth="380.0" preserveRatio="true" smooth="true" opacity="0.15" StackPane.alignment="CENTER">
+               <image>
+                  <Image url="@../images/fondoOriginalPatitas.png" />
+               </image>
+            </ImageView>
+            
+            <VBox alignment="CENTER" spacing="25.0">
+               <padding>
+                  <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+               </padding>
                <children>
-                  <ImageView fitHeight="40.0" fitWidth="120.0" preserveRatio="true">
+                  <ImageView fitWidth="150.0" preserveRatio="true">
                      <image>
                         <Image url="@../images/logoPaw.png" />
                      </image>
+                     <VBox.margin>
+                        <Insets bottom="15.0" />
+                     </VBox.margin>
                   </ImageView>
-               </children>
-               <VBox.margin>
-                  <Insets bottom="10.0" />
-               </VBox.margin>
-            </HBox>
-            
-            <Label styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Recuperar Acceso" textFill="#3d8d7a" style="-fx-font-weight: bold; -fx-font-size: 24px;"/>
-            
-            <!-- STEP 1: Email Input -->
-            <VBox fx:id="emailStep" spacing="15.0">
-               <children>
-                  <Label text="Correo electrónico o Usuario para recibir código" textFill="#555555" />
-                  <TextField fx:id="txtCorreo" prefHeight="40.0" promptText="tunombre@ejemplo.com" styleClass="text-field" stylesheets="@estilos.css">
-                     <cursor>
-                        <Cursor fx:constant="TEXT" />
-                     </cursor>
-                  </TextField>
-                  <Button fx:id="btnEnviar" alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="370.0" styleClass="boton-verde" stylesheets="@estilos.css" text="Enviar Código">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                     <VBox.margin>
-                        <Insets top="10.0" />
-                     </VBox.margin>
-                  </Button>
-               </children>
-            </VBox>
-            
-            <!-- STEP 2: Password Reset (Hidden by default) -->
-            <VBox fx:id="passwordStep" managed="false" visible="false" spacing="15.0">
-               <children>
-                  <Label text="Ingresa tu nueva contraseña" textFill="#555555" />
-                  <PasswordField fx:id="txtNuevaContra" prefHeight="40.0" promptText="Nueva Contraseña" styleClass="text-field" stylesheets="@estilos.css" />
-                  <PasswordField fx:id="txtConfirmaContra" prefHeight="40.0" promptText="Confirmar Contraseña" styleClass="text-field" stylesheets="@estilos.css" />
-                  <Button fx:id="btnActualizar" alignment="CENTER" mnemonicParsing="false" prefHeight="40.0" prefWidth="370.0" styleClass="boton-verde" stylesheets="@estilos.css" text="Actualizar Contraseña">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                     <VBox.margin>
-                        <Insets top="10.0" />
-                     </VBox.margin>
-                  </Button>
-               </children>
-            </VBox>
+                  
+                  <Label styleClass="titulo-bienvenida" text="Recuperar Acceso" />
+                  
+                  <!-- STEP 1: Email Input -->
+                  <VBox fx:id="emailStep" alignment="CENTER" spacing="20.0">
+                     <children>
+                        <VBox alignment="CENTER_LEFT" spacing="5.0">
+                           <children>
+                              <Label text="Correo electrónico o Usuario para recibir código" textFill="#555555" />
+                              <TextField fx:id="txtCorreo" prefHeight="40.0" prefWidth="300.0" promptText="tunombre@ejemplo.com" styleClass="text-field" />
+                              <Line endX="300.0" stroke="#30cd9e" strokeWidth="2.0" />
+                           </children>
+                        </VBox>
+                        <Button fx:id="btnEnviar" alignment="CENTER" mnemonicParsing="false" prefHeight="45.0" prefWidth="300.0" style="-fx-text-fill: white;" styleClass="boton-verde" text="Enviar Código">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
+                     </children>
+                  </VBox>
+                  
+                  <!-- STEP 2: Password Reset (Hidden by default) -->
+                  <VBox fx:id="passwordStep" alignment="CENTER" managed="false" spacing="20.0" visible="false">
+                     <children>
+                        <VBox alignment="CENTER_LEFT" spacing="5.0">
+                           <children>
+                              <Label text="Ingresa tu nueva contraseña" textFill="#555555" />
+                              <PasswordField fx:id="txtNuevaContra" prefHeight="40.0" prefWidth="300.0" promptText="Nueva Contraseña" styleClass="text-field" />
+                              <Line endX="300.0" stroke="#30cd9e" strokeWidth="2.0" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER_LEFT" spacing="5.0">
+                           <children>
+                              <PasswordField fx:id="txtConfirmaContra" prefHeight="40.0" prefWidth="300.0" promptText="Confirmar Contraseña" styleClass="text-field" />
+                              <Line endX="300.0" stroke="#30cd9e" strokeWidth="2.0" />
+                           </children>
+                        </VBox>
+                        <Button fx:id="btnActualizar" alignment="CENTER" mnemonicParsing="false" prefHeight="45.0" prefWidth="300.0" style="-fx-text-fill: white;" styleClass="boton-verde" text="Actualizar Contraseña">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
+                     </children>
+                  </VBox>
 
-            <!-- Cancel Link -->
-            <HBox alignment="CENTER" stylesheets="@estilos.css">
-               <children>
-                  <Button mnemonicParsing="false" onAction="#cerrarAccion" styleClass="boton-link" text="Cancelar">
+                  <!-- Cancel Button -->
+                  <Button mnemonicParsing="false" onAction="#cerrarAccion" prefHeight="24.0" prefWidth="158.0" style="-fx-background-color: #2A5F52; -fx-text-fill: white;" styleClass="boton-verde" text="Cancelar">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
+                     <VBox.margin>
+                        <Insets top="20.0" />
+                     </VBox.margin>
                   </Button>
                </children>
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
-            </HBox>
+            </VBox>
          </children>
-      </VBox>
+      </StackPane>
    </children>
 </StackPane>

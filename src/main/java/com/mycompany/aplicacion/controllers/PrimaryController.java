@@ -47,10 +47,14 @@ public class PrimaryController {
     private void mostrarRecuperarContrasena(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/RecuperarContrasena.fxml"));
-            Node overlay = loader.load();
-            rootPane.getChildren().add(overlay);
-            // Ensure it stays on top
-            overlay.toFront(); 
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Recuperar Contraseña");
+            stage.initStyle(javafx.stage.StageStyle.TRANSPARENT);
+            javafx.scene.Scene scene = new javafx.scene.Scene(root);
+            scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+            stage.setScene(scene);
+            stage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }

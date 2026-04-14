@@ -74,7 +74,7 @@ Project    : APLICACION Paw-tastic
 
 .boton-link {
     -fx-background-color: transparent;
-    -fx-text-fill: #a3d1c6;
+    -fx-text-fill: #1d564a;
     -fx-cursor: hand;
     -fx-padding: 0; /* Evita que se mueva a la derecha */
     -fx-alignment: center-left;
@@ -144,7 +144,7 @@ Project    : APLICACION Paw-tastic
     .root {
         -fx-font-family: "Segoe UI";
     }
-
+}
     .label {
         -fx-text-fill: #2E4E3F;
     }
@@ -178,5 +178,5 @@ Project    : APLICACION Paw-tastic
     -fx-font-weight: bold;
     -fx-text-fill: #2E7D6B;
 }
-}
+
 

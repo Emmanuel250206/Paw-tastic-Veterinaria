@@ -83,7 +83,7 @@ Project    : APLICACION Paw-tastic
 
 .boton-link {
     -fx-background-color: transparent;
-    -fx-text-fill: #a3d1c6;
+    -fx-text-fill: #1d564a;
     -fx-cursor: hand;
     -fx-padding: 0;
     /* Evita que se mueva a la derecha */

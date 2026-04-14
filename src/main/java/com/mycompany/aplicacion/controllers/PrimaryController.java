@@ -138,10 +138,8 @@ public class PrimaryController {
 
             App.setRolUsuario(rol);
 
-            if (rol.equalsIgnoreCase("Veterinario")) {
+            if (rol.equalsIgnoreCase("Veterinario") || rol.equalsIgnoreCase("Staff")) {
                 App.setRoot("fxml/InterfazVeterinario");
-            } else if (rol.equalsIgnoreCase("Staff")) {
-                App.setRoot("fxml/InterfazStaff");
             }
 
             // Ejecutamos los ajustes de ventana para maximizar después del login exitoso

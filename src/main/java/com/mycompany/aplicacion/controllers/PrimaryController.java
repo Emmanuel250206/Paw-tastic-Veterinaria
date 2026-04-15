@@ -61,6 +61,27 @@ public class PrimaryController {
     }
 
     @FXML
+    private void abrirRegistro(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/SeccionRegistro.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Paw-tastic - Crear Cuenta");
+            stage.initStyle(javafx.stage.StageStyle.TRANSPARENT);
+            javafx.scene.Scene scene = new javafx.scene.Scene(root);
+            scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+            stage.setScene(scene);
+            stage.show();
+
+            // Cerrar la ventana actual del Login
+            Stage loginStage = (Stage) rootPane.getScene().getWindow();
+            loginStage.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
     private PasswordField txtContrasenaOculta;
     @FXML
     private TextField txtContrasenaVisible;

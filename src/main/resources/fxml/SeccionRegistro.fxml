@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 <?import javafx.scene.shape.Line?>
 
 <StackPane fx:id="rootPane" alignment="CENTER" style="-fx-background-color: radial-gradient(center 50% 50%, radius 100%, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%); -fx-background-radius: 20px;" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.RegistroController">
@@ -58,6 +59,7 @@
                      <children>
                         <Label text="Nombre Completo" textFill="#555555" />
                         <TextField fx:id="txtNombreCompleto" prefHeight="40.0" prefWidth="300.0" promptText="Ej. María García López" styleClass="text-field" />
+                        <Text fx:id="txtErrorNombreCompleto" fill="RED" visible="false" />
                         <Line endX="300.0" stroke="#30cd9e" strokeWidth="2.0" />
                      </children>
                   </VBox>
@@ -67,6 +69,7 @@
                      <children>
                         <Label text="Nombre de Usuario" textFill="#555555" />
                         <TextField fx:id="txtUsuario" prefHeight="40.0" prefWidth="300.0" promptText="usuario123" styleClass="text-field" />
+                        <Text fx:id="txtErrorUsuario" fill="RED" visible="false" />
                         <Line endX="300.0" stroke="#30cd9e" strokeWidth="2.0" />
                      </children>
                   </VBox>
@@ -76,6 +79,7 @@
                      <children>
                         <Label text="Contraseña" textFill="#555555" />
                         <PasswordField fx:id="txtContrasena" prefHeight="40.0" prefWidth="300.0" promptText="Contraseña segura" styleClass="text-field" />
+                        <Text fx:id="txtErrorContrasena" fill="RED" visible="false" />
                         <Line endX="300.0" stroke="#30cd9e" strokeWidth="2.0" />
                      </children>
                   </VBox>
@@ -85,6 +89,7 @@
                      <children>
                         <Label text="Confirmar Contraseña" textFill="#555555" />
                         <PasswordField fx:id="txtConfirmarContrasena" prefHeight="40.0" prefWidth="300.0" promptText="Repite tu contraseña" styleClass="text-field" />
+                        <Text fx:id="txtErrorConfirmarContrasena" fill="RED" visible="false" />
                         <Line endX="300.0" stroke="#30cd9e" strokeWidth="2.0" />
                      </children>
                   </VBox>
@@ -94,6 +99,7 @@
                      <children>
                         <Label text="Rol" textFill="#555555" />
                         <ComboBox fx:id="cmbRol" prefHeight="40.0" prefWidth="300.0" promptText="Selecciona un rol" styleClass="boton-transparente" />
+                        <Text fx:id="txtErrorRol" fill="RED" visible="false" />
                         <Line endX="300.0" stroke="#30cd9e" strokeWidth="2.0" />
                      </children>
                   </VBox>
@@ -108,8 +114,8 @@
                      </VBox.margin>
                   </Button>
 
-                  <!-- Botón Volver -->
-                  <Button mnemonicParsing="false" onAction="#volverAlLogin" prefHeight="24.0" prefWidth="158.0" style="-fx-background-color: #2A5F52; -fx-text-fill: white;" styleClass="boton-verde" text="Volver">
+                  <!-- Botón Cerrar (en lugar de Volver al Login porque solo el admin lo usa) -->
+                  <Button mnemonicParsing="false" onAction="#cerrarVentana" prefHeight="24.0" prefWidth="158.0" style="-fx-background-color: #2A5F52; -fx-text-fill: white;" styleClass="boton-verde" text="Cerrar">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>

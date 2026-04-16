@@ -186,6 +186,8 @@ public class VeterinarioController implements Initializable {
 
                 Platform.runLater(() -> {
                     Stage stage = (Stage) App.getScene().getWindow();
+                    stage.setMinWidth(0);
+                    stage.setMinHeight(0);
                     stage.setMaximized(false);
                     stage.setResizable(true);
                     stage.sizeToScene();

@@ -1,5 +1,7 @@
 package com.mycompany.aplicacion.controllers;
 
+
+
 import com.mycompany.aplicacion.modelo.DatosSimulados;
 import com.mycompany.aplicacion.modelo.Staff;
 import java.net.URL;
@@ -117,6 +119,7 @@ public class StaffController implements Initializable {
         }
     }
 
+
     private void mostrarDialogoAgregar() {
         Dialog<Staff> dialog = new Dialog<>();
         dialog.setTitle("Agregar Nuevo Staff");
@@ -136,25 +139,42 @@ public class StaffController implements Initializable {
         String styleTextField = "-fx-background-color: white; -fx-border-color: #3d8d7a; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 5px;";
         String styleLabel = "-fx-text-fill: #3d8d7a; -fx-font-weight: bold; -fx-font-size: 14px;";
 
+        String styleError = "-fx-text-fill: #e74c3c; -fx-font-size: 11px;";
+
         TextField tfNombre = new TextField();
         tfNombre.setPromptText("Nombre");
         tfNombre.setStyle(styleTextField);
+        Label errNombre = new Label("Debes rellenar este campo");
+        errNombre.setStyle(styleError);
+        errNombre.setVisible(false);
 
         TextField tfApellidos = new TextField();
         tfApellidos.setPromptText("Apellidos");
         tfApellidos.setStyle(styleTextField);
+        Label errApellidos = new Label("Debes rellenar este campo");
+        errApellidos.setStyle(styleError);
+        errApellidos.setVisible(false);
 
         TextField tfRol = new TextField();
         tfRol.setPromptText("Rol (ej. Veterinario)");
         tfRol.setStyle(styleTextField);
+        Label errRol = new Label("Debes rellenar este campo");
+        errRol.setStyle(styleError);
+        errRol.setVisible(false);
 
         TextField tfEspecialidad = new TextField();
         tfEspecialidad.setPromptText("Especialidad");
         tfEspecialidad.setStyle(styleTextField);
+        Label errEspecialidad = new Label("Debes rellenar este campo");
+        errEspecialidad.setStyle(styleError);
+        errEspecialidad.setVisible(false);
 
         TextField tfTel = new TextField();
         tfTel.setPromptText("Teléfono");
         tfTel.setStyle(styleTextField);
+        Label errTel = new Label("Debes rellenar este campo");
+        errTel.setStyle(styleError);
+        errTel.setVisible(false);
 
         Label lbl1 = new Label("Nombre:");
         lbl1.setStyle(styleLabel);
@@ -168,20 +188,15 @@ public class StaffController implements Initializable {
         lbl5.setStyle(styleLabel);
 
         grid.add(lbl1, 0, 0);
-        grid.add(tfNombre, 1, 0);
+        grid.add(new VBox(2, tfNombre, errNombre), 1, 0);
         grid.add(lbl2, 0, 1);
-        grid.add(tfApellidos, 1, 1);
+        grid.add(new VBox(2, tfApellidos, errApellidos), 1, 1);
         grid.add(lbl3, 0, 2);
-        grid.add(tfRol, 1, 2);
+        grid.add(new VBox(2, tfRol, errRol), 1, 2);
         grid.add(lbl4, 0, 3);
-        grid.add(tfEspecialidad, 1, 3);
+        grid.add(new VBox(2, tfEspecialidad, errEspecialidad), 1, 3);
         grid.add(lbl5, 0, 4);
-        grid.add(tfTel, 1, 4);
-
-        // Label para mostrar errores de validación
-        Label lblError = new Label("");
-        lblError.setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold; -fx-font-size: 13px;");
-        grid.add(lblError, 0, 5, 2, 1); // Ocupa las 2 columnas
+        grid.add(new VBox(2, tfTel, errTel), 1, 4);
 
         dialog.getDialogPane().setContent(grid);
 
@@ -194,16 +209,35 @@ public class StaffController implements Initializable {
 
             // FILTRO DE EVENTOS (VALIDACIÓN)
             btnGuardar.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
-                if (tfNombre.getText().trim().isEmpty() ||
-                        tfApellidos.getText().trim().isEmpty() ||
-                        tfRol.getText().trim().isEmpty() ||
-                        tfEspecialidad.getText().trim().isEmpty() ||
-                        tfTel.getText().trim().isEmpty()) {
+                boolean hasError = false;
 
-                    lblError.setText("⚠ Error: Por favor, rellena todos los campos.");
+                if (tfNombre.getText().trim().isEmpty()) {
+                    errNombre.setVisible(true);
+                    hasError = true;
+                } else errNombre.setVisible(false);
+
+                if (tfApellidos.getText().trim().isEmpty()) {
+                    errApellidos.setVisible(true);
+                    hasError = true;
+                } else errApellidos.setVisible(false);
+
+                if (tfRol.getText().trim().isEmpty()) {
+                    errRol.setVisible(true);
+                    hasError = true;
+                } else errRol.setVisible(false);
+
+                if (tfEspecialidad.getText().trim().isEmpty()) {
+                    errEspecialidad.setVisible(true);
+                    hasError = true;
+                } else errEspecialidad.setVisible(false);
+
+                if (tfTel.getText().trim().isEmpty()) {
+                    errTel.setVisible(true);
+                    hasError = true;
+                } else errTel.setVisible(false);
+
+                if (hasError) {
                     event.consume(); // Cancela que se cierre la ventana
-                } else {
-                    lblError.setText(""); // Si todo está bien, limpia el error
                 }
             });
         }

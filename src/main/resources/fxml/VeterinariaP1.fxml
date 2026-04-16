@@ -61,12 +61,7 @@
                                 <Image url="@../images/OjoContrasena.png" />
                             </image>
                         </ImageView>
-                        <Label layoutX="100.0" layoutY="464.0" text="¿No tienes una cuenta?" textFill="#555555" />
-                        <Button layoutX="246.0" layoutY="464.0" mnemonicParsing="false" onAction="#abrirRegistro" styleClass="boton-link" text="Regístrate" underline="true">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
-                        </Button>
+                        <!-- Registro link removed as it is now private -->
                     </children>
                 </Pane>
             </center>

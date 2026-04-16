@@ -3,14 +3,14 @@ package com.mycompany.aplicacion.controllers;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -41,6 +41,21 @@ public class RegistroController {
     private ComboBox<String> cmbRol;
 
     @FXML
+    private Text txtErrorNombreCompleto;
+
+    @FXML
+    private Text txtErrorUsuario;
+
+    @FXML
+    private Text txtErrorContrasena;
+
+    @FXML
+    private Text txtErrorConfirmarContrasena;
+
+    @FXML
+    private Text txtErrorRol;
+
+    @FXML
     private Button btnRegistrar;
 
     private double xOffset = 0;
@@ -53,7 +68,7 @@ public class RegistroController {
     @FXML
     public void initialize() {
         // Poblar el ComboBox con los roles disponibles
-        cmbRol.setItems(FXCollections.observableArrayList("Veterinario", "Recepcionista"));
+        cmbRol.setItems(FXCollections.observableArrayList("Veterinario", "Recepcionista", "Staff"));
 
         // Configurar arrastre de la ventana independiente
         mainCard.setOnMousePressed(event -> {
@@ -74,38 +89,40 @@ public class RegistroController {
      * @return true si todos los campos son válidos, false en caso contrario.
      */
     private boolean validarCampos() {
+        boolean valido = true;
+
+        txtErrorNombreCompleto.setVisible(false);
+        txtErrorUsuario.setVisible(false);
+        txtErrorContrasena.setVisible(false);
+        txtErrorConfirmarContrasena.setVisible(false);
+        txtErrorRol.setVisible(false);
+
         if (txtNombreCompleto.getText().trim().isEmpty()) {
-            mostrarAlerta("Campo requerido", "El Nombre Completo no puede estar vacío.");
-            return false;
+            txtErrorNombreCompleto.setText("Debes rellenar este campo");
+            txtErrorNombreCompleto.setVisible(true);
+            valido = false;
         }
         if (txtUsuario.getText().trim().isEmpty()) {
-            mostrarAlerta("Campo requerido", "El Nombre de Usuario no puede estar vacío.");
-            return false;
+            txtErrorUsuario.setText("Debes rellenar este campo");
+            txtErrorUsuario.setVisible(true);
+            valido = false;
         }
         if (txtContrasena.getText().isEmpty()) {
-            mostrarAlerta("Campo requerido", "La Contraseña no puede estar vacía.");
-            return false;
+            txtErrorContrasena.setText("Debes rellenar este campo");
+            txtErrorContrasena.setVisible(true);
+            valido = false;
         }
-        if (!txtContrasena.getText().equals(txtConfirmarContrasena.getText())) {
-            mostrarAlerta("Error de contraseña", "Las contraseñas no coinciden. Por favor verifica.");
-            return false;
+        if (!txtContrasena.getText().isEmpty() && !txtContrasena.getText().equals(txtConfirmarContrasena.getText())) {
+            txtErrorConfirmarContrasena.setText("Las contraseñas no coinciden");
+            txtErrorConfirmarContrasena.setVisible(true);
+            valido = false;
         }
         if (cmbRol.getValue() == null) {
-            mostrarAlerta("Campo requerido", "Debes seleccionar un Rol.");
-            return false;
+            txtErrorRol.setText("Debes seleccionar un rol");
+            txtErrorRol.setVisible(true);
+            valido = false;
         }
-        return true;
-    }
-
-    /**
-     * Muestra una alerta informativa con el mensaje indicado.
-     */
-    private void mostrarAlerta(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+        return valido;
     }
 
     /**
@@ -126,28 +143,18 @@ public class RegistroController {
         alert.setContentText("El usuario \"" + txtUsuario.getText() + "\" ha sido registrado correctamente como " + cmbRol.getValue() + ".");
         alert.showAndWait();
 
-        // Cerrar esta ventana y volver al login
-        volverAlLogin(event);
+        // Cerrar esta ventana
+        cerrarVentana(event);
     }
 
     /**
-     * Cierra la ventana de registro y abre el Login.
+     * Cierra la ventana de registro.
      */
     @FXML
-    private void volverAlLogin(ActionEvent event) {
+    private void cerrarVentana(ActionEvent event) {
         try {
             Stage stageActual = (Stage) rootPane.getScene().getWindow();
             stageActual.close();
-
-            // Abrir la ventana del Login
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/VeterinariaP1.fxml"));
-            Parent root = loader.load();
-            Stage loginStage = new Stage();
-            loginStage.setTitle("Paw-tastic - Iniciar Sesión");
-            loginStage.setResizable(false);
-            loginStage.setScene(new javafx.scene.Scene(root));
-            loginStage.sizeToScene();
-            loginStage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }

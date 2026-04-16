@@ -3,8 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -14,7 +12,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.DashboardController">
    <children>
@@ -37,14 +37,29 @@
                            </graphic>
                         </Label>
                         <Region HBox.hgrow="ALWAYS" />
-                        <MenuButton fx:id="menuUsuario" alignment="CENTER_RIGHT" mnemonicParsing="false" prefHeight="26.0" prefWidth="287.0" styleClass="boton-link" stylesheets="@estilos.css" text="Hola, Dr. Emmanuel-Veterinario" textOverrun="LEADING_ELLIPSIS">
-                          <items>
-                            <MenuItem mnemonicParsing="false" text="Configurar Perfil" />
-                          </items>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </MenuButton>
+
+                        <!-- ═══════ Perfil de Usuario ═══════ -->
+                        <HBox fx:id="contenedorPerfil" alignment="CENTER_LEFT" spacing="10.0" style="-fx-cursor: hand;">
+
+                           <!-- Imagen circular del usuario -->
+                           <StackPane>
+                              <ImageView fx:id="imgPerfilHeader" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+                                 <clip>
+                                    <Circle centerX="22.5" centerY="22.5" radius="22.5" />
+                                 </clip>
+                              </ImageView>
+                           </StackPane>
+
+                           <!-- Nombre y rol del usuario -->
+                           <VBox fx:id="vboxInfoUsuario" alignment="CENTER_LEFT" spacing="2.0">
+                              <Label fx:id="lblNombreHeader" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Dr. Emmanuel" />
+                              <Label fx:id="lblRolHeader" style="-fx-font-size: 11px; -fx-text-fill: #888888;" text="Veterinario" />
+                           </VBox>
+
+                           <!-- Icono flecha hacia abajo -->
+                           <Label fx:id="iconFlecha" style="-fx-font-size: 10px; -fx-text-fill: #AAAAAA;" text="▼" />
+
+                        </HBox>
                      </children>
                   </HBox>
                   <GridPane hgap="20.0" vgap="20.0" VBox.vgrow="ALWAYS">

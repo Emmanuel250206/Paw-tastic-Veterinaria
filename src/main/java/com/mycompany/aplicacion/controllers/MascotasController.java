@@ -70,7 +70,7 @@ public class MascotasController {
         // 🔹 Cargar datos simulados
         tablaMascotas.setItems(DatosSimulados.getMascotas());
         tablaMascotas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        // 🔥 EVENTO: clic en tabla
+        //  EVENTO: clic en tabla
         tablaMascotas.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldSelection, mascota) -> {
                     if (mascota != null) {
@@ -80,7 +80,7 @@ public class MascotasController {
         );
     }
 
-    // 🔥 Método clave
+    //  Método clave
     private void mostrarMascota(Mascota m) {
         lblNombre.setText(m.getNombre());
         lblEspecie.setText(m.getEspecie());

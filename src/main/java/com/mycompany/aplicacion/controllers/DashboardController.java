@@ -6,10 +6,12 @@ package com.mycompany.aplicacion.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
 import com.mycompany.aplicacion.App;
 import com.mycompany.aplicacion.modelo.DatosSimulados;
+import com.mycompany.aplicacion.modelo.UserSession;
 
 /**
  *
@@ -28,19 +30,35 @@ public class DashboardController {
     @FXML
     private VBox cardStaff;
 
+    /** Imagen circular del encabezado de perfil. */
     @FXML
-    private javafx.scene.control.MenuButton menuUsuario;
+    private ImageView imgPerfilHeader;
+
+    /** Etiquetas de nombre y rol en el encabezado. */
+    @FXML
+    private Label lblNombreHeader;
+    @FXML
+    private Label lblRolHeader;
 
     @FXML
     private void initialize() {
+        // ── Cargar avatar y datos de sesión en el encabezado ──
+        UserSession.loadProfileImage(imgPerfilHeader);
+
+        UserSession session = UserSession.getInstance();
+        if (lblNombreHeader != null) {
+            lblNombreHeader.setText(session.getUserName());
+        }
+        if (lblRolHeader != null) {
+            lblRolHeader.setText(session.getUserRole());
+        }
+
+        // ── Restricciones por rol ──
         if ("Staff".equalsIgnoreCase(App.getRolUsuario())) {
             // Solo ocultar tarjeta Staff (El inventario sí podrán verlo para recepcionar insumos)
             if (cardStaff != null) {
                 cardStaff.setVisible(false);
                 cardStaff.setManaged(false);
-            }
-            if (menuUsuario != null) {
-                menuUsuario.setText("Hola Staff");
             }
         }
 

@@ -3,8 +3,13 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -13,155 +18,244 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Circle?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="598.0" prefWidth="1105.0" style="-fx-background-color: #DFF5E1;" styleClass="recuadros-informacion" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.CitasController">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+      prefHeight="598.0" prefWidth="1105.0"
+      style="-fx-background-color: #DFF5E1;"
+      stylesheets="@estilos.css"
+      xmlns="http://javafx.com/javafx/25"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.mycompany.aplicacion.controllers.CitasController">
+
    <children>
-      <HBox alignment="CENTER_LEFT" prefHeight="62.0" prefWidth="1110.0">
+      <!-- ══ CABECERA ══════════════════════════════════════════════════════ -->
+      <HBox alignment="CENTER_LEFT" prefHeight="50.0">
          <children>
-            <Label prefHeight="45.0" prefWidth="342.0" styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Citas" textFill="#3d8d7a">
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
+            <Label prefHeight="45.0" prefWidth="300.0"
+                   styleClass="titulo-bienvenida"
+                   text="Citas"
+                   textFill="#3d8d7a">
                <graphic>
-                  <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="40.0" fitWidth="38.0"
+                             pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../images/Icon_Citas.png" />
                      </image>
                   </ImageView>
                </graphic>
-               <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin>
-               <padding>
-                  <Insets top="10.0" />
-               </padding>
+               <HBox.margin><Insets left="10.0" /></HBox.margin>
+               <padding><Insets top="10.0" /></padding>
             </Label>
-            <Region prefHeight="56.0" prefWidth="548.0" HBox.hgrow="ALWAYS" />
-            <!-- ═══════ Perfil de Usuario - Citas ═══════ -->
-            <HBox fx:id="contenedorPerfilCitas" alignment="CENTER_LEFT" spacing="10.0" style="-fx-cursor: hand;">
-
-               <!-- Imagen circular del usuario -->
-               <StackPane>
-                  <ImageView fx:id="imgPerfilCitas" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
-                     <clip>
-                        <Circle centerX="22.5" centerY="22.5" radius="22.5" />
-                     </clip>
-                  </ImageView>
-               </StackPane>
-
-               <!-- Nombre y rol del usuario -->
-               <VBox fx:id="vboxInfoCitas" alignment="CENTER_LEFT" spacing="2.0">
-                  <Label fx:id="lblNombreCitas" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Dr. Emmanuel" />
-                  <Label fx:id="lblRolCitas" style="-fx-font-size: 11px; -fx-text-fill: #888888;" text="Veterinario" />
-               </VBox>
-
-               <!-- Icono flecha hacia abajo -->
-               <Label fx:id="iconFlechaCitas" prefHeight="15.0" prefWidth="39.0" style="-fx-font-size: 10px; -fx-text-fill: #AAAAAA;" text="▼" />
-
-            </HBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <MenuButton fx:id="menuUsuario"
+                        alignment="CENTER_RIGHT"
+                        mnemonicParsing="false"
+                        prefHeight="26.0" prefWidth="220.0"
+                        styleClass="boton-link"
+                        text="Hola, Dr. Emmanuel">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="Configurar Perfil" />
+               </items>
+               <cursor><Cursor fx:constant="HAND" /></cursor>
+            </MenuButton>
          </children>
       </HBox>
-      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: #DFF5E1;" stylesheets="@estilos.css" VBox.vgrow="ALWAYS">
-         <content>
-            <GridPane hgap="20.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="517.0" prefWidth="1099.0" style="-fx-background-color: #DFF5E1;" vgap="20.0">
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="56.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="44.0" prefWidth="100.0" />
-               </columnConstraints>
-                <rowConstraints>
-                  <RowConstraints minHeight="200.0" vgrow="ALWAYS" />
-                  <RowConstraints minHeight="200.0" vgrow="ALWAYS" />
-                  <RowConstraints minHeight="200.0" vgrow="ALWAYS" />
-                </rowConstraints>
-               <children>
-                  <AnchorPane fx:id="vboxSiguienteCita" prefHeight="200.0" prefWidth="200.0" styleClass="barra-lateral">
-                     <children>
-                        <Label styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Siguiente cita">
-                           <padding>
-                              <Insets left="25.0" top="5.0" />
-                           </padding>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </Label>
-                        <Button fx:id="bAccionCita" layoutX="433.0" layoutY="199.0" mnemonicParsing="false" onAction="#manejarAccionCita" styleClass="boton-transparente" text="Iniciar Consulta" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="15.0" />
-                     </children>
-                     <GridPane.margin>
-                        <Insets left="10.0" right="10.0" top="10.0" />
-                     </GridPane.margin>
-                  </AnchorPane>
-                  <VBox fx:id="vboxDetallesClinicos" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css" GridPane.columnIndex="1">
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                     <GridPane.margin>
-                        <Insets right="10.0" top="10.0" />
-                     </GridPane.margin>
-                     <children>
-                        <Label styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Detalles Clínicos">
-                           <padding>
-                              <Insets left="25.0" top="5.0" />
-                           </padding>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </Label>
-                     </children>
-                  </VBox>
-                  <VBox fx:id="txtNotasMedicas" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css" GridPane.rowIndex="1">
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                     <GridPane.margin>
-                        <Insets left="10.0" right="10.0" top="10.0" />
-                     </GridPane.margin>
-                     <children>
-                        <Label styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Generar reporte">
-                           <padding>
-                              <Insets left="25.0" top="5.0" />
-                           </padding>
-                        </Label>
-                        <javafx.scene.control.TextArea fx:id="txtReporteCita" prefHeight="100.0" prefWidth="200.0" promptText="Escribe aquí las notas médicas de la consulta..." />
-                        <Button fx:id="btnGuardarReporte" mnemonicParsing="false" onAction="#guardarReporte" style="-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-cursor: hand;" text="Guardar Reporte" />
-                     </children>
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                  </VBox>
-                  <VBox fx:id="vboxReportesGuardados" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css" GridPane.columnSpan="2" GridPane.rowIndex="2">
-                     <GridPane.margin>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </GridPane.margin>
-                     <children>
-                        <Label styleClass="titulo-bienvenida" stylesheets="@estilos.css" text="Historial de Reportes Guardados (Local)">
-                           <padding>
-                              <Insets bottom="10.0" left="25.0" top="5.0" />
-                           </padding>
-                        </Label>
-                     </children>
-                  </VBox>
-                  <VBox fx:id="vboxSignosVitales" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="190.0" prefWidth="493.0" styleClass="barra-lateral" stylesheets="@estilos.css" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <children>
-                        <Label styleClass="titulo-bienvenida" text="Signos Vitales">
-                           <padding>
-                              <Insets left="25.0" top="5.0" />
-                           </padding>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </Label>
-                     </children>
-                     <GridPane.margin>
-                        <Insets right="10.0" top="10.0" />
-                     </GridPane.margin>
-                  </VBox>
-               </children>
-            </GridPane>
-         </content>
-      </ScrollPane>
+
+      <!-- ══ BODY: 30% izquierda | 70% derecha ════════════════════════════ -->
+      <GridPane hgap="15.0" maxHeight="1.7976931348623157E308"
+                maxWidth="1.7976931348623157E308"
+                style="-fx-background-color: #DFF5E1;"
+                vgap="0.0" VBox.vgrow="ALWAYS">
+         <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="30.0" minWidth="220.0"/>
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="70.0" minWidth="300.0"/>
+         </columnConstraints>
+         <rowConstraints>
+            <javafx.scene.layout.RowConstraints vgrow="ALWAYS" />
+         </rowConstraints>
+         <padding><Insets bottom="15.0" left="10.0" right="10.0" top="8.0" /></padding>
+
+         <!-- ── COLUMNA IZQUIERDA: Cola de Citas ─────────────────────────── -->
+         <VBox spacing="10.0" GridPane.columnIndex="0"
+               style="-fx-background-color: white; -fx-background-radius: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 12, 0, 0, 5);"
+               VBox.vgrow="ALWAYS">
+            <padding><Insets bottom="15.0" left="15.0" right="15.0" top="15.0" /></padding>
+            <children>
+               <!-- Título cola -->
+               <HBox alignment="CENTER_LEFT" spacing="8.0">
+                  <children>
+                     <Label text="Cola de Citas"
+                            style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3d8d7a;" />
+                     <Region HBox.hgrow="ALWAYS" />
+                     <Label fx:id="lblContadorCitas"
+                            style="-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 2 8 2 8; -fx-font-size: 11px;" />
+                  </children>
+               </HBox>
+
+               <!-- TableView de citas -->
+               <TableView fx:id="tablaColaCitas"
+                          maxHeight="1.7976931348623157E308"
+                          maxWidth="1.7976931348623157E308"
+                          style="-fx-background-radius: 10;"
+                          VBox.vgrow="ALWAYS">
+                  <columns>
+                     <TableColumn fx:id="colHora"    text="Hora"       prefWidth="60.0"  />
+                     <TableColumn fx:id="colPaciente" text="Paciente"  prefWidth="90.0"  />
+                     <TableColumn fx:id="colPrioridad" text="Prior."   prefWidth="65.0"  />
+                  </columns>
+                  <placeholder>
+                     <Label text="Sin citas programadas"
+                            style="-fx-text-fill: #aaaaaa; -fx-font-style: italic;" />
+                  </placeholder>
+               </TableView>
+            </children>
+         </VBox>
+
+         <!-- ── COLUMNA DERECHA: Panel Consulta Activa ───────────────────── -->
+         <VBox spacing="12.0" GridPane.columnIndex="1"
+               VBox.vgrow="ALWAYS">
+            <padding><Insets left="8.0" /></padding>
+            <children>
+
+               <!-- Panel superior: datos del paciente + botón Iniciar Consulta -->
+               <VBox fx:id="panelPaciente" spacing="8.0"
+                     style="-fx-background-color: white; -fx-background-radius: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 10, 0, 0, 3); -fx-padding: 18;">
+                  <children>
+                     <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <children>
+                           <Label text="Consulta Activa"
+                                  style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3d8d7a;" />
+                           <Region HBox.hgrow="ALWAYS" />
+                           <Button fx:id="btnCancelarCita"
+                                   mnemonicParsing="false"
+                                   onAction="#cancelarCita"
+                                   text="Cancelar Cita"
+                                   disable="true"
+                                   style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 7 16 7 16; -fx-cursor: hand;" />
+                           <Button fx:id="bAccionCita"
+                                   mnemonicParsing="false"
+                                   onAction="#manejarAccionCita"
+                                   text="Iniciar Consulta"
+                                   style="-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 7 20 7 20; -fx-cursor: hand;" />
+                        </children>
+                     </HBox>
+
+                     <!-- Info del paciente seleccionado -->
+                     <HBox fx:id="hboxInfoPaciente" alignment="CENTER_LEFT" spacing="20.0">
+                        <children>
+                           <VBox spacing="3.0">
+                              <children>
+                                 <Label text="Paciente"
+                                        style="-fx-font-size: 11px; -fx-text-fill: #999999;" />
+                                 <Label fx:id="lblNombrePaciente"
+                                        text="— Selecciona una cita —"
+                                        style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" />
+                              </children>
+                           </VBox>
+                           <VBox spacing="3.0">
+                              <children>
+                                 <Label text="Motivo"
+                                        style="-fx-font-size: 11px; -fx-text-fill: #999999;" />
+                                 <Label fx:id="lblMotivoConsulta"
+                                        text="—"
+                                        style="-fx-font-size: 14px; -fx-text-fill: #34495e;" />
+                              </children>
+                           </VBox>
+                           <VBox spacing="3.0">
+                              <children>
+                                 <Label text="Hora"
+                                        style="-fx-font-size: 11px; -fx-text-fill: #999999;" />
+                                 <Label fx:id="lblHoraCita"
+                                        text="—"
+                                        style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;" />
+                              </children>
+                           </VBox>
+                           <VBox spacing="3.0">
+                              <children>
+                                 <Label text="Estado"
+                                        style="-fx-font-size: 11px; -fx-text-fill: #999999;" />
+                                 <Label fx:id="lblEstadoCita"
+                                        text="—"
+                                        style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #3d8d7a;" />
+                              </children>
+                           </VBox>
+                        </children>
+                     </HBox>
+
+                     <!-- Signos Vitales compactos en fila -->
+                     <HBox fx:id="hboxSignosVitales" alignment="CENTER_LEFT" spacing="12.0">
+                        <children>
+                           <Label text="Signos Vitales:"
+                                  style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #555555;" />
+                           <!-- Los TextFields se inyectan desde el controlador -->
+                        </children>
+                     </HBox>
+                  </children>
+               </VBox>
+
+               <!-- Panel central: Editor Clínico (ocupa todo el espacio disponible) -->
+               <VBox fx:id="panelEditor" spacing="8.0" VBox.vgrow="ALWAYS"
+                     style="-fx-background-color: white; -fx-background-radius: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 10, 0, 0, 3); -fx-padding: 18;">
+                  <children>
+                     <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <children>
+                           <Label text="Notas Clínicas"
+                                  style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #3d8d7a;" />
+                           <Label text="(se guarda automáticamente al finalizar)"
+                                  style="-fx-font-size: 11px; -fx-text-fill: #aaaaaa; -fx-font-style: italic;" />
+                        </children>
+                     </HBox>
+                     <TextArea fx:id="txtReporteCita"
+                               promptText="Escribe aquí las notas médicas de la consulta: diagnóstico, tratamiento, observaciones..."
+                               maxHeight="1.7976931348623157E308"
+                               maxWidth="1.7976931348623157E308"
+                               wrapText="true"
+                               styleClass="editor-clinico"
+                               VBox.vgrow="ALWAYS" />
+                  </children>
+               </VBox>
+
+               <!-- Panel inferior: Historial con filtros ─────────────────── -->
+               <VBox fx:id="vboxReportesGuardados" spacing="8.0"
+                     maxHeight="240.0"
+                     style="-fx-background-color: white; -fx-background-radius: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2); -fx-padding: 14;">
+                  <children>
+                     <!-- Título + filtros de fecha -->
+                     <HBox alignment="CENTER_LEFT" spacing="8.0">
+                        <children>
+                           <Label text="Historial de Reportes"
+                                  style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #3d8d7a;" />
+                           <Region HBox.hgrow="ALWAYS" />
+                           <Label text="Desde:"
+                                  style="-fx-font-size: 11px; -fx-text-fill: #777777;" />
+                           <DatePicker fx:id="dpDesde" prefWidth="130.0"
+                                       style="-fx-font-size: 11px;" />
+                           <Label text="Hasta:"
+                                  style="-fx-font-size: 11px; -fx-text-fill: #777777;" />
+                           <DatePicker fx:id="dpHasta" prefWidth="130.0"
+                                       style="-fx-font-size: 11px;" />
+                           <Button text="Filtrar" onAction="#filtrarReportes"
+                                   style="-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-size: 11px; -fx-background-radius: 15; -fx-padding: 4 12 4 12; -fx-cursor: hand;" />
+                           <Button text="Ver todos" onAction="#mostrarTodosReportes"
+                                   style="-fx-background-color: transparent; -fx-text-fill: #3d8d7a; -fx-font-size: 11px; -fx-border-color: #3d8d7a; -fx-border-radius: 15; -fx-padding: 3 10 3 10; -fx-cursor: hand;" />
+                        </children>
+                     </HBox>
+                     <!-- Lista de tarjetas de reportes -->
+                     <ScrollPane fitToWidth="true"
+                                 style="-fx-background-color: transparent; -fx-background: transparent;"
+                                 maxHeight="160.0" VBox.vgrow="ALWAYS">
+                        <content>
+                           <VBox fx:id="vboxHistorialContent" spacing="5.0"
+                                 style="-fx-background-color: transparent;" />
+                        </content>
+                     </ScrollPane>
+                  </children>
+               </VBox>
+
+            </children>
+         </VBox>
+
+      </GridPane>
    </children>
 </VBox>

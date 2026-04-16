@@ -3,15 +3,15 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Circle?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.StaffController">
    <children>
@@ -34,33 +34,14 @@
                            </graphic>
                         </Label>
                         <Region HBox.hgrow="ALWAYS" />
-<!-- ═══════ Perfil de Usuario - Staff ═══════ -->
-                        <HBox fx:id="contenedorPerfilStaff" alignment="CENTER_LEFT" spacing="10.0" style="-fx-cursor: hand;">
-
-                           <!-- Imagen circular del usuario -->
-                           <StackPane>
-                              <ImageView fx:id="imgPerfilStaff" fitHeight="45.0" fitWidth="45.0"
-                                         pickOnBounds="true" preserveRatio="true"
-                                         style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
-                                 <clip>
-                                    <Circle centerX="22.5" centerY="22.5" radius="22.5" />
-                                 </clip>
-                              </ImageView>
-                           </StackPane>
-
-                           <!-- Nombre y rol del usuario -->
-                           <VBox fx:id="vboxInfoStaff" alignment="CENTER_LEFT" spacing="2.0">
-                              <Label fx:id="lblNombreStaff" text="Dr. Emmanuel"
-                                     style="-fx-font-weight: bold; -fx-font-size: 14px;" />
-                              <Label fx:id="lblRolStaff" text="Veterinario"
-                                     style="-fx-font-size: 11px; -fx-text-fill: #888888;" />
-                           </VBox>
-
-                           <!-- Icono flecha hacia abajo -->
-                           <Label fx:id="iconFlechaStaff" text="&#9660;"
-                                  style="-fx-font-size: 10px; -fx-text-fill: #AAAAAA;" />
-
-                        </HBox>
+                        <MenuButton fx:id="menuUsuario" alignment="CENTER_RIGHT" mnemonicParsing="false" prefHeight="26.0" prefWidth="287.0" styleClass="boton-link" stylesheets="@estilos.css" text="Hola, Dr. Emmanuel-Veterinario" textOverrun="LEADING_ELLIPSIS">
+                           <items>
+                              <MenuItem mnemonicParsing="false" text="Configurar Perfil" />
+                           </items>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </MenuButton>
                      </children>
                   </HBox>
                   <VBox fx:id="vboxContenedor" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS" />

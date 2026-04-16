@@ -178,42 +178,50 @@ public class PrimaryController {
         String usuario = txtNombre.getText();
         String contrasenia = txtContrasenaOculta.getText();
 
-        String rol = validarUsuarioBD(usuario, contrasenia);
+        // --- BYPASS TEMPORAL (sin BD) ---
+        String rol;
+        if (usuario.equalsIgnoreCase("staff")) {
+            rol = "Staff";
+        } else if (usuario.equalsIgnoreCase("veterinario")) {
+            rol = "Veterinario";
+        } else {
+            rol = validarUsuarioBD(usuario, contrasenia);
+        }
+        // --- FIN BYPASS ---
 
         if (rol != null) {
 
             App.setRolUsuario(rol);
 
             if (rol.equalsIgnoreCase("Veterinario") || rol.equalsIgnoreCase("Staff")) {
-                App.setRoot("fxml/InterfazVeterinario");
-            }
 
-            // Ejecutamos los ajustes de ventana para maximizar después del login exitoso
-            javafx.application.Platform.runLater(() -> {
+                // 1. Primero habilitamos el redimensionamiento ANTES de cambiar la vista
                 Stage stage = App.getStage();
                 if (stage != null) {
-                    // Desbloqueamos el redimensionamiento
                     stage.setResizable(true);
-
-                    // --- NUEVAS LÍNEAS PARA EL TAMAÑO MÍNIMO ---
                     stage.setMinWidth(836);
                     stage.setMinHeight(600);
-                    // -------------------------------------------
-
-                    // OBTENEMOS EL TAMAÑO DEL MONITOR
-                    javafx.stage.Screen screen = javafx.stage.Screen.getPrimary();
-                    javafx.geometry.Rectangle2D bounds = screen.getVisualBounds();
-
-                    // FORZAMOS EL TAMAÑO MANUALMENTE PARA ASEGURAR EL CAMBIO
-                    stage.setX(bounds.getMinX());
-                    stage.setY(bounds.getMinY());
-                    stage.setWidth(bounds.getWidth());
-                    stage.setHeight(bounds.getHeight());
-
-                    // Finalmente aplicamos el maximizado nativo
-                    stage.setMaximized(true);
                 }
-            });
+
+                // 2. Cambiamos la vista
+                App.setRoot("fxml/InterfazVeterinario");
+
+                // 3. Maximizamos en el siguiente ciclo del layout para que tome efecto
+                javafx.application.Platform.runLater(() -> {
+                    javafx.application.Platform.runLater(() -> {
+                        Stage s = App.getStage();
+                        if (s != null) {
+                            javafx.stage.Screen screen = javafx.stage.Screen.getPrimary();
+                            javafx.geometry.Rectangle2D bounds = screen.getVisualBounds();
+                            s.setX(bounds.getMinX());
+                            s.setY(bounds.getMinY());
+                            s.setWidth(bounds.getWidth());
+                            s.setHeight(bounds.getHeight());
+                            s.setMaximized(true);
+                        }
+                    });
+                });
+            }
 
         } else {
             txtErrorDatos.setText("Usuario o contraseña incorrectos");

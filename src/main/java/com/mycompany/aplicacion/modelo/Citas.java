@@ -2,6 +2,9 @@ package com.mycompany.aplicacion.modelo;
 
 public class Citas {
 
+    /** Nivel de prioridad de la cita. URGENTE sube al inicio de la cola. */
+    public enum Prioridad { URGENTE, NORMAL }
+
     private int id;
     private String fecha;
     private String hora;
@@ -10,9 +13,11 @@ public class Citas {
     private String veterinario;
     private String motivo;
     private String estado;
+    private Prioridad prioridad;
 
-    public Citas(int id, String fecha, String hora, String nombreMascota, String nombrePropietario, String veterinario,
-            String motivo, String estado) {
+    /** Constructor completo con prioridad explícita. */
+    public Citas(int id, String fecha, String hora, String nombreMascota, String nombrePropietario,
+            String veterinario, String motivo, String estado, Prioridad prioridad) {
         this.id = id;
         this.fecha = fecha;
         this.hora = hora;
@@ -21,74 +26,51 @@ public class Citas {
         this.veterinario = veterinario;
         this.motivo = motivo;
         this.estado = estado;
+        this.prioridad = prioridad;
     }
 
-    public int getId() {
-        return id;
+    /** Constructor legado: prioridad por defecto NORMAL. */
+    public Citas(int id, String fecha, String hora, String nombreMascota, String nombrePropietario,
+            String veterinario, String motivo, String estado) {
+        this(id, fecha, hora, nombreMascota, nombrePropietario, veterinario, motivo, estado, Prioridad.NORMAL);
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    // ── Getters / Setters ───────────────────────────────────────────────────
 
-    public String getFecha() {
-        return fecha;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
+    public String getFecha() { return fecha; }
+    public void setFecha(String fecha) { this.fecha = fecha; }
 
-    public String getHora() {
-        return hora;
-    }
+    public String getHora() { return hora; }
+    public void setHora(String hora) { this.hora = hora; }
 
-    public void setHora(String hora) {
-        this.hora = hora;
-    }
+    public String getNombreMascota() { return nombreMascota; }
+    public void setNombreMascota(String nombreMascota) { this.nombreMascota = nombreMascota; }
 
-    public String getNombreMascota() {
-        return nombreMascota;
-    }
+    public String getNombrePropietario() { return nombrePropietario; }
+    public void setNombrePropietario(String nombrePropietario) { this.nombrePropietario = nombrePropietario; }
 
-    public void setNombreMascota(String nombreMascota) {
-        this.nombreMascota = nombreMascota;
-    }
+    public String getVeterinario() { return veterinario; }
+    public void setVeterinario(String veterinario) { this.veterinario = veterinario; }
 
-    public String getNombrePropietario() {
-        return nombrePropietario;
-    }
+    public String getMotivo() { return motivo; }
+    public void setMotivo(String motivo) { this.motivo = motivo; }
 
-    public void setNombrePropietario(String nombrePropietario) {
-        this.nombrePropietario = nombrePropietario;
-    }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 
-    public String getVeterinario() {
-        return veterinario;
-    }
+    public Prioridad getPrioridad() { return prioridad; }
+    public void setPrioridad(Prioridad prioridad) { this.prioridad = prioridad; }
 
-    public void setVeterinario(String veterinario) {
-        this.veterinario = veterinario;
-    }
-
-    public String getMotivo() {
-        return motivo;
-    }
-
-    public void setMotivo(String motivo) {
-        this.motivo = motivo;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public boolean esUrgente() {
+        return Prioridad.URGENTE.equals(prioridad);
     }
 
     @Override
     public String toString() {
-        return fecha + " " + hora + " - " + nombreMascota + " (" + estado + ")";
+        return hora + " - " + nombreMascota + " [" + prioridad + "]";
     }
 }
+

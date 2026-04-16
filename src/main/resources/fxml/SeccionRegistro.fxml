@@ -14,10 +14,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 
-<StackPane fx:id="rootPane" alignment="CENTER" style="-fx-background-color: transparent;" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.RegistroController">
+<StackPane fx:id="rootPane" alignment="CENTER" style="-fx-background-color: radial-gradient(center 50% 50%, radius 100%, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%); -fx-background-radius: 20px;" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.RegistroController">
    <children>
       <!-- Background Overlay Pane -->
-      <Pane style="-fx-background-color: radial-gradient(center 50% 50%, radius 100%, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%);" />
+      <Pane style="-fx-background-color: radial-gradient(center 50% 50%, radius 100%, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%); -fx-background-radius: 20px;" />
 
       <!-- Main Card -->
       <StackPane fx:id="mainCard" maxHeight="-Infinity" prefWidth="400.0" style="-fx-background-color: white; -fx-background-radius: 20px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 25, 0, 0, 10);" StackPane.alignment="CENTER">
@@ -26,26 +26,30 @@
          </cursor>
          <children>
             <!-- Background Image with "Ghost" Effect -->
-            <ImageView fitWidth="400.0" opacity="0.15" preserveRatio="true" smooth="true" StackPane.alignment="CENTER">
+            <ImageView fitHeight="938.0" fitWidth="401.0" opacity="0.15" smooth="false" StackPane.alignment="CENTER">
                <image>
                   <Image url="@../images/fondoOriginalPatitas.png" />
                </image>
             </ImageView>
 
-            <VBox alignment="CENTER" spacing="25.0">
+            <VBox alignment="CENTER" spacing="25.0" style="-fx-background-color: transparent; -fx-background-radius: 20px;">
                <padding>
                   <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
                </padding>
                <children>
                   <!-- Logo -->
-                  <ImageView fitWidth="150.0" preserveRatio="true">
-                     <image>
-                        <Image url="@../images/logoPaw.png" />
-                     </image>
+                  <StackPane style="-fx-background-radius: 20px; -fx-background-color: transparent;">
+                     <children>
+                        <ImageView fitWidth="150.0" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/logoPaw.png" />
+                           </image>
+                        </ImageView>
+                     </children>
                      <VBox.margin>
                         <Insets bottom="15.0" />
                      </VBox.margin>
-                  </ImageView>
+                  </StackPane>
 
                   <Label styleClass="titulo-bienvenida" text="Crear Cuenta" />
 
@@ -89,7 +93,7 @@
                   <VBox alignment="CENTER_LEFT" spacing="5.0">
                      <children>
                         <Label text="Rol" textFill="#555555" />
-                        <ComboBox fx:id="cmbRol" prefHeight="40.0" prefWidth="300.0" promptText="Selecciona un rol" />
+                        <ComboBox fx:id="cmbRol" prefHeight="40.0" prefWidth="300.0" promptText="Selecciona un rol" styleClass="boton-transparente" />
                         <Line endX="300.0" stroke="#30cd9e" strokeWidth="2.0" />
                      </children>
                   </VBox>
@@ -105,7 +109,7 @@
                   </Button>
 
                   <!-- Botón Volver -->
-                  <Button mnemonicParsing="false" onAction="#volverAlLogin" prefHeight="24.0" prefWidth="158.0" style="-fx-background-color: #2A5F52; -fx-text-fill: white;" styleClass="boton-verde" text="Volver al Login">
+                  <Button mnemonicParsing="false" onAction="#volverAlLogin" prefHeight="24.0" prefWidth="158.0" style="-fx-background-color: #2A5F52; -fx-text-fill: white;" styleClass="boton-verde" text="Volver">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>

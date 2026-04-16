@@ -153,26 +153,29 @@ public class DatosSimulados {
     private static void cargarCitas() {
         citas = FXCollections.observableArrayList();
 
-        // Cita 1
-        Citas c1 = new Citas(1, "2025-03-30", "10:00", "Max", "Juan Pérez", "Ana López", "Consulta General",
-                "Programada");
+        // Cita 1 - NORMAL
+        Citas c1 = new Citas(1, "2025-03-30", "10:00", "Max", "Juan Pérez",
+                "Ana López", "Consulta General", "Programada", Citas.Prioridad.NORMAL);
 
-        // Cita 2
-        Citas c2 = new Citas(2, "2025-03-30", "11:30", "Luna", "María García", "Carlos Martínez", "Infección urinaria",
-                "Completada");
+        // Cita 2 - NORMAL (ya completada)
+        Citas c2 = new Citas(2, "2025-03-30", "11:30", "Luna", "María García",
+                "Carlos Martínez", "Infección urinaria", "Completada", Citas.Prioridad.NORMAL);
 
-        // Cita 3
-        Citas c3 = new Citas(3, "2025-03-31", "09:00", "Rocky", "Pedro Díaz", "Ana López", "Vacunación", "Programada");
+        // Cita 3 - URGENTE
+        Citas c3 = new Citas(3, "2025-03-31", "09:00", "Rocky", "Pedro Díaz",
+                "Ana López", "Reacción alérgica severa", "Programada", Citas.Prioridad.URGENTE);
 
-        // Cita 4
-        Citas c4 = new Citas(4, "2025-04-01", "16:00", "Nala", "Laura Méndez", "Carlos Martínez", "Revisión dental",
-                "Programada");
+        // Cita 4 - NORMAL
+        Citas c4 = new Citas(4, "2025-04-01", "16:00", "Nala", "Laura Méndez",
+                "Carlos Martínez", "Revisión dental", "Programada", Citas.Prioridad.NORMAL);
 
-        // Cita 5
-        Citas c5 = new Citas(5, "2025-04-02", "12:00", "Toby", "Carlos Ruiz", "Ana López", "Urgencia", "Completada");
+        // Cita 5 - URGENTE
+        Citas c5 = new Citas(5, "2025-04-02", "08:00", "Toby", "Carlos Ruiz",
+                "Ana López", "Luxación - dolor agudo", "Programada", Citas.Prioridad.URGENTE);
 
         citas.addAll(c1, c2, c3, c4, c5);
     }
+
     
     // DATOS SIMULADOS INVENTARIO
     

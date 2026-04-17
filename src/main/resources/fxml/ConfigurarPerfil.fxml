@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<VBox prefWidth="520.0" spacing="0"
+      style="-fx-background-color: white; -fx-background-radius: 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 20, 0, 0, 6);"
+      xmlns="http://javafx.com/javafx/25"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.mycompany.aplicacion.controllers.ConfigurarPerfilController">
+
+   <children>
+
+      <!-- ══ HEADER ══════════════════════════════════════════════════════════ -->
+      <HBox alignment="CENTER_LEFT" prefHeight="64" spacing="14"
+            style="-fx-background-color: #3D8D7A; -fx-background-radius: 16 16 0 0; -fx-padding: 0 20 0 20;">
+         <children>
+            <!-- Avatar actual (circular) -->
+            <ImageView fx:id="imgAvatarActual" fitHeight="46" fitWidth="46" pickOnBounds="true" preserveRatio="true">
+               <clip>
+                  <Circle centerX="23" centerY="23" radius="23" />
+               </clip>
+            </ImageView>
+            <VBox spacing="2" alignment="CENTER_LEFT">
+               <children>
+                  <Label text="Configuración de Perfil Profesional"
+                         style="-fx-text-fill: white; -fx-font-family: 'Segoe UI'; -fx-font-weight: bold; -fx-font-size: 15px;" />
+                  <Label fx:id="lblSubtituloRol"
+                         style="-fx-text-fill: rgba(255,255,255,0.80); -fx-font-family: 'Segoe UI'; -fx-font-size: 12px;" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+
+      <!-- ══ BODY ════════════════════════════════════════════════════════════ -->
+      <VBox spacing="18" style="-fx-padding: 22 24 10 24;">
+         <children>
+
+            <!-- ── Galería de avatares ─────────────────────────────────────── -->
+            <VBox spacing="10">
+               <children>
+                  <Label text="Selecciona tu Avatar"
+                         style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #3D8D7A;" />
+                  <HBox fx:id="hboxAvatares" alignment="CENTER_LEFT" spacing="10" />
+               </children>
+            </VBox>
+
+            <Separator style="-fx-background-color: #E8F4F1;" />
+
+            <!-- ── Formulario ──────────────────────────────────────────────── -->
+            <GridPane hgap="16" vgap="12">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="NEVER" minWidth="150" prefWidth="155" />
+                  <ColumnConstraints hgrow="ALWAYS" />
+               </columnConstraints>
+
+               <!-- Nombre Completo -->
+               <Label text="Nombre Completo" GridPane.rowIndex="0" GridPane.columnIndex="0"
+                      style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-text-fill: #555;" />
+               <TextField fx:id="txtNombreCompleto" GridPane.rowIndex="0" GridPane.columnIndex="1"
+                          promptText="Nombre y apellidos"
+                          style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-background-color: #F7FAFA; -fx-border-color: #C8E6E0; -fx-border-radius: 7; -fx-background-radius: 7; -fx-padding: 7 10 7 10;" />
+
+               <!-- Nombre de Usuario -->
+               <Label text="Nombre de Usuario" GridPane.rowIndex="1" GridPane.columnIndex="0"
+                      style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-text-fill: #555;" />
+               <TextField fx:id="txtAlias" GridPane.rowIndex="1" GridPane.columnIndex="1"
+                          promptText="Alias visible en el sistema"
+                          style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-background-color: #F7FAFA; -fx-border-color: #C8E6E0; -fx-border-radius: 7; -fx-background-radius: 7; -fx-padding: 7 10 7 10;" />
+
+               <!-- Rol en la Clínica -->
+               <Label text="Rol en la Clínica" GridPane.rowIndex="2" GridPane.columnIndex="0"
+                      style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-text-fill: #555;" />
+               <TextField fx:id="txtRol" GridPane.rowIndex="2" GridPane.columnIndex="1"
+                          promptText="Veterinario / Staff / Recepcionista"
+                          style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-background-color: #F7FAFA; -fx-border-color: #C8E6E0; -fx-border-radius: 7; -fx-background-radius: 7; -fx-padding: 7 10 7 10;" />
+
+               <!-- Cédula Profesional -->
+               <Label text="Cédula Profesional" GridPane.rowIndex="3" GridPane.columnIndex="0"
+                      style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-text-fill: #555;" />
+               <TextField fx:id="txtCedula" GridPane.rowIndex="3" GridPane.columnIndex="1"
+                          promptText="Solo Veterinarios"
+                          style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-background-color: #F7FAFA; -fx-border-color: #C8E6E0; -fx-border-radius: 7; -fx-background-radius: 7; -fx-padding: 7 10 7 10;" />
+
+               <!-- Horario de Turno -->
+               <Label text="Horario de Turno" GridPane.rowIndex="4" GridPane.columnIndex="0"
+                      style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-text-fill: #555;" />
+               <TextField fx:id="txtHorario" GridPane.rowIndex="4" GridPane.columnIndex="1"
+                          promptText="Ej: Lunes-Viernes 8:00–17:00"
+                          style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-background-color: #F7FAFA; -fx-border-color: #C8E6E0; -fx-border-radius: 7; -fx-background-radius: 7; -fx-padding: 7 10 7 10;" />
+
+               <!-- Estado -->
+               <Label text="Estado" GridPane.rowIndex="5" GridPane.columnIndex="0"
+                      style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-text-fill: #555;" />
+               <HBox alignment="CENTER_LEFT" spacing="8" GridPane.rowIndex="5" GridPane.columnIndex="1">
+                  <children>
+                     <Label text="●"
+                            style="-fx-text-fill: #27AE60; -fx-font-size: 11px;" />
+                     <Label text="Activo"
+                            style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-text-fill: #27AE60; -fx-font-weight: bold;" />
+                  </children>
+               </HBox>
+
+            </GridPane>
+         </children>
+      </VBox>
+
+      <!-- ══ FOOTER ═══════════════════════════════════════════════════════════ -->
+      <HBox alignment="CENTER_RIGHT" spacing="10"
+            style="-fx-padding: 14 24 18 24; -fx-background-color: #F7FAFA; -fx-background-radius: 0 0 16 16;">
+         <children>
+            <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#cancelar" text="Cancelar"
+                    style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-background-color: white; -fx-border-color: #B0CCC7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-text-fill: #555; -fx-padding: 8 22 8 22; -fx-cursor: hand;" />
+            <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#guardarCambios" text="Guardar Cambios"
+                    style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-color: #3D8D7A; -fx-background-radius: 8; -fx-text-fill: white; -fx-padding: 8 22 8 22; -fx-cursor: hand;" />
+         </children>
+      </HBox>
+
+   </children>
+</VBox>

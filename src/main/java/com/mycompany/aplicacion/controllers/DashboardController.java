@@ -119,7 +119,7 @@ public class DashboardController {
 
         // Clic → acción + cierra el menú
         lblConfigurar.setOnMouseClicked(e -> {
-            System.out.println("Abriendo configuración...");
+            ConfigurarPerfilController.abrir(hboxPerfil);
             menuPerfil.hide();
         });
 

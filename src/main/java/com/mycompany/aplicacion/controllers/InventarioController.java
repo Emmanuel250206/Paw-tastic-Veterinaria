@@ -87,7 +87,7 @@ public class InventarioController implements Initializable {
         lbl.setStyle(base);
         lbl.setOnMouseEntered(e -> lbl.setStyle(hover));
         lbl.setOnMouseExited(e  -> lbl.setStyle(base));
-        lbl.setOnMouseClicked(e -> { System.out.println("Abriendo configuración..."); menuPerfil.hide(); });
+        lbl.setOnMouseClicked(e -> { menuPerfil.hide(); ConfigurarPerfilController.abrir(hboxPerfil); });
         CustomMenuItem item = new CustomMenuItem(lbl, true);
         item.setMnemonicParsing(false);
         menuPerfil.getItems().add(item);

@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="407.0" prefWidth="699.0" spacing="20" style="-fx-background-color: #DFF5E1;" styleClass="recuadros-informacion" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.InventarioController">
@@ -34,14 +32,31 @@
                </padding>
             </Label>
             <Region HBox.hgrow="ALWAYS" />
-            <MenuButton fx:id="menuUsuario" alignment="CENTER_RIGHT" mnemonicParsing="false" prefHeight="26.0" prefWidth="287.0" styleClass="boton-link" stylesheets="@estilos.css" text="Hola, Dr. Emmanuel-Veterinario" textOverrun="LEADING_ELLIPSIS">
-               <items>
-                  <MenuItem mnemonicParsing="false" text="Configurar Perfil" />
-               </items>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </MenuButton>
+            <HBox fx:id="hboxPerfil" alignment="CENTER_RIGHT" onMouseClicked="#manejarClickPerfil" spacing="10" style="-fx-cursor: hand;">
+               <children>
+                  <!-- Avatar circular -->
+                  <ImageView fx:id="imgPerfilInventario" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <clip>
+                        <Circle centerX="20.0" centerY="20.0" radius="20.0" />
+                     </clip>
+                  </ImageView>
+                  <!-- Nombre y rol del usuario -->
+                  <VBox alignment="CENTER_LEFT" spacing="2.0">
+                     <children>
+                        <Label fx:id="lblNombreInventario" style="-fx-font-family: System; -fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2c3e50;" text="Cargando..." />
+                        <Label fx:id="lblRolInventario" style="-fx-font-family: System; -fx-font-size: 12px; -fx-text-fill: #7f8c8d;" text="" />
+                     </children>
+                     <HBox.margin>
+                        <Insets right="15.0" top="10.0" />
+                     </HBox.margin>
+                  </VBox>
+                  <!-- Flecha indicadora de menú -->
+                  <Label prefHeight="16.0" prefWidth="21.0" style="-fx-text-fill: #95a5a6; -fx-font-size: 11px;" text="▾" />
+               </children>
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </HBox>
          </children>
       </HBox>
       <VBox spacing="15.0" VBox.vgrow="ALWAYS">

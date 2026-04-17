@@ -5,11 +5,18 @@
 package com.mycompany.aplicacion.controllers;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Side;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
 import com.mycompany.aplicacion.App;
 import com.mycompany.aplicacion.modelo.DatosSimulados;
+import com.mycompany.aplicacion.modelo.UserSession;
 
 /**
  *
@@ -29,23 +36,114 @@ public class DashboardController {
     private VBox cardStaff;
 
     @FXML
-    private javafx.scene.control.MenuButton menuUsuario;
+    private ImageView imgPerfilHeader;
+
+    @FXML
+    private Label lblNombreHeader;
+
+    @FXML
+    private Label lblRolHeader;
+
+    @FXML
+    private HBox hboxPerfil;
+
+    /** Instancia persistente para poder hacer toggle show/hide. */
+    private ContextMenu menuPerfil;
 
     @FXML
     private void initialize() {
+        // --- Perfil de usuario en el header ---
+        UserSession.loadProfileImage(imgPerfilHeader);
+        lblNombreHeader.setText(UserSession.getInstance().getUserName());
+        lblRolHeader.setText(UserSession.getInstance().getUserRole());
+
+        // Construir el ContextMenu una sola vez
+        construirMenuPerfil();
+
         if ("Staff".equalsIgnoreCase(App.getRolUsuario())) {
             // Solo ocultar tarjeta Staff (El inventario sí podrán verlo para recepcionar insumos)
             if (cardStaff != null) {
                 cardStaff.setVisible(false);
                 cardStaff.setManaged(false);
             }
-            if (menuUsuario != null) {
-                menuUsuario.setText("Hola Staff");
-            }
         }
 
         renderizarTarjetas();
     }
+
+    private void construirMenuPerfil() {
+        menuPerfil = new ContextMenu();
+
+        // Estilo inline — no depende de ningún recurso externo
+        menuPerfil.setStyle(
+            "-fx-background-color: white;" +
+            "-fx-background-radius: 10;" +
+            "-fx-border-color: #3D8D7A;" +
+            "-fx-border-radius: 10;" +
+            "-fx-border-width: 1.2;" +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.14), 14, 0, 0, 5);" +
+            "-fx-padding: 4 0 4 0;"
+        );
+
+        // Label es un Node real → soporta setOnMouseEntered / setOnMouseExited
+        Label lblConfigurar = new Label("⚙  Configurar Perfil");
+        lblConfigurar.setMaxWidth(Double.MAX_VALUE);
+        lblConfigurar.setPrefWidth(185);
+
+        String estiloBase =
+            "-fx-font-size: 13px;" +
+            "-fx-text-fill: #2C3E50;" +
+            "-fx-padding: 9 20 9 20;" +
+            "-fx-font-family: 'Segoe UI';" +
+            "-fx-background-color: transparent;" +
+            "-fx-background-radius: 7;" +
+            "-fx-cursor: hand;";
+
+        String estiloHover =
+            "-fx-font-size: 13px;" +
+            "-fx-text-fill: #2E7D6B;" +
+            "-fx-font-weight: bold;" +
+            "-fx-padding: 9 20 9 20;" +
+            "-fx-font-family: 'Segoe UI';" +
+            "-fx-background-color: #E9F5F2;" +
+            "-fx-background-radius: 7;" +
+            "-fx-cursor: hand;";
+
+        lblConfigurar.setStyle(estiloBase);
+
+        // Mouse entra → verde suave
+        lblConfigurar.setOnMouseEntered(e -> lblConfigurar.setStyle(estiloHover));
+
+        // Mouse sale → vuelve a transparente (evita el color pegado)
+        lblConfigurar.setOnMouseExited(e -> lblConfigurar.setStyle(estiloBase));
+
+        // Clic → acción + cierra el menú
+        lblConfigurar.setOnMouseClicked(e -> {
+            System.out.println("Abriendo configuración...");
+            menuPerfil.hide();
+        });
+
+        // hideOnClick=true para que el CustomMenuItem cierre el popup al hacer clic
+        CustomMenuItem itemConfigurar = new CustomMenuItem(lblConfigurar, true);
+        itemConfigurar.setMnemonicParsing(false);
+
+        menuPerfil.getItems().add(itemConfigurar);
+    }
+
+    @FXML
+    private void manejarClickPerfil(MouseEvent event) {
+        if (menuPerfil == null) return;
+
+        if (menuPerfil.isShowing()) {
+            menuPerfil.hide();
+            return;
+        }
+
+        // Alinear el borde derecho del men\u00fa con el del HBox de perfil
+        double offsetX = hboxPerfil.getWidth() - 185;
+        menuPerfil.show(hboxPerfil, Side.BOTTOM, offsetX, 4);
+    }
+
 
     private void renderizarTarjetas() {
         // Citas (Info rica con AM/PM)

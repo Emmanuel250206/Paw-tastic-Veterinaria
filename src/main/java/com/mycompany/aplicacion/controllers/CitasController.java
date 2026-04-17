@@ -12,13 +12,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuButton;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -38,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import com.mycompany.aplicacion.modelo.UserSession;
 
 /**
  * Controlador del módulo Citas.
@@ -70,8 +75,12 @@ public class CitasController implements Initializable {
     @FXML private DatePicker dpDesde;
     @FXML private DatePicker dpHasta;
 
-    // ── Menú ──────────────────────────────────────────────────────────────────
-    @FXML private MenuButton menuUsuario;
+    // ── Perfil header ─────────────────────────────────────────────────────────
+    @FXML private ImageView imgPerfilCitas;
+    @FXML private Label     lblNombreCitas;
+    @FXML private Label     lblRolCitas;
+    @FXML private HBox      hboxPerfil;
+    private ContextMenu menuPerfil;
 
     // ── Signos Vitales (inyectados por código) ────────────────────────────────
     private TextField txtTemp;
@@ -94,18 +103,49 @@ public class CitasController implements Initializable {
     // ─────────────────────────────────────────────────────────────────────────
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        configurarMenuUsuario();
+        // --- Perfil de usuario en el header ---
+        UserSession.loadProfileImage(imgPerfilCitas);
+        lblNombreCitas.setText(UserSession.getInstance().getUserName());
+        lblRolCitas.setText(UserSession.getInstance().getUserRole());
+        construirMenuPerfil();
+
         configurarSignosVitales();
         configurarTabla();
         bloquearPanelCentral();
     }
 
-    // ══ CONFIGURACIÓN INICIAL ════════════════════════════════════════════════
+    private void construirMenuPerfil() {
+        menuPerfil = new ContextMenu();
+        menuPerfil.setStyle(
+            "-fx-background-color: white;" +
+            "-fx-background-radius: 10;" +
+            "-fx-border-color: #3D8D7A;" +
+            "-fx-border-radius: 10;" +
+            "-fx-border-width: 1.2;" +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.14), 14, 0, 0, 5);" +
+            "-fx-padding: 4 0 4 0;"
+        );
+        Label lbl = new Label("⚙  Configurar Perfil");
+        lbl.setMaxWidth(Double.MAX_VALUE);
+        lbl.setPrefWidth(185);
+        String base = "-fx-font-size:13px;-fx-text-fill:#2C3E50;-fx-padding:9 20 9 20;" +
+                      "-fx-font-family:'Segoe UI';-fx-background-color:transparent;-fx-background-radius:7;-fx-cursor:hand;";
+        String hover = "-fx-font-size:13px;-fx-text-fill:#2E7D6B;-fx-font-weight:bold;-fx-padding:9 20 9 20;" +
+                       "-fx-font-family:'Segoe UI';-fx-background-color:#E9F5F2;-fx-background-radius:7;-fx-cursor:hand;";
+        lbl.setStyle(base);
+        lbl.setOnMouseEntered(e -> lbl.setStyle(hover));
+        lbl.setOnMouseExited(e  -> lbl.setStyle(base));
+        lbl.setOnMouseClicked(e -> { System.out.println("Abriendo configuración..."); menuPerfil.hide(); });
+        CustomMenuItem item = new CustomMenuItem(lbl, true);
+        item.setMnemonicParsing(false);
+        menuPerfil.getItems().add(item);
+    }
 
-    private void configurarMenuUsuario() {
-        if (menuUsuario == null) return;
-        menuUsuario.setText("Staff".equalsIgnoreCase(App.getRolUsuario())
-            ? "Hola Staff" : "Hola, Dr. Emmanuel");
+    @FXML
+    private void manejarClickPerfil(MouseEvent event) {
+        if (menuPerfil == null) return;
+        if (menuPerfil.isShowing()) { menuPerfil.hide(); return; }
+        menuPerfil.show(hboxPerfil, Side.BOTTOM, hboxPerfil.getWidth() - 185, 4);
     }
 
     private void configurarSignosVitales() {

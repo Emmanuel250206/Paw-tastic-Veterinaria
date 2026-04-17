@@ -13,7 +13,7 @@ Project    : APLICACION Paw-tastic
 
 .text-field,
 .password-field {
-    -fx-background-color: transnparent;
+    -fx-background-color: transparent;
     -fx-border-color: #3D8D7A;
     /* Cambié el color clarito por el verde principal para que se vea la línea */
     -fx-border-width: 0 0 2 0;
@@ -155,7 +155,7 @@ Project    : APLICACION Paw-tastic
     -fx-padding: 20;
     -fx-spacing: 10;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 12, 0, 0, 5);
-
+    
     .root {
         -fx-font-family: "Segoe UI";
     }
@@ -196,9 +196,8 @@ Project    : APLICACION Paw-tastic
     -fx-text-fill: #2E7D6B;
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   CLASES NUEVAS — Solo contornos, bordes y sombras. Sin paleta modificada.
-   ═══════════════════════════════════════════════════════════════════════════ */
+/*
+ CLASES NUEVAS — Solo contornos, bordes y sombras. Sin paleta modificada.*/
 
 /* ── Módulo Citas: Fila URGENTE en TableView ─────────────────────────────── */
 .fila-urgente {

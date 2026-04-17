@@ -17,12 +17,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.MenuButton;
+import javafx.scene.image.ImageView;
+import com.mycompany.aplicacion.modelo.UserSession;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.GridPane;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.geometry.Insets;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
+import javafx.scene.input.MouseEvent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -34,21 +39,65 @@ public class InventarioController implements Initializable {
     @FXML
     private HBox btnControlInventario;
     @FXML
-    private MenuButton menuUsuario;
+    private ImageView imgPerfilInventario;
+    @FXML
+    private Label lblNombreInventario;
+    @FXML
+    private Label lblRolInventario;
+    @FXML
+    private HBox hboxPerfil;
+    private ContextMenu menuPerfil;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        // --- Perfil de usuario en el header ---
+        UserSession.loadProfileImage(imgPerfilInventario);
+        lblNombreInventario.setText(UserSession.getInstance().getUserName());
+        lblRolInventario.setText(UserSession.getInstance().getUserRole());
+        construirMenuPerfil();
+
         cargarInventarioEnPantalla();
-        
+
         if ("Staff".equalsIgnoreCase(com.mycompany.aplicacion.App.getRolUsuario())) {
             if (btnControlInventario != null) {
                 btnControlInventario.setVisible(false);
                 btnControlInventario.setManaged(false);
             }
-            if (menuUsuario != null) {
-                menuUsuario.setText("Hola Staff");
-            }
         }
+    }
+
+    private void construirMenuPerfil() {
+        menuPerfil = new ContextMenu();
+        menuPerfil.setStyle(
+            "-fx-background-color: white;" +
+            "-fx-background-radius: 10;" +
+            "-fx-border-color: #3D8D7A;" +
+            "-fx-border-radius: 10;" +
+            "-fx-border-width: 1.2;" +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.14), 14, 0, 0, 5);" +
+            "-fx-padding: 4 0 4 0;"
+        );
+        Label lbl = new Label("⚙  Configurar Perfil");
+        lbl.setMaxWidth(Double.MAX_VALUE);
+        lbl.setPrefWidth(185);
+        String base = "-fx-font-size:13px;-fx-text-fill:#2C3E50;-fx-padding:9 20 9 20;" +
+                      "-fx-font-family:'Segoe UI';-fx-background-color:transparent;-fx-background-radius:7;-fx-cursor:hand;";
+        String hover = "-fx-font-size:13px;-fx-text-fill:#2E7D6B;-fx-font-weight:bold;-fx-padding:9 20 9 20;" +
+                       "-fx-font-family:'Segoe UI';-fx-background-color:#E9F5F2;-fx-background-radius:7;-fx-cursor:hand;";
+        lbl.setStyle(base);
+        lbl.setOnMouseEntered(e -> lbl.setStyle(hover));
+        lbl.setOnMouseExited(e  -> lbl.setStyle(base));
+        lbl.setOnMouseClicked(e -> { System.out.println("Abriendo configuración..."); menuPerfil.hide(); });
+        CustomMenuItem item = new CustomMenuItem(lbl, true);
+        item.setMnemonicParsing(false);
+        menuPerfil.getItems().add(item);
+    }
+
+    @FXML
+    private void manejarClickPerfil(MouseEvent event) {
+        if (menuPerfil == null) return;
+        if (menuPerfil.isShowing()) { menuPerfil.hide(); return; }
+        menuPerfil.show(hboxPerfil, Side.BOTTOM, hboxPerfil.getWidth() - 185, 4);
     }
     
     private void cargarInventarioEnPantalla() {

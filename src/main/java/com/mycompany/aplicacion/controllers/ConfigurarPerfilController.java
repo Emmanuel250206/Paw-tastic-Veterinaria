@@ -44,6 +44,9 @@ public class ConfigurarPerfilController {
     // Lista de nodos visuales de la galería para resetear borde al cambiar selección
     private final List<ImageView> galeria = new ArrayList<>();
 
+    // Callback ejecutado tras guardar cambios (actualiza el header de la vista activa)
+    private Runnable refreshCallback;
+
     // ── Estilos reutilizables ─────────────────────────────────────────────────
     private static final String STYLE_AVATAR_BASE =
         "-fx-background-color: transparent; -fx-border-color: transparent; -fx-border-width: 2; -fx-background-radius: 25; -fx-cursor: hand;";
@@ -163,6 +166,12 @@ public class ConfigurarPerfilController {
     }
 
     // ── Acciones de botones ───────────────────────────────────────────────────
+
+    /** Permite inyectar una acción de refresco desde el controlador que abre este modal. */
+    public void setRefreshCallback(Runnable callback) {
+        this.refreshCallback = callback;
+    }
+
     @FXML
     private void guardarCambios() {
         UserSession session = UserSession.getInstance();
@@ -176,6 +185,11 @@ public class ConfigurarPerfilController {
         session.setCurrentAvatarName(avatarSeleccionado);
 
         cerrarModal();
+
+        // Refrescar el header de la vista activa (si se registró un callback)
+        if (refreshCallback != null) {
+            refreshCallback.run();
+        }
     }
 
     @FXML
@@ -199,7 +213,7 @@ public class ConfigurarPerfilController {
     }
 
     // ═════════════════════════════════════════════════════════════════════════
-    //  MÉTODO ESTÁTICO DE APERTURA — punto de entrada desde cualquier controller
+    //  MÉTODOS ESTÁTICOS DE APERTURA — punto de entrada desde cualquier controller
     // ═════════════════════════════════════════════════════════════════════════
 
     /**
@@ -209,11 +223,28 @@ public class ConfigurarPerfilController {
      * @param ownerNode cualquier Node de la escena padre (para calcular la Stage dueña)
      */
     public static void abrir(Node ownerNode) {
+        abrir(ownerNode, null);
+    }
+
+    /**
+     * Abre el modal "Configurar Perfil" con un callback de refresco.
+     * El callback se ejecuta automáticamente tras guardar los cambios.
+     *
+     * @param ownerNode      cualquier Node de la escena padre (para calcular la Stage dueña)
+     * @param onSaved        Runnable que actualiza el header de la vista activa; puede ser null
+     */
+    public static void abrir(Node ownerNode, Runnable onSaved) {
         try {
             FXMLLoader loader = new FXMLLoader(
                 ConfigurarPerfilController.class.getResource("/fxml/ConfigurarPerfil.fxml")
             );
             VBox root = loader.load();
+
+            // Inyectar el callback ANTES de mostrar el modal
+            ConfigurarPerfilController controller = loader.getController();
+            if (onSaved != null) {
+                controller.setRefreshCallback(onSaved);
+            }
 
             Stage modal = new Stage();
             modal.initModality(Modality.APPLICATION_MODAL);
@@ -234,7 +265,7 @@ public class ConfigurarPerfilController {
             }
             modal.setScene(scene);
 
-            // Sobreponer un fondo oscuro semitransparente sobre la ventana owner
+            // Mostrar como modal bloqueante
             modal.showAndWait();
 
         } catch (Exception e) {

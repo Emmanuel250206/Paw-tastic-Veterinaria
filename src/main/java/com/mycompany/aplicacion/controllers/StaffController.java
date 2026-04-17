@@ -73,7 +73,11 @@ public class StaffController implements Initializable {
         lbl.setStyle(base);
         lbl.setOnMouseEntered(e -> lbl.setStyle(hover));
         lbl.setOnMouseExited(e  -> lbl.setStyle(base));
-        lbl.setOnMouseClicked(e -> { menuPerfil.hide(); ConfigurarPerfilController.abrir(hboxPerfil); });
+        lbl.setOnMouseClicked(e -> { menuPerfil.hide(); ConfigurarPerfilController.abrir(hboxPerfil, () -> {
+            UserSession.loadProfileImage(imgPerfilStaff);
+            lblNombreStaff.setText(UserSession.getInstance().getUserName());
+            lblRolStaff.setText(UserSession.getInstance().getUserRole());
+        }); });
         CustomMenuItem item = new CustomMenuItem(lbl, true);
         item.setMnemonicParsing(false);
         menuPerfil.getItems().add(item);

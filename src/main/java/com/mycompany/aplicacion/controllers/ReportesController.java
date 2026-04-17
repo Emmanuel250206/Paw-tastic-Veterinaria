@@ -93,7 +93,11 @@ public class ReportesController implements Initializable {
         lbl.setStyle(base);
         lbl.setOnMouseEntered(e -> lbl.setStyle(hover));
         lbl.setOnMouseExited(e  -> lbl.setStyle(base));
-        lbl.setOnMouseClicked(e -> { menuPerfil.hide(); ConfigurarPerfilController.abrir(hboxPerfil); });
+        lbl.setOnMouseClicked(e -> { menuPerfil.hide(); ConfigurarPerfilController.abrir(hboxPerfil, () -> {
+            UserSession.loadProfileImage(imgPerfilReportes);
+            lblNombreReportes.setText(UserSession.getInstance().getUserName());
+            lblRolReportes.setText(UserSession.getInstance().getUserRole());
+        }); });
         CustomMenuItem item = new CustomMenuItem(lbl, true);
         item.setMnemonicParsing(false);
         menuPerfil.getItems().add(item);

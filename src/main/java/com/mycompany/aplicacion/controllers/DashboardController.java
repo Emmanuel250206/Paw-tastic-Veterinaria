@@ -119,8 +119,12 @@ public class DashboardController {
 
         // Clic → acción + cierra el menú
         lblConfigurar.setOnMouseClicked(e -> {
-            ConfigurarPerfilController.abrir(hboxPerfil);
             menuPerfil.hide();
+            ConfigurarPerfilController.abrir(hboxPerfil, () -> {
+                UserSession.loadProfileImage(imgPerfilHeader);
+                lblNombreHeader.setText(UserSession.getInstance().getUserName());
+                lblRolHeader.setText(UserSession.getInstance().getUserRole());
+            });
         });
 
         // hideOnClick=true para que el CustomMenuItem cierre el popup al hacer clic

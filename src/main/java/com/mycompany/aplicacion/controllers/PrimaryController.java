@@ -128,18 +128,14 @@ public class PrimaryController {
     public String validarUsuarioBD(String usuario, String contrasena) {
     Conexion conexion = new Conexion();
     Connection con = conexion.estableceConexion();
-
     try {
-        String sql = "SELECT rol FROM login_pawtastic WHERE nombre = ? AND contrasenia = ?";
+        String sql = "SELECT tipo_rol FROM tb_usuarios WHERE nombre = ? AND contrasenia = ?";
         PreparedStatement ps = con.prepareStatement(sql);
-
         ps.setString(1, usuario);
         ps.setString(2, contrasena);
-
         ResultSet rs = ps.executeQuery();
-
         if (rs.next()) {
-            return rs.getString("rol");
+            return rs.getString("tipo_rol");
         }
 
     } catch (Exception e) {
@@ -159,17 +155,8 @@ public class PrimaryController {
         String usuario = txtNombre.getText();
         String contrasenia = txtContrasenaOculta.getText();
 
-        // --- BYPASS TEMPORAL (sin BD) ---
-        String rol;
-        if (usuario.equalsIgnoreCase("staff")) {
-            rol = "Staff";
-        } else if (usuario.equalsIgnoreCase("veterinario")) {
-            rol = "Veterinario";
-        } else {
-            rol = validarUsuarioBD(usuario, contrasenia);
-        }
-        // --- FIN BYPASS ---
-
+    String rol = validarUsuarioBD(usuario, contrasenia);
+        
         if (rol != null) {
 
             App.setRolUsuario(rol);

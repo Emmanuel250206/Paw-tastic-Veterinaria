@@ -28,6 +28,12 @@ import javafx.scene.control.CustomMenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.geometry.Side;
 import com.mycompany.aplicacion.modelo.UserSession;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import com.mycompany.aplicacion.persistencia.Conexion;
 
 public class StaffController implements Initializable {
 
@@ -113,9 +119,31 @@ public class StaffController implements Initializable {
         headerContainer.setAlignment(Pos.CENTER_RIGHT);
         headerContainer.setPadding(new Insets(0, 0, 10, 0));
         vboxContenedor.getChildren().add(headerContainer);
-
-        ObservableList<Staff> listaStaff = DatosSimulados.getPersonal();
-
+    // conexion BD: cargar lista
+    List<Staff> listaStaff = new ArrayList<>();
+    Conexion conexion = new Conexion();
+    Connection con = conexion.estableceConexion();
+    try {
+        String sql = "SELECT id, nombre, apellidos, tipo_rol, especialidad, telefono, email " +
+             "FROM tb_usuarios WHERE tipo_rol = 'staff'";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            listaStaff.add(new Staff(
+                rs.getInt("id"),
+                rs.getString("nombre"),
+                rs.getString("apellidos"),
+                rs.getString("tipo_rol"),
+                rs.getString("especialidad"),
+                rs.getString("telefono"),
+                rs.getString("email"),
+                ""  
+            ));
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    
         for (Staff s : listaStaff) {
             // Contenedor principal de la tarjeta
             HBox tarjeta = new HBox(15);
@@ -161,7 +189,17 @@ public class StaffController implements Initializable {
             btnEliminar.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;");
             btnEliminar.setCursor(javafx.scene.Cursor.HAND);
             btnEliminar.setOnAction(e -> {
-                DatosSimulados.getPersonal().remove(s);
+            // conexio DB: eliminar
+            Conexion cx = new Conexion();
+            Connection conn = cx.estableceConexion();
+            try {
+                String sql = "DELETE FROM tb_usuarios WHERE id = ?";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setInt(1, s.getId());
+                ps.executeUpdate();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
                 cargarPersonalEnPantalla(); // Recargar visualmente
             });
 
@@ -232,6 +270,20 @@ public class StaffController implements Initializable {
         Label errTel = new Label("Debes rellenar este campo");
         errTel.setStyle(styleError);
         errTel.setVisible(false);
+        
+        TextField tfContrasena = new TextField();
+        tfContrasena.setPromptText("Contraseña");
+        tfContrasena.setStyle(styleTextField);
+        Label errContrasena = new Label("Debes rellenar este campo");
+        errContrasena.setStyle(styleError);
+        errContrasena.setVisible(false);
+        
+        TextField tfEmail = new TextField();
+        tfEmail.setPromptText("Email");
+        tfEmail.setStyle(styleTextField);
+        Label errEmail = new Label("Debes rellenar este campo");
+        errEmail.setStyle(styleError);
+        errEmail.setVisible(false);
 
         Label lbl1 = new Label("Nombre:");
         lbl1.setStyle(styleLabel);
@@ -246,15 +298,29 @@ public class StaffController implements Initializable {
 
         grid.add(lbl1, 0, 0);
         grid.add(new VBox(2, tfNombre, errNombre), 1, 0);
+        
         grid.add(lbl2, 0, 1);
         grid.add(new VBox(2, tfApellidos, errApellidos), 1, 1);
+        
         grid.add(lbl3, 0, 2);
         grid.add(new VBox(2, tfRol, errRol), 1, 2);
+        
         grid.add(lbl4, 0, 3);
         grid.add(new VBox(2, tfEspecialidad, errEspecialidad), 1, 3);
+        
         grid.add(lbl5, 0, 4);
         grid.add(new VBox(2, tfTel, errTel), 1, 4);
-
+        
+        Label lbl6 = new Label("Contraseña:");
+        lbl6.setStyle(styleLabel);
+        grid.add(lbl6, 0, 5);
+        grid.add(new VBox(2, tfContrasena, errContrasena), 1, 5);
+        
+        Label lbl7 = new Label("Email:");
+        lbl7.setStyle(styleLabel);
+        grid.add(lbl7, 0, 6);
+        grid.add(new VBox(2, tfEmail, errEmail), 1, 6);
+        
         dialog.getDialogPane().setContent(grid);
 
         // Estilizar los botones del dialogo nativo usando lookup
@@ -292,7 +358,17 @@ public class StaffController implements Initializable {
                     errTel.setVisible(true);
                     hasError = true;
                 } else errTel.setVisible(false);
-
+                
+                if (tfContrasena.getText().trim().isEmpty()) {
+                    errContrasena.setVisible(true);
+                    hasError = true;
+                } else errContrasena.setVisible(false);
+                
+                if (tfEmail.getText().trim().isEmpty()) {
+                    errEmail.setVisible(true);
+                    hasError = true;
+                } else errEmail.setVisible(false);
+                
                 if (hasError) {
                     event.consume(); // Cancela que se cierre la ventana
                 }
@@ -316,8 +392,26 @@ public class StaffController implements Initializable {
 
         java.util.Optional<Staff> result = dialog.showAndWait();
         result.ifPresent(nuevoStaff -> {
-            DatosSimulados.getPersonal().add(nuevoStaff);
+        //conexion DB: nuevo staff
+        Conexion cx = new Conexion();
+        Connection conn = cx.estableceConexion();
+        try {
+            String sql = "INSERT INTO tb_usuarios (nombre, apellidos, tipo_rol, especialidad, telefono, email, contrasenia) VALUES (?,?,?,?,?,?,?)";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, nuevoStaff.getNombre());
+            ps.setString(2, nuevoStaff.getApellidos());
+            ps.setString(3, nuevoStaff.getRol());
+            ps.setString(4, nuevoStaff.getEspecialidad());
+            ps.setString(5, nuevoStaff.getTelefono());
+            ps.setString(6, tfEmail.getText());
+            ps.setString(7, tfContrasena.getText());
+            ps.executeUpdate();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
             cargarPersonalEnPantalla(); // Recargar visualmente
         });
+        
     }
+    
 }

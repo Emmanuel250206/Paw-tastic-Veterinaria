@@ -129,13 +129,18 @@ public class PrimaryController {
     Conexion conexion = new Conexion();
     Connection con = conexion.estableceConexion();
     try {
-        String sql = "SELECT tipo_rol FROM tb_usuarios WHERE nombre = ? AND contrasenia = ?";
+        // Buscamos tanto por 'nombre' como por 'email' para que puedas ingresar con cualquiera de los dos
+        String sql = "SELECT * FROM tb_usuarios WHERE (nombre = ? OR email = ?) AND contrasenia = ?";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setString(1, usuario);
-        ps.setString(2, contrasena);
+        ps.setString(2, usuario);
+        ps.setString(3, contrasena);
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
-            return rs.getString("tipo_rol");
+            String bdContrasenia = rs.getString("contrasenia");
+            if (contrasena.equals(bdContrasenia)) {
+                return rs.getString("tipo_rol");
+            }
         }
 
     } catch (Exception e) {

@@ -26,3 +26,7 @@ Thumbs.db
 src/main/java/com/mycompany/aplicacion/CConexion.java
 src/main/java/com/mycompany/aplicacion/CConexion.java
 .aider*
+
+.metals/
+target/
+*.db

@@ -12,9 +12,8 @@ public class Conexion {
     private String ip = "localhost";
     private String puerto = "3306";
 
-    private String cadena = "jdbc:mysql://" + ip + ":" + puerto + "/" + bd + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
-
     public Connection estableceConexion() {
+        String cadena = "jdbc:mysql://" + ip + ":" + puerto + "/" + bd + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conectar = DriverManager.getConnection(cadena, usuario, contrasenia);

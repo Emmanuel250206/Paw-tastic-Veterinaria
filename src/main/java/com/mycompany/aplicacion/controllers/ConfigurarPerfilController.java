@@ -38,6 +38,7 @@ public class ConfigurarPerfilController {
     @FXML private TextField txtRol;
     @FXML private TextField txtCedula;
     @FXML private TextField txtHorario;
+    @FXML private Label     lblCedula;
 
     // Avatar seleccionado actualmente en la galería
     private String avatarSeleccionado;
@@ -71,27 +72,62 @@ public class ConfigurarPerfilController {
     // ── initialize ────────────────────────────────────────────────────────────
     @FXML
     public void initialize() {
+        System.out.println("[DEBUG] Current Session Role: " + UserSession.getInstance().getUserRole());
         UserSession session = UserSession.getInstance();
         avatarSeleccionado = session.getCurrentAvatarName();
 
         // Cargar avatar actual en el header
         cargarImagenEnView(imgAvatarActual, avatarSeleccionado);
 
+        // Obtenemos el rol actual de la sesión
+        String currentRole = session.getUserRole();
+
         // Subtítulo con rol
-        lblSubtituloRol.setText(session.getUserRole() + "  ·  Clínica Paw-tastic");
+        lblSubtituloRol.setText(currentRole + "  ·  Clínica Paw-tastic");
 
         // Poblar formulario
         txtNombreCompleto.setText(session.getUserName());
-        txtAlias.setText(session.getUserName());
-        txtRol.setText(session.getUserRole());
+        txtAlias.setText(session.getUserAlias());
         txtHorario.setText("Lunes–Viernes  8:00 – 17:00");
 
-        // Cédula: solo editable para veterinarios
-        boolean esVet = "Veterinario".equalsIgnoreCase(session.getUserRole());
-        txtCedula.setDisable(!esVet);
-        if (!esVet) {
-            txtCedula.setPromptText("No aplica para este rol");
-            txtCedula.setStyle(txtCedula.getStyle() + " -fx-opacity: 0.55;");
+        // Lógica condicional según el rol
+        boolean isStaff = currentRole != null && currentRole.trim().equalsIgnoreCase("Staff");
+        boolean isVet = currentRole != null && currentRole.trim().equalsIgnoreCase("Veterinario");
+
+        // Bloqueo General: el rol nunca debe ser editable por el usuario
+        txtRol.setEditable(false);
+        txtRol.setStyle(txtRol.getStyle() + " -fx-background-color: #EEEEEE; -fx-text-fill: #777777;");
+
+        // Bloqueo Condicional: Si ya se cambió el nombre de usuario previamente
+        if (session.isUsernameChanged()) {
+            txtAlias.setEditable(false);
+            txtAlias.setStyle(txtAlias.getStyle() + " -fx-background-color: #EEEEEE; -fx-text-fill: #777777;");
+        }
+
+        if (isStaff) {
+            txtRol.setText("Staff");
+            
+            // Ocultar Cédula y su Label para Staff
+            txtCedula.setVisible(false);
+            txtCedula.setManaged(false);
+            if (lblCedula != null) {
+                lblCedula.setVisible(false);
+                lblCedula.setManaged(false);
+            }
+        } else {
+            txtRol.setText(currentRole);
+            
+            // Mostrar Cédula para Veterinarios
+            txtCedula.setVisible(true);
+            txtCedula.setManaged(true);
+            txtCedula.setDisable(false);
+            if (isVet) {
+                txtCedula.setEditable(false); // Vet Special Lock
+            }
+            if (lblCedula != null) {
+                lblCedula.setVisible(true);
+                lblCedula.setManaged(true);
+            }
         }
 
         // Construir galería de avatares
@@ -176,19 +212,63 @@ public class ConfigurarPerfilController {
     private void guardarCambios() {
         UserSession session = UserSession.getInstance();
 
+        // Guardar el alias antiguo para buscar el registro correcto en la BD
+        String viejoAlias = session.getUserAlias();
+
         // Persistir valores en el singleton
         String nuevoNombre = txtNombreCompleto.getText().trim();
         if (!nuevoNombre.isEmpty()) {
             session.setUserName(nuevoNombre);
         }
+
+        String nuevoAlias = txtAlias.getText().trim();
+        boolean wasAliasChanged = false;
+        if (!nuevoAlias.isEmpty() && !nuevoAlias.equals(viejoAlias)) {
+            session.setUserAlias(nuevoAlias);
+            session.setUsernameChanged(true);
+            wasAliasChanged = true;
+        }
+
+        // El rol ya no se guarda porque está bloqueado (readonly), pero igual lo sincronizamos
         session.setUserRole(txtRol.getText().trim());
         session.setCurrentAvatarName(avatarSeleccionado);
+
+        // Actualizar en base de datos
+        if (viejoAlias != null && !viejoAlias.isEmpty()) {
+            actualizarBaseDatos(viejoAlias, wasAliasChanged);
+        }
 
         cerrarModal();
 
         // Refrescar el header de la vista activa (si se registró un callback)
         if (refreshCallback != null) {
             refreshCallback.run();
+        }
+    }
+
+    private void actualizarBaseDatos(String viejoAlias, boolean wasAliasChanged) {
+        UserSession session = UserSession.getInstance();
+        com.mycompany.aplicacion.persistencia.Conexion conexion = new com.mycompany.aplicacion.persistencia.Conexion();
+        try (java.sql.Connection con = conexion.estableceConexion()) {
+            if (con != null) {
+                String sql;
+                if (wasAliasChanged) {
+                    // Update login alias (nombre) & set cambio_usuario flag
+                    sql = "UPDATE tb_usuarios SET nombre = ?, cambio_usuario = 1 WHERE nombre = ?";
+                } else {
+                    // Update only alias (even if not modified physically, for consistency)
+                    sql = "UPDATE tb_usuarios SET nombre = ? WHERE nombre = ?";
+                }
+                
+                try (java.sql.PreparedStatement ps = con.prepareStatement(sql)) {
+                    ps.setString(1, session.getUserAlias());
+                    ps.setString(2, viejoAlias);
+                    ps.executeUpdate();
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error al actualizar la base de datos: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -274,3 +354,4 @@ public class ConfigurarPerfilController {
         }
     }
 }
+// End of file

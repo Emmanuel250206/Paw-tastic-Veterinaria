@@ -87,7 +87,7 @@
                           style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-background-color: #F7FAFA; -fx-border-color: #C8E6E0; -fx-border-radius: 7; -fx-background-radius: 7; -fx-padding: 7 10 7 10;" />
 
                <!-- Cédula Profesional -->
-               <Label text="Cédula Profesional" GridPane.rowIndex="3" GridPane.columnIndex="0"
+               <Label fx:id="lblCedula" text="Cédula Profesional" GridPane.rowIndex="3" GridPane.columnIndex="0"
                       style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-text-fill: #555;" />
                <TextField fx:id="txtCedula" GridPane.rowIndex="3" GridPane.columnIndex="1"
                           promptText="Solo Veterinarios"

@@ -124,8 +124,8 @@ public class StaffController implements Initializable {
     Conexion conexion = new Conexion();
     Connection con = conexion.estableceConexion();
     try {
-        String sql = "SELECT id, nombre, apellidos, tipo_rol, especialidad, telefono, email " +
-             "FROM tb_usuarios WHERE tipo_rol = 'staff'";
+        String sql = "SELECT id, nombre, apellidos, tipo_rol, especialidad, telefono, email, cedula " +
+             "FROM tb_usuarios WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista')";
         PreparedStatement ps = con.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
@@ -137,7 +137,8 @@ public class StaffController implements Initializable {
                 rs.getString("especialidad"),
                 rs.getString("telefono"),
                 rs.getString("email"),
-                ""  
+                "",
+                rs.getString("cedula")
             ));
         }
     } catch (Exception e) {
@@ -161,7 +162,8 @@ public class StaffController implements Initializable {
             Label lblNombre = new Label(s.getNombre() + " " + s.getApellidos());
             lblNombre.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
 
-            Label lblRol = new Label(s.getRol() + " | Especialidad: " + s.getEspecialidad());
+            String extraCedula = (s.getCedula() != null && !s.getCedula().trim().isEmpty()) ? " | Cédula: " + s.getCedula() : "";
+            Label lblRol = new Label(s.getRol() + " | Especialidad: " + s.getEspecialidad() + extraCedula);
             lblRol.setStyle("-fx-font-size: 14px; -fx-text-fill: #7f8c8d;");
 
             Label lblTurno = new Label("Turno: " + s.getTurno());
@@ -257,6 +259,23 @@ public class StaffController implements Initializable {
         errRol.setStyle(styleError);
         errRol.setVisible(false);
 
+        TextField tfCedula = new TextField();
+        tfCedula.setPromptText("Cédula Profesional");
+        tfCedula.setStyle(styleTextField);
+        tfCedula.setDisable(true); // Default disabled
+        Label errCedula = new Label("Debes rellenar este campo");
+        errCedula.setStyle(styleError);
+        errCedula.setVisible(false);
+
+        tfRol.textProperty().addListener((obs, oldVal, newVal) -> {
+            boolean isVet = newVal != null && newVal.trim().equalsIgnoreCase("Veterinario");
+            tfCedula.setDisable(!isVet);
+            if (!isVet) {
+                tfCedula.clear();
+                errCedula.setVisible(false);
+            }
+        });
+
         TextField tfEspecialidad = new TextField();
         tfEspecialidad.setPromptText("Especialidad");
         tfEspecialidad.setStyle(styleTextField);
@@ -291,6 +310,8 @@ public class StaffController implements Initializable {
         lbl2.setStyle(styleLabel);
         Label lbl3 = new Label("Rol:");
         lbl3.setStyle(styleLabel);
+        Label lblCedula = new Label("Cédula:");
+        lblCedula.setStyle(styleLabel);
         Label lbl4 = new Label("Especialidad:");
         lbl4.setStyle(styleLabel);
         Label lbl5 = new Label("Teléfono:");
@@ -305,21 +326,24 @@ public class StaffController implements Initializable {
         grid.add(lbl3, 0, 2);
         grid.add(new VBox(2, tfRol, errRol), 1, 2);
         
-        grid.add(lbl4, 0, 3);
-        grid.add(new VBox(2, tfEspecialidad, errEspecialidad), 1, 3);
+        grid.add(lblCedula, 0, 3);
+        grid.add(new VBox(2, tfCedula, errCedula), 1, 3);
         
-        grid.add(lbl5, 0, 4);
-        grid.add(new VBox(2, tfTel, errTel), 1, 4);
+        grid.add(lbl4, 0, 4);
+        grid.add(new VBox(2, tfEspecialidad, errEspecialidad), 1, 4);
+        
+        grid.add(lbl5, 0, 5);
+        grid.add(new VBox(2, tfTel, errTel), 1, 5);
         
         Label lbl6 = new Label("Contraseña:");
         lbl6.setStyle(styleLabel);
-        grid.add(lbl6, 0, 5);
-        grid.add(new VBox(2, tfContrasena, errContrasena), 1, 5);
+        grid.add(lbl6, 0, 6);
+        grid.add(new VBox(2, tfContrasena, errContrasena), 1, 6);
         
         Label lbl7 = new Label("Email:");
         lbl7.setStyle(styleLabel);
-        grid.add(lbl7, 0, 6);
-        grid.add(new VBox(2, tfEmail, errEmail), 1, 6);
+        grid.add(lbl7, 0, 7);
+        grid.add(new VBox(2, tfEmail, errEmail), 1, 7);
         
         dialog.getDialogPane().setContent(grid);
 
@@ -348,6 +372,11 @@ public class StaffController implements Initializable {
                     errRol.setVisible(true);
                     hasError = true;
                 } else errRol.setVisible(false);
+
+                if (tfRol.getText().trim().equalsIgnoreCase("Veterinario") && tfCedula.getText().trim().isEmpty()) {
+                    errCedula.setVisible(true);
+                    hasError = true;
+                } else errCedula.setVisible(false);
 
                 if (tfEspecialidad.getText().trim().isEmpty()) {
                     errEspecialidad.setVisible(true);
@@ -383,9 +412,10 @@ public class StaffController implements Initializable {
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == btnTypeGuardar) {
-                int nuevoId = DatosSimulados.getPersonal().size() + 1;
+                // El ID se autogenerará en la base de datos, usamos 0 temporalmente
+                int nuevoId = 0;
                 return new Staff(nuevoId, tfNombre.getText(), tfApellidos.getText(), tfRol.getText(),
-                        tfEspecialidad.getText(), tfTel.getText(), "nuevo@vet.com", "Matutino");
+                        tfEspecialidad.getText(), tfTel.getText(), tfEmail.getText(), "Matutino", tfCedula.getText());
             }
             return null;
         });
@@ -396,7 +426,7 @@ public class StaffController implements Initializable {
         Conexion cx = new Conexion();
         Connection conn = cx.estableceConexion();
         try {
-            String sql = "INSERT INTO tb_usuarios (nombre, apellidos, tipo_rol, especialidad, telefono, email, contrasenia) VALUES (?,?,?,?,?,?,?)";
+            String sql = "INSERT INTO tb_usuarios (nombre, apellidos, tipo_rol, especialidad, telefono, email, contrasenia, cedula, cambio_usuario) VALUES (?,?,?,?,?,?,?,?,0)";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, nuevoStaff.getNombre());
             ps.setString(2, nuevoStaff.getApellidos());
@@ -405,9 +435,24 @@ public class StaffController implements Initializable {
             ps.setString(5, nuevoStaff.getTelefono());
             ps.setString(6, tfEmail.getText());
             ps.setString(7, tfContrasena.getText());
+            
+            // Lógica Nulls / Vacíos para la cédula si no es veterinario
+            boolean isVet = nuevoStaff.getRol().trim().equalsIgnoreCase("Veterinario");
+            String cedulaValue = isVet && tfCedula.getText() != null ? tfCedula.getText().trim() : "";
+            ps.setString(8, cedulaValue);
+            
             ps.executeUpdate();
         } catch (Exception ex) {
+            String errorMsg = "SQL ERROR al insertar tb_usuarios: " + ex.getMessage();
+            System.err.println(errorMsg);
             ex.printStackTrace();
+            
+            // Mostrar Alert al usuario
+            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+            alert.setTitle("Error de Base de Datos");
+            alert.setHeaderText("Fallo en la creación del Staff");
+            alert.setContentText(errorMsg);
+            alert.showAndWait();
         }
             cargarPersonalEnPantalla(); // Recargar visualmente
         });

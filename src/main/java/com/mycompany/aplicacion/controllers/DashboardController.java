@@ -186,14 +186,37 @@ public class DashboardController {
         }
         crearTarjetaDinamica(cardInventario, "Inventario", DatosSimulados.getInventario().size(), detalleInv);
 
-        // Staff (Info rica)
+        // Staff (Info rica desde Base de Datos)
         java.util.List<String> detalleStaff = new java.util.ArrayList<>();
-        int maxStaff = Math.min(3, DatosSimulados.getPersonal().size());
-        for (int i = 0; i < maxStaff; i++) {
-            var s = DatosSimulados.getPersonal().get(i);
-            detalleStaff.add("• " + s.getNombre() + " (" + s.getEspecialidad() + ")");
+        int totalStaff = 0;
+        try {
+            com.mycompany.aplicacion.persistencia.Conexion cx = new com.mycompany.aplicacion.persistencia.Conexion();
+            java.sql.Connection conn = cx.estableceConexion();
+            if (conn != null) {
+                String sqlCount = "SELECT COUNT(*) FROM tb_usuarios WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista')";
+                java.sql.PreparedStatement psCount = conn.prepareStatement(sqlCount);
+                java.sql.ResultSet rsCount = psCount.executeQuery();
+                if (rsCount.next()) {
+                    totalStaff = rsCount.getInt(1);
+                }
+
+                String sqlTop = "SELECT nombre, especialidad FROM tb_usuarios WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista') LIMIT 3";
+                java.sql.PreparedStatement psTop = conn.prepareStatement(sqlTop);
+                java.sql.ResultSet rsTop = psTop.executeQuery();
+                while(rsTop.next()) {
+                    String nom = rsTop.getString("nombre");
+                    String esp = rsTop.getString("especialidad");
+                    if (esp == null || esp.trim().isEmpty()) {
+                        esp = "General";
+                    }
+                    detalleStaff.add("• " + nom + " (" + esp + ")");
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error cargando staff para el dashboard: " + e.getMessage());
         }
-        crearTarjetaDinamica(cardStaff, "Staff", DatosSimulados.getPersonal().size(), detalleStaff);
+        
+        crearTarjetaDinamica(cardStaff, "Staff", totalStaff, detalleStaff);
     }
 
     private void crearTarjetaDinamica(VBox tarjeta, String titulo, int cantidad, java.util.List<String> detallesList) {

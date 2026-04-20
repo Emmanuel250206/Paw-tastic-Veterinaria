@@ -10,9 +10,10 @@ public class Staff {
     private String telefono;
     private String email;
     private String turno;
+    private String cedula;
 
     public Staff(int id, String nombre, String apellidos, String rol, String especialidad, String telefono,
-            String email, String turno) {
+            String email, String turno, String cedula) {
         this.id = id;
         this.nombre = nombre;
         this.apellidos = apellidos;
@@ -21,7 +22,11 @@ public class Staff {
         this.telefono = telefono;
         this.email = email;
         this.turno = turno;
+        this.cedula = cedula;
     }
+
+    public String getCedula() { return cedula; }
+    public void setCedula(String cedula) { this.cedula = cedula; }
 
     public int getId() {
         return id;

@@ -20,9 +20,10 @@ public class UserSession {
     private static UserSession instance;
 
     private UserSession() {
-        // Valores por defecto de sesión
-        userName         = new SimpleStringProperty("Dr. Emmanuel");
-        userRole         = new SimpleStringProperty("Veterinario");
+        // Valores por defecto
+        userName = new SimpleStringProperty("Dr. Emmanuel"); // Nombre real
+        userAlias = new SimpleStringProperty("emmanuel_v"); // Alias/Username
+        userRole = new SimpleStringProperty("Veterinario");
         currentAvatarName = new SimpleStringProperty("Ava_huella.png");
     }
 
@@ -41,11 +42,17 @@ public class UserSession {
     /** Nombre completo del usuario logueado. */
     private final StringProperty userName;
 
+    /** Nombre de usuario (alias para login). */
+    private final StringProperty userAlias;
+
     /** Rol del usuario (p. ej. "Veterinario", "Staff"). */
     private final StringProperty userRole;
 
     /** Nombre del archivo de avatar dentro de /images/ (p. ej. "Ava_huella.png"). */
     private final StringProperty currentAvatarName;
+    
+    /** Flag que indica si el usuario ya cambió su alias de login */
+    private boolean usernameChanged;
 
     // --- Accessors userName ---
     public StringProperty userNameProperty()       { return userName; }
@@ -57,10 +64,27 @@ public class UserSession {
     public String getUserRole()                    { return userRole.get(); }
     public void   setUserRole(String role)         { userRole.set(role); }
 
+    // --- Accessors userAlias ---
+    public StringProperty userAliasProperty() {
+        return userAlias;
+    }
+
+    public String getUserAlias() {
+        return userAlias.get();
+    }
+
+    public void setUserAlias(String alias) {
+        userAlias.set(alias);
+    }
+
     // --- Accessors currentAvatarName ---
     public StringProperty currentAvatarNameProperty() { return currentAvatarName; }
     public String getCurrentAvatarName()              { return currentAvatarName.get(); }
     public void   setCurrentAvatarName(String name)   { currentAvatarName.set(name); }
+    
+    // --- Accessors usernameChanged ---
+    public boolean isUsernameChanged() { return usernameChanged; }
+    public void setUsernameChanged(boolean usernameChanged) { this.usernameChanged = usernameChanged; }
 
     // ═══════════════════════════════════════════
     //  Utilidad de avatar

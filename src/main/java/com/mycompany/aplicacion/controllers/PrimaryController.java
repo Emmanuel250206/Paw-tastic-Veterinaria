@@ -126,29 +126,56 @@ public class PrimaryController {
         return valido;
     }
     public String validarUsuarioBD(String usuario, String contrasena) {
-    Conexion conexion = new Conexion();
-    Connection con = conexion.estableceConexion();
-    try {
-        // Buscamos tanto por 'nombre' como por 'email' para que puedas ingresar con cualquiera de los dos
-        String sql = "SELECT * FROM tb_usuarios WHERE (nombre = ? OR email = ?) AND contrasenia = ?";
-        PreparedStatement ps = con.prepareStatement(sql);
-        ps.setString(1, usuario);
-        ps.setString(2, usuario);
-        ps.setString(3, contrasena);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            String bdContrasenia = rs.getString("contrasenia");
-            if (contrasena.equals(bdContrasenia)) {
-                return rs.getString("tipo_rol");
+        Conexion conexion = new Conexion();
+        Connection con = conexion.estableceConexion();
+        try {
+            String sql = "SELECT * FROM tb_usuarios WHERE nombre = ? AND contrasenia = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, usuario);
+            ps.setString(2, contrasena);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                String bdContrasenia = rs.getString("contrasenia");
+                if (contrasena.equals(bdContrasenia)) {
+                    
+                    // Extraer los datos correctos de la base de datos
+                    String dbNombre = rs.getString("nombre");
+                    String dbApellidos = rs.getString("apellidos");
+                    String dbRol = rs.getString("tipo_rol");
+                    boolean dbCambio = rs.getBoolean("cambio_usuario");
+                    
+                    String nombreCompleto = (dbNombre != null ? dbNombre : "") + " " + (dbApellidos != null ? dbApellidos : "");
+                    nombreCompleto = nombreCompleto.trim();
+                    
+                    // Llenar la sesión activa (el 'backpack')
+                    com.mycompany.aplicacion.modelo.UserSession session = com.mycompany.aplicacion.modelo.UserSession.getInstance();
+                    session.setUserName(nombreCompleto.isEmpty() ? "Usuario sin Nombre" : nombreCompleto);
+                    session.setUserAlias(dbNombre != null ? dbNombre : "Sin Alias");
+                    session.setUsernameChanged(dbCambio);
+                    
+                    if (dbRol != null) {
+                        if (dbRol.trim().equalsIgnoreCase("Staff")) {
+                            session.setUserRole("Staff");
+                        } else if (dbRol.trim().equalsIgnoreCase("Veterinario")) {
+                            session.setUserRole("Veterinario");
+                        } else {
+                            session.setUserRole(dbRol.trim());
+                        }
+                    } else {
+                        session.setUserRole("Desconocido");
+                    }
+                    
+                    return dbRol;
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-    } catch (Exception e) {
-        e.printStackTrace();
+        // Si llegamos hasta aquí, es porque la consulta falló o el acceso fue denegado
+        com.mycompany.aplicacion.modelo.UserSession.clear();
+        return null;
     }
-
-    return null;
-}
 
     @FXML
     private void iniciarSesion() throws IOException {
@@ -197,6 +224,8 @@ public class PrimaryController {
             }
 
         } else {
+            // Si validación es null, asegurar limpieza por seguridad
+            com.mycompany.aplicacion.modelo.UserSession.clear();
             txtErrorDatos.setText("Usuario o contraseña incorrectos");
             txtErrorDatos.setVisible(true);
         }

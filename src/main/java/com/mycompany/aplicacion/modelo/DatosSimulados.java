@@ -9,7 +9,6 @@ import javafx.collections.ObservableList;
 
 public class DatosSimulados {
      private static ObservableList<Mascota> mascotas = null;
-     private static ObservableList<Staff> personal = null;
      private static ObservableList<Citas> citas = null;
      private static ObservableList<Inventario> inventario = null;
 
@@ -109,39 +108,7 @@ public class DatosSimulados {
         return resultados;
     }
 
-    // DATOS SIMULADOS STAFF
 
-    public static ObservableList<Staff> getPersonal() {
-        if (personal == null) {
-            cargarPersonal();
-        }
-        return personal;
-    }
-
-    private static void cargarPersonal() {
-        personal = FXCollections.observableArrayList();
-
-        // Staff 1
-        Staff s1 = new Staff(1, "Ana", "López", "Veterinario", "General", "555-1001", "ana.lopez@vet.com", "Mañana");
-
-        // Staff 2
-        Staff s2 = new Staff(2, "Carlos", "Martínez", "Veterinario", "Cirugía", "555-1002", "carlos.m@vet.com",
-                "Tarde");
-
-        // Staff 3
-        Staff s3 = new Staff(3, "Laura", "Gómez", "Asistente", "Ninguna", "555-1003", "laura.g@vet.com", "Mañana");
-
-        // Staff 4
-        Staff s4 = new Staff(4, "Diego", "Sánchez", "Recepcionista", "Atención al cliente", "555-1004",
-                "diego.s@vet.com", "Mañana");
-
-        // Staff 5
-        Staff s5 = new Staff(5, "Elena", "Torres", "Asistente", "Ninguna", "555-1005", "elena.t@vet.com", "Tarde");
-
-        personal.addAll(s1, s2, s3, s4, s5);
-    }
-
-    // DATOS SIMULADOS CITAS
 
     public static ObservableList<Citas> getCitas() {
         if (citas == null) {

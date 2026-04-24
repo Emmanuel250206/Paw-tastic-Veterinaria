@@ -251,14 +251,8 @@ public class ConfigurarPerfilController {
         com.mycompany.aplicacion.persistencia.Conexion conexion = new com.mycompany.aplicacion.persistencia.Conexion();
         try (java.sql.Connection con = conexion.estableceConexion()) {
             if (con != null) {
-                String sql;
-                if (wasAliasChanged) {
-                    // Update login alias (nombre) & set cambio_usuario flag
-                    sql = "UPDATE tb_usuarios SET nombre = ?, cambio_usuario = 1 WHERE nombre = ?";
-                } else {
-                    // Update only alias (even if not modified physically, for consistency)
-                    sql = "UPDATE tb_usuarios SET nombre = ? WHERE nombre = ?";
-                }
+                // Update only alias
+                String sql = "UPDATE tb_usuarios SET nombre = ? WHERE nombre = ?";
                 
                 try (java.sql.PreparedStatement ps = con.prepareStatement(sql)) {
                     ps.setString(1, session.getUserAlias());

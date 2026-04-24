@@ -426,7 +426,7 @@ public class StaffController implements Initializable {
         Conexion cx = new Conexion();
         Connection conn = cx.estableceConexion();
         try {
-            String sql = "INSERT INTO tb_usuarios (nombre, apellidos, tipo_rol, especialidad, telefono, email, contrasenia, cedula, cambio_usuario) VALUES (?,?,?,?,?,?,?,?,0)";
+            String sql = "INSERT INTO tb_usuarios (nombre, apellidos, tipo_rol, especialidad, telefono, email, contrasenia, cedula) VALUES (?,?,?,?,?,?,?,?)";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, nuevoStaff.getNombre());
             ps.setString(2, nuevoStaff.getApellidos());

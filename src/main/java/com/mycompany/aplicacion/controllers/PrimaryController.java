@@ -142,7 +142,6 @@ public class PrimaryController {
                     String dbNombre = rs.getString("nombre");
                     String dbApellidos = rs.getString("apellidos");
                     String dbRol = rs.getString("tipo_rol");
-                    boolean dbCambio = rs.getBoolean("cambio_usuario");
                     
                     String nombreCompleto = (dbNombre != null ? dbNombre : "") + " " + (dbApellidos != null ? dbApellidos : "");
                     nombreCompleto = nombreCompleto.trim();
@@ -151,7 +150,7 @@ public class PrimaryController {
                     com.mycompany.aplicacion.modelo.UserSession session = com.mycompany.aplicacion.modelo.UserSession.getInstance();
                     session.setUserName(nombreCompleto.isEmpty() ? "Usuario sin Nombre" : nombreCompleto);
                     session.setUserAlias(dbNombre != null ? dbNombre : "Sin Alias");
-                    session.setUsernameChanged(dbCambio);
+                    session.setUsernameChanged(false);
                     
                     if (dbRol != null) {
                         if (dbRol.trim().equalsIgnoreCase("Staff")) {

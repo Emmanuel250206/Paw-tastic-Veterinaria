@@ -232,12 +232,25 @@ public class DashboardController {
         tarjeta.setCursor(javafx.scene.Cursor.HAND);
         tarjeta.setStyle("-fx-background-color: linear-gradient(to bottom right, #ffffff, " + colorBg + "); -fx-background-radius: 20;");
 
-        // Top Header HBox (Title + Icon)
-        HBox header = new HBox();
-        header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        // Top Title
         Label lblTitulo = new Label(titulo);
         lblTitulo.setStyle("-fx-text-fill: #3d8d7a;");
+
+        // Middle Box (Number + Icon)
+        HBox middleBox = new HBox();
+        middleBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         
+        VBox numberBox = new VBox(2);
+        numberBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        numberBox.setPadding(new javafx.geometry.Insets(5, 0, 15, 0));
+        
+        Label lblCantidad = new Label(String.valueOf(cantidad));
+        lblCantidad.setStyle("-fx-text-fill: #3D8D7A; -fx-font-weight: bold; -fx-font-size: 40px;");
+        
+        Label lblSubLabel = new Label(subLabelText.toUpperCase());
+        lblSubLabel.setStyle("-fx-text-fill: #b0bec5; -fx-font-weight: bold;");
+        numberBox.getChildren().addAll(lblCantidad, lblSubLabel);
+
         javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
         HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
         
@@ -253,19 +266,7 @@ public class DashboardController {
         iconBg.setPadding(new javafx.geometry.Insets(8));
         iconBg.setEffect(new javafx.scene.effect.DropShadow(5, javafx.scene.paint.Color.rgb(0,0,0,0.05)));
         
-        header.getChildren().addAll(lblTitulo, spacer, iconBg);
-
-        // Big Number & Sub-label
-        VBox numberBox = new VBox(2); // increased spacing slightly for caps
-        numberBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        numberBox.setPadding(new javafx.geometry.Insets(10, 0, 15, 0));
-        
-        Label lblCantidad = new Label(String.valueOf(cantidad));
-        lblCantidad.setStyle("-fx-text-fill: #3D8D7A; -fx-font-weight: bold;");
-        
-        Label lblSubLabel = new Label(subLabelText.toUpperCase());
-        lblSubLabel.setStyle("-fx-text-fill: #b0bec5; -fx-font-weight: bold;");
-        numberBox.getChildren().addAll(lblCantidad, lblSubLabel);
+        middleBox.getChildren().addAll(numberBox, spacer, iconBg);
 
         // Details container
         VBox detallesContainer = new VBox();
@@ -282,7 +283,7 @@ public class DashboardController {
             labelsDetalle.add(lblDetalle);
         }
 
-        tarjeta.getChildren().addAll(header, numberBox, detallesContainer);
+        tarjeta.getChildren().addAll(lblTitulo, middleBox, detallesContainer);
 
         // --- LÓGICA DE FUENTES DINÁMICAS (RESPONSIVE POR ESCALONES) ---
         // Al usar escalones (Tiers) evitamos el recálculo circular que causa el parpadeo
@@ -306,7 +307,7 @@ public class DashboardController {
             detallesContainer.setSpacing(4 * f);
 
             lblTitulo.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.BOLD, 18.0 * f));
-            lblCantidad.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.BOLD, 42.0 * f));
+            lblCantidad.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.BOLD, 40.0 * f));
             lblSubLabel.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.BOLD, 10.0 * f));
             lblSubtitulo.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.BOLD, 13.0 * f));
 
@@ -322,18 +323,53 @@ public class DashboardController {
         tarjeta.setAlignment(javafx.geometry.Pos.TOP_LEFT);
         tarjeta.setPadding(new javafx.geometry.Insets(20, 25, 20, 25));
         tarjeta.setCursor(javafx.scene.Cursor.HAND);
-        tarjeta.setSpacing(20);
+        tarjeta.setSpacing(10);
 
-        // Titulo
+        tarjeta.setStyle("-fx-background-color: linear-gradient(to bottom right, #ffffff, #E1BEE7); -fx-background-radius: 20;");
+
+        // Top Title
         Label lblTitulo = new Label("Staff");
-        lblTitulo.setStyle("-fx-text-fill: #3d8d7a; -fx-font-size: 18px; -fx-font-weight: bold;");
-        tarjeta.getChildren().add(lblTitulo);
+        lblTitulo.setStyle("-fx-text-fill: #3D8D7A; -fx-font-size: 18px; -fx-font-weight: bold;");
+        
+        // Middle Box (Number + Icon)
+        HBox middleBox = new HBox();
+        middleBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        
+        VBox numberBox = new VBox(2);
+        numberBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        numberBox.setPadding(new javafx.geometry.Insets(5, 0, 15, 0));
+        
+        Label lblCantidad = new Label("3");
+        lblCantidad.setStyle("-fx-text-fill: #3D8D7A; -fx-font-weight: bold; -fx-font-size: 40px;");
+        
+        Label lblSubLabel = new Label("ACTIVOS");
+        lblSubLabel.setStyle("-fx-text-fill: #b0bec5; -fx-font-weight: bold;");
+        numberBox.getChildren().addAll(lblCantidad, lblSubLabel);
+
+        javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
+        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+        
+        ImageView icon = new ImageView();
+        try {
+            icon.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/images/Icon_Staff.png")));
+        } catch(Exception e) { System.err.println("Icono no encontrado: /images/Icon_Staff.png"); }
+        icon.setFitWidth(24);
+        icon.setFitHeight(24);
+        
+        javafx.scene.layout.StackPane iconBg = new javafx.scene.layout.StackPane(icon);
+        iconBg.setStyle("-fx-background-color: white; -fx-background-radius: 50;");
+        iconBg.setPadding(new javafx.geometry.Insets(8));
+        iconBg.setEffect(new javafx.scene.effect.DropShadow(5, javafx.scene.paint.Color.rgb(0,0,0,0.05)));
+        
+        middleBox.getChildren().addAll(numberBox, spacer, iconBg);
+
+        tarjeta.getChildren().addAll(lblTitulo, middleBox);
 
         try {
             com.mycompany.aplicacion.persistencia.Conexion cx = new com.mycompany.aplicacion.persistencia.Conexion();
             java.sql.Connection conn = cx.estableceConexion();
             if (conn != null) {
-                String sqlTop = "SELECT id, nombre, apellidos, tipo_rol FROM tb_usuarios WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista') LIMIT 4";
+                String sqlTop = "SELECT id, nombre, apellidos, tipo_rol FROM tb_usuarios WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista') LIMIT 3";
                 java.sql.PreparedStatement psTop = conn.prepareStatement(sqlTop);
                 java.sql.ResultSet rsTop = psTop.executeQuery();
                 while(rsTop.next()) {
@@ -352,7 +388,7 @@ public class DashboardController {
                     }
 
                     // Create row
-                    HBox row = new HBox(12);
+                    HBox row = new HBox(10);
                     row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
                     ImageView avatar = new ImageView();
@@ -363,17 +399,17 @@ public class DashboardController {
                     } catch(Exception ex) {
                         System.err.println("No se pudo cargar " + avatarName + ": " + ex.getMessage());
                     }
-                    avatar.setFitWidth(40);
-                    avatar.setFitHeight(40);
-                    javafx.scene.shape.Circle clip = new javafx.scene.shape.Circle(20, 20, 20);
+                    avatar.setFitWidth(32);
+                    avatar.setFitHeight(32);
+                    javafx.scene.shape.Circle clip = new javafx.scene.shape.Circle(16, 16, 16);
                     avatar.setClip(clip);
 
                     VBox textContainer = new VBox(2);
                     textContainer.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
                     Label lblNombre = new Label(nombreCompleto);
-                    lblNombre.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2c3e50;");
+                    lblNombre.setStyle("-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #2c3e50;");
                     Label lblRol = new Label(rol);
-                    lblRol.setStyle("-fx-font-size: 12px; -fx-text-fill: #95a5a6;");
+                    lblRol.setStyle("-fx-font-size: 11px; -fx-text-fill: #95a5a6;");
                     textContainer.getChildren().addAll(lblNombre, lblRol);
 
                     row.getChildren().addAll(avatar, textContainer);

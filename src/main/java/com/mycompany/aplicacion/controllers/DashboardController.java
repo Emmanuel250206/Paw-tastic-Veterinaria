@@ -47,6 +47,9 @@ public class DashboardController {
     @FXML
     private HBox hboxPerfil;
 
+    @FXML
+    private Label lblSaludo;
+
     /** Instancia persistente para poder hacer toggle show/hide. */
     private ContextMenu menuPerfil;
 
@@ -56,6 +59,8 @@ public class DashboardController {
         UserSession.loadProfileImage(imgPerfilHeader);
         lblNombreHeader.setText(UserSession.getInstance().getUserName());
         lblRolHeader.setText(UserSession.getInstance().getUserRole());
+
+        generarSaludoDinamico();
 
         // Construir el ContextMenu una sola vez
         construirMenuPerfil();
@@ -69,6 +74,33 @@ public class DashboardController {
         }
 
         renderizarTarjetas();
+    }
+
+    private void generarSaludoDinamico() {
+        if (lblSaludo == null) return;
+        
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        int hour = now.getHour();
+        java.time.DayOfWeek dayOfWeek = now.getDayOfWeek();
+        
+        String nombre = UserSession.getInstance().getUserName();
+        if (nombre != null && nombre.contains(" ")) {
+            nombre = nombre.split(" ")[0];
+        }
+
+        String[] dias = {"lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"};
+        String diaStr = dias[dayOfWeek.getValue() - 1];
+
+        String saludo;
+        if (hour >= 5 && hour < 12) {
+            saludo = "¡Buenos días! Excelente " + diaStr + ", " + nombre + " ☀️";
+        } else if (hour >= 12 && hour < 19) {
+            saludo = "¡Buenas tardes! Es un gusto verte, " + nombre + " ⛅";
+        } else {
+            saludo = "¡Buenas noches! Excelente " + diaStr + ", " + nombre + " 🌙";
+        }
+
+        lblSaludo.setText(saludo);
     }
 
     private void construirMenuPerfil() {
@@ -166,7 +198,7 @@ public class DashboardController {
             }
             detalleCitas.add("• " + c.getNombreMascota() + " - " + c.getMotivo() + " (" + horaStr + ")");
         }
-        crearTarjetaDinamica(cardCitas, "Citas pendientes", DatosSimulados.getCitas().size(), detalleCitas);
+        crearTarjetaDinamica(cardCitas, "Citas pendientes", DatosSimulados.getCitas().size(), "Próximas hoy", "/images/Icon_Citas.png", "#E3F2FD", detalleCitas);
 
         // Mascotas (Info rica)
         java.util.List<String> detalleMascotas = new java.util.ArrayList<>();
@@ -175,7 +207,7 @@ public class DashboardController {
             var m = DatosSimulados.getMascotas().get(i);
             detalleMascotas.add("• " + m.getNombre() + " (" + m.getRaza() + ")");
         }
-        crearTarjetaDinamica(cardMascotas, "Mascotas", DatosSimulados.getMascotas().size(), detalleMascotas);
+        crearTarjetaDinamica(cardMascotas, "Mascotas", DatosSimulados.getMascotas().size(), "Registradas", "/images/Icon_Mascotas.png", "#E8F5E9", detalleMascotas);
 
         // Inventario (Info rica)
         java.util.List<String> detalleInv = new java.util.ArrayList<>();
@@ -184,59 +216,58 @@ public class DashboardController {
             var inv = DatosSimulados.getInventario().get(i);
             detalleInv.add("• " + inv.getNombreProducto() + " - Stock: " + inv.getCantidad());
         }
-        crearTarjetaDinamica(cardInventario, "Inventario", DatosSimulados.getInventario().size(), detalleInv);
+        crearTarjetaDinamica(cardInventario, "Inventario", DatosSimulados.getInventario().size(), "En stock", "/images/Icon_Inventario.png", "#FFF3E0", detalleInv);
 
-        // Staff (Info rica desde Base de Datos)
-        java.util.List<String> detalleStaff = new java.util.ArrayList<>();
-        int totalStaff = 0;
-        try {
-            com.mycompany.aplicacion.persistencia.Conexion cx = new com.mycompany.aplicacion.persistencia.Conexion();
-            java.sql.Connection conn = cx.estableceConexion();
-            if (conn != null) {
-                String sqlCount = "SELECT COUNT(*) FROM tb_usuarios WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista')";
-                java.sql.PreparedStatement psCount = conn.prepareStatement(sqlCount);
-                java.sql.ResultSet rsCount = psCount.executeQuery();
-                if (rsCount.next()) {
-                    totalStaff = rsCount.getInt(1);
-                }
-
-                String sqlTop = "SELECT nombre, especialidad FROM tb_usuarios WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista') LIMIT 3";
-                java.sql.PreparedStatement psTop = conn.prepareStatement(sqlTop);
-                java.sql.ResultSet rsTop = psTop.executeQuery();
-                while(rsTop.next()) {
-                    String nom = rsTop.getString("nombre");
-                    String esp = rsTop.getString("especialidad");
-                    if (esp == null || esp.trim().isEmpty()) {
-                        esp = "General";
-                    }
-                    detalleStaff.add("• " + nom + " (" + esp + ")");
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Error cargando staff para el dashboard: " + e.getMessage());
-        }
-        
-        crearTarjetaDinamica(cardStaff, "Staff", totalStaff, detalleStaff);
+        // Staff (Activity List Style)
+        populateStaffCard(cardStaff);
     }
 
-    private void crearTarjetaDinamica(VBox tarjeta, String titulo, int cantidad, java.util.List<String> detallesList) {
+    private void crearTarjetaDinamica(VBox tarjeta, String titulo, int cantidad, String subLabelText, String iconPath, String colorBg, java.util.List<String> detallesList) {
         if (tarjeta == null)
             return;
 
         tarjeta.getChildren().clear();
-        tarjeta.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-
-        // PADDING inicial.
+        tarjeta.setAlignment(javafx.geometry.Pos.TOP_LEFT);
         tarjeta.setPadding(new javafx.geometry.Insets(20, 25, 20, 25));
         tarjeta.setCursor(javafx.scene.Cursor.HAND);
+        tarjeta.setStyle("-fx-background-color: linear-gradient(to bottom right, #ffffff, " + colorBg + "); -fx-background-radius: 20;");
 
-        // Se asignan los COLORES fijos mediante CSS una sola vez.
+        // Top Header HBox (Title + Icon)
+        HBox header = new HBox();
+        header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         Label lblTitulo = new Label(titulo);
         lblTitulo.setStyle("-fx-text-fill: #3d8d7a;");
+        
+        javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
+        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+        
+        ImageView icon = new ImageView();
+        try {
+            icon.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream(iconPath)));
+        } catch(Exception e) { System.err.println("Icono no encontrado: " + iconPath); }
+        icon.setFitWidth(24);
+        icon.setFitHeight(24);
+        
+        javafx.scene.layout.StackPane iconBg = new javafx.scene.layout.StackPane(icon);
+        iconBg.setStyle("-fx-background-color: white; -fx-background-radius: 50;");
+        iconBg.setPadding(new javafx.geometry.Insets(8));
+        iconBg.setEffect(new javafx.scene.effect.DropShadow(5, javafx.scene.paint.Color.rgb(0,0,0,0.05)));
+        
+        header.getChildren().addAll(lblTitulo, spacer, iconBg);
 
+        // Big Number & Sub-label
+        VBox numberBox = new VBox(2); // increased spacing slightly for caps
+        numberBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        numberBox.setPadding(new javafx.geometry.Insets(10, 0, 15, 0));
+        
         Label lblCantidad = new Label(String.valueOf(cantidad));
-        lblCantidad.setStyle("-fx-text-fill: #2c3e50;");
+        lblCantidad.setStyle("-fx-text-fill: #3D8D7A; -fx-font-weight: bold;");
+        
+        Label lblSubLabel = new Label(subLabelText.toUpperCase());
+        lblSubLabel.setStyle("-fx-text-fill: #b0bec5; -fx-font-weight: bold;");
+        numberBox.getChildren().addAll(lblCantidad, lblSubLabel);
 
+        // Details container
         VBox detallesContainer = new VBox();
         Label lblSubtitulo = new Label(detallesList.isEmpty() ? "Sin registros recientes" : "Registros recientes:");
         lblSubtitulo.setStyle("-fx-text-fill: #7f8c8d;");
@@ -251,11 +282,10 @@ public class DashboardController {
             labelsDetalle.add(lblDetalle);
         }
 
-        tarjeta.getChildren().addAll(lblTitulo, lblCantidad, detallesContainer);
+        tarjeta.getChildren().addAll(header, numberBox, detallesContainer);
 
         // --- LÓGICA DE FUENTES DINÁMICAS (RESPONSIVE POR ESCALONES) ---
-        // Al usar escalones (Tiers) evitamos el recálculo circular que causa el
-        // parpadeo (jitter) en el GridPane.
+        // Al usar escalones (Tiers) evitamos el recálculo circular que causa el parpadeo
         tarjeta.widthProperty().addListener((obs, oldVal, newVal) -> {
             double w = newVal.doubleValue();
             double f = 1.0;
@@ -267,8 +297,6 @@ public class DashboardController {
             } else if (w > 400) {
                 f = 1.15;
             }
-            // Si el factor no cambia significativamente, no recaculamos (Evita
-            // re-renderizado infinito)
             if (tarjeta.getUserData() != null && (double) tarjeta.getUserData() == f) {
                 return;
             }
@@ -278,13 +306,83 @@ public class DashboardController {
             detallesContainer.setSpacing(4 * f);
 
             lblTitulo.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.BOLD, 18.0 * f));
-            lblCantidad.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.BOLD, 36.0 * f));
+            lblCantidad.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.BOLD, 42.0 * f));
+            lblSubLabel.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.BOLD, 10.0 * f));
             lblSubtitulo.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.BOLD, 13.0 * f));
 
             for (Label lDet : labelsDetalle) {
                 lDet.setFont(javafx.scene.text.Font.font("System", javafx.scene.text.FontWeight.NORMAL, 13.0 * f));
             }
         });
+    }
+
+    private void populateStaffCard(VBox tarjeta) {
+        if (tarjeta == null) return;
+        tarjeta.getChildren().clear();
+        tarjeta.setAlignment(javafx.geometry.Pos.TOP_LEFT);
+        tarjeta.setPadding(new javafx.geometry.Insets(20, 25, 20, 25));
+        tarjeta.setCursor(javafx.scene.Cursor.HAND);
+        tarjeta.setSpacing(20);
+
+        // Titulo
+        Label lblTitulo = new Label("Staff");
+        lblTitulo.setStyle("-fx-text-fill: #3d8d7a; -fx-font-size: 18px; -fx-font-weight: bold;");
+        tarjeta.getChildren().add(lblTitulo);
+
+        try {
+            com.mycompany.aplicacion.persistencia.Conexion cx = new com.mycompany.aplicacion.persistencia.Conexion();
+            java.sql.Connection conn = cx.estableceConexion();
+            if (conn != null) {
+                String sqlTop = "SELECT id, nombre, apellidos, tipo_rol FROM tb_usuarios WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista') LIMIT 4";
+                java.sql.PreparedStatement psTop = conn.prepareStatement(sqlTop);
+                java.sql.ResultSet rsTop = psTop.executeQuery();
+                while(rsTop.next()) {
+                    int id = rsTop.getInt("id");
+                    String nom = rsTop.getString("nombre");
+                    String ape = rsTop.getString("apellidos");
+                    String nombreCompleto = (nom != null ? nom : "") + " " + (ape != null ? ape : "");
+                    nombreCompleto = nombreCompleto.trim();
+                    if (nombreCompleto.isEmpty()) nombreCompleto = "Usuario";
+
+                    String rol = rsTop.getString("tipo_rol");
+                    if (rol != null && !rol.isEmpty()) {
+                        rol = rol.substring(0, 1).toUpperCase() + rol.substring(1).toLowerCase();
+                    } else {
+                        rol = "Staff";
+                    }
+
+                    // Create row
+                    HBox row = new HBox(12);
+                    row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
+                    ImageView avatar = new ImageView();
+                    String[] avas = {"Ava_perro1.png", "Ava_perro2.png", "Ava_gato.png", "Ava_conejo.png", "Ava_perro3.png", "Ava_perro4.png"};
+                    String avatarName = avas[id % avas.length];
+                    try {
+                        avatar.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/images/" + avatarName)));
+                    } catch(Exception ex) {
+                        System.err.println("No se pudo cargar " + avatarName + ": " + ex.getMessage());
+                    }
+                    avatar.setFitWidth(40);
+                    avatar.setFitHeight(40);
+                    javafx.scene.shape.Circle clip = new javafx.scene.shape.Circle(20, 20, 20);
+                    avatar.setClip(clip);
+
+                    VBox textContainer = new VBox(2);
+                    textContainer.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+                    Label lblNombre = new Label(nombreCompleto);
+                    lblNombre.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2c3e50;");
+                    Label lblRol = new Label(rol);
+                    lblRol.setStyle("-fx-font-size: 12px; -fx-text-fill: #95a5a6;");
+                    textContainer.getChildren().addAll(lblNombre, lblRol);
+
+                    row.getChildren().addAll(avatar, textContainer);
+                    tarjeta.getChildren().add(row);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error cargando staff: " + e.getMessage());
+        }
     }
 
     // Método para que el VeterinarioController se "presente"

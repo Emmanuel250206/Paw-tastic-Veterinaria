@@ -20,7 +20,7 @@
          <children>
             <ImageView fitHeight="200.0" fitWidth="199.0">
                <image>
-                  <Image url="@../images/logoPaw.png" />
+                  <Image url="@../images/logo_paw.png" />
                </image>
                <VBox.margin>
                   <Insets top="-90.0" />

@@ -98,11 +98,9 @@ public class ConfigurarPerfilController {
         txtRol.setEditable(false);
         txtRol.setStyle(txtRol.getStyle() + " -fx-background-color: #EEEEEE; -fx-text-fill: #777777;");
 
-        // Bloqueo Condicional: Si ya se cambió el nombre de usuario previamente
-        if (session.isUsernameChanged()) {
-            txtAlias.setEditable(false);
-            txtAlias.setStyle(txtAlias.getStyle() + " -fx-background-color: #EEEEEE; -fx-text-fill: #777777;");
-        }
+        // Bloqueo Condicional: El usuario/alias ahora se autogenera, por lo que es de solo lectura
+        txtAlias.setEditable(false);
+        txtAlias.setStyle(txtAlias.getStyle() + " -fx-background-color: #EEEEEE; -fx-text-fill: #777777;");
 
         if (isStaff) {
             txtRol.setText("Staff");
@@ -212,31 +210,30 @@ public class ConfigurarPerfilController {
     private void guardarCambios() {
         UserSession session = UserSession.getInstance();
 
-        // Guardar el alias antiguo para buscar el registro correcto en la BD
-        String viejoAlias = session.getUserAlias();
+        String full = txtNombreCompleto.getText().trim();
+        String n = full;
+        String a = "";
+        int spaceIdx = full.indexOf(" ");
+        if (spaceIdx > 0) {
+            n = full.substring(0, spaceIdx).trim();
+            a = full.substring(spaceIdx + 1).trim();
+        }
+
+        String genUsuario = "user";
+        if (!n.isEmpty() && !a.isEmpty()) {
+            genUsuario = n.substring(0, 1).toLowerCase() + a.split(" ")[0].toLowerCase();
+        } else if (!n.isEmpty()) {
+            genUsuario = n.toLowerCase();
+        }
 
         // Persistir valores en el singleton
-        String nuevoNombre = txtNombreCompleto.getText().trim();
-        if (!nuevoNombre.isEmpty()) {
-            session.setUserName(nuevoNombre);
-        }
-
-        String nuevoAlias = txtAlias.getText().trim();
-        boolean wasAliasChanged = false;
-        if (!nuevoAlias.isEmpty() && !nuevoAlias.equals(viejoAlias)) {
-            session.setUserAlias(nuevoAlias);
-            session.setUsernameChanged(true);
-            wasAliasChanged = true;
-        }
-
-        // El rol ya no se guarda porque está bloqueado (readonly), pero igual lo sincronizamos
+        session.setUserName(full);
+        session.setUserAlias(genUsuario);
         session.setUserRole(txtRol.getText().trim());
         session.setCurrentAvatarName(avatarSeleccionado);
 
         // Actualizar en base de datos
-        if (viejoAlias != null && !viejoAlias.isEmpty()) {
-            actualizarBaseDatos(viejoAlias, wasAliasChanged);
-        }
+        actualizarBaseDatos(n, a, genUsuario);
 
         cerrarModal();
 
@@ -246,17 +243,18 @@ public class ConfigurarPerfilController {
         }
     }
 
-    private void actualizarBaseDatos(String viejoAlias, boolean wasAliasChanged) {
+    private void actualizarBaseDatos(String nombre, String apellidos, String usuario) {
         UserSession session = UserSession.getInstance();
         com.mycompany.aplicacion.persistencia.Conexion conexion = new com.mycompany.aplicacion.persistencia.Conexion();
         try (java.sql.Connection con = conexion.estableceConexion()) {
             if (con != null) {
-                // Update only alias
-                String sql = "UPDATE tb_usuarios SET nombre = ? WHERE nombre = ?";
+                String sql = "UPDATE tb_usuarios SET nombre = ?, apellidos = ?, usuario = ? WHERE id = ?";
                 
                 try (java.sql.PreparedStatement ps = con.prepareStatement(sql)) {
-                    ps.setString(1, session.getUserAlias());
-                    ps.setString(2, viejoAlias);
+                    ps.setString(1, nombre);
+                    ps.setString(2, apellidos);
+                    ps.setString(3, usuario);
+                    ps.setInt(4, session.getUserId());
                     ps.executeUpdate();
                 }
             }

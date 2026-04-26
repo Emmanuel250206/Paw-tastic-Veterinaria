@@ -432,7 +432,7 @@ public class StaffController implements Initializable {
         Conexion cx = new Conexion();
         Connection conn = cx.estableceConexion();
         try {
-            String sql = "INSERT INTO tb_usuarios (nombre, apellidos, tipo_rol, especialidad, telefono, email, contrasenia, cedula) VALUES (?,?,?,?,?,?,?,?)";
+            String sql = "INSERT INTO tb_usuarios (nombre, apellidos, tipo_rol, especialidad, telefono, email, contrasenia, cedula, usuario, cambio_usuario) VALUES (?,?,?,?,?,?,?,?,?,0)";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, nuevoStaff.getNombre());
             ps.setString(2, nuevoStaff.getApellidos());
@@ -447,7 +447,32 @@ public class StaffController implements Initializable {
             String cedulaValue = isVet && tfCedula.getText() != null ? tfCedula.getText().trim() : "";
             ps.setString(8, cedulaValue);
             
+            // Generar usuario automáticamente
+            String n = nuevoStaff.getNombre();
+            String a = nuevoStaff.getApellidos();
+            String genUsuario = "user";
+            if (n != null && !n.trim().isEmpty() && a != null && !a.trim().isEmpty()) {
+                genUsuario = n.trim().substring(0, 1).toLowerCase() + a.trim().split(" ")[0].toLowerCase();
+            } else if (n != null && !n.trim().isEmpty()) {
+                genUsuario = n.trim().toLowerCase();
+            }
+            ps.setString(9, genUsuario);
+            
+
             ps.executeUpdate();
+            
+            final String lambdaN = n != null ? n : "";
+            final String lambdaA = a != null ? a : "";
+            final String lambdaGenUser = genUsuario;
+            
+            // Mostrar Alert de éxito con el nombre de usuario generado
+            javafx.application.Platform.runLater(() -> {
+                javafx.scene.control.Alert alertExito = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+                alertExito.setTitle("Staff Creado Exitosamente");
+                alertExito.setHeaderText("Nuevo miembro añadido al sistema");
+                alertExito.setContentText("El usuario generado automáticamente para " + lambdaN + " " + lambdaA + " es:\n\n" + lambdaGenUser + "\n\nPor favor, entrega este usuario para que pueda iniciar sesión.");
+                alertExito.showAndWait();
+            });
         } catch (Exception ex) {
             String errorMsg = "SQL ERROR al insertar tb_usuarios: " + ex.getMessage();
             System.err.println(errorMsg);
@@ -602,8 +627,17 @@ public class StaffController implements Initializable {
                 String pwd = tfContrasena.getText().trim();
                 String sql;
                 PreparedStatement ps;
+                String genUsuario = "user";
+                String n = staffEditado.getNombre();
+                String a = staffEditado.getApellidos();
+                if (n != null && !n.trim().isEmpty() && a != null && !a.trim().isEmpty()) {
+                    genUsuario = n.trim().substring(0, 1).toLowerCase() + a.trim().split(" ")[0].toLowerCase();
+                } else if (n != null && !n.trim().isEmpty()) {
+                    genUsuario = n.trim().toLowerCase();
+                }
+
                 if (!pwd.isEmpty()) {
-                    sql = "UPDATE tb_usuarios SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, contrasenia=?, cedula=? WHERE id=?";
+                    sql = "UPDATE tb_usuarios SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, contrasenia=?, cedula=?, usuario=? WHERE id=?";
                     ps = conn.prepareStatement(sql);
                     ps.setString(1, staffEditado.getNombre());
                     ps.setString(2, staffEditado.getApellidos());
@@ -614,9 +648,10 @@ public class StaffController implements Initializable {
                     ps.setString(7, pwd);
                     boolean isVet = staffEditado.getRol().trim().equalsIgnoreCase("Veterinario");
                     ps.setString(8, isVet && staffEditado.getCedula() != null ? staffEditado.getCedula().trim() : "");
-                    ps.setInt(9, staffEditado.getId());
+                    ps.setString(9, genUsuario);
+                    ps.setInt(10, staffEditado.getId());
                 } else {
-                    sql = "UPDATE tb_usuarios SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, cedula=? WHERE id=?";
+                    sql = "UPDATE tb_usuarios SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, cedula=?, usuario=? WHERE id=?";
                     ps = conn.prepareStatement(sql);
                     ps.setString(1, staffEditado.getNombre());
                     ps.setString(2, staffEditado.getApellidos());
@@ -626,7 +661,8 @@ public class StaffController implements Initializable {
                     ps.setString(6, staffEditado.getEmail());
                     boolean isVet = staffEditado.getRol().trim().equalsIgnoreCase("Veterinario");
                     ps.setString(7, isVet && staffEditado.getCedula() != null ? staffEditado.getCedula().trim() : "");
-                    ps.setInt(8, staffEditado.getId());
+                    ps.setString(8, genUsuario);
+                    ps.setInt(9, staffEditado.getId());
                 }
                 ps.executeUpdate();
             } catch (Exception ex) {

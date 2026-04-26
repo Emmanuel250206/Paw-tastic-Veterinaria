@@ -83,9 +83,33 @@ public class DashboardController {
         int hour = now.getHour();
         java.time.DayOfWeek dayOfWeek = now.getDayOfWeek();
         
-        String nombre = UserSession.getInstance().getUserName();
-        if (nombre != null && nombre.contains(" ")) {
-            nombre = nombre.split(" ")[0];
+        String nombreCompleto = "";
+        int currentUserId = UserSession.getInstance().getUserId();
+        
+        // Ejecutar SELECT usando el ID único para garantizar sincronización perfecta con la DB
+        com.mycompany.aplicacion.persistencia.Conexion cx = new com.mycompany.aplicacion.persistencia.Conexion();
+        try (java.sql.Connection conn = cx.estableceConexion()) {
+            if (conn != null && currentUserId > 0) {
+                String sql = "SELECT nombre, apellidos FROM tb_usuarios WHERE id = ?";
+                try (java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
+                    ps.setInt(1, currentUserId);
+                    try (java.sql.ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            String n = rs.getString("nombre");
+                            String a = rs.getString("apellidos");
+                            nombreCompleto = (n != null ? n : "") + " " + (a != null ? a : "");
+                            nombreCompleto = nombreCompleto.trim();
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error fetching user name for greeting: " + e.getMessage());
+        }
+
+        // Fallback a UserSession si falla la BD
+        if (nombreCompleto == null || nombreCompleto.trim().isEmpty()) {
+            nombreCompleto = UserSession.getInstance().getUserName();
         }
 
         String[] dias = {"lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"};
@@ -93,11 +117,11 @@ public class DashboardController {
 
         String saludo;
         if (hour >= 5 && hour < 12) {
-            saludo = "¡Buenos días! Excelente " + diaStr + ", " + nombre + " ☀️";
+            saludo = "¡Buenos días! Excelente " + diaStr + ", " + nombreCompleto + " ☀️";
         } else if (hour >= 12 && hour < 19) {
-            saludo = "¡Buenas tardes! Es un gusto verte, " + nombre + " ⛅";
+            saludo = "¡Buenas tardes! Es un gusto verte, " + nombreCompleto + " ⛅";
         } else {
-            saludo = "¡Buenas noches! Excelente " + diaStr + ", " + nombre + " 🌙";
+            saludo = "¡Buenas noches! Excelente " + diaStr + ", " + nombreCompleto + " 🌙";
         }
 
         lblSaludo.setText(saludo);
@@ -156,6 +180,7 @@ public class DashboardController {
                 UserSession.loadProfileImage(imgPerfilHeader);
                 lblNombreHeader.setText(UserSession.getInstance().getUserName());
                 lblRolHeader.setText(UserSession.getInstance().getUserRole());
+                generarSaludoDinamico();
             });
         });
 

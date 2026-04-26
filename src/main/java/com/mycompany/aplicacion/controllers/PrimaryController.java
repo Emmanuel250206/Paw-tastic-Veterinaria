@@ -129,7 +129,7 @@ public class PrimaryController {
         Conexion conexion = new Conexion();
         Connection con = conexion.estableceConexion();
         try {
-            String sql = "SELECT * FROM tb_usuarios WHERE nombre = ? AND contrasenia = ?";
+            String sql = "SELECT * FROM tb_usuarios WHERE usuario = ? AND contrasenia = ?";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, usuario);
             ps.setString(2, contrasena);
@@ -139,17 +139,20 @@ public class PrimaryController {
                 if (contrasena.equals(bdContrasenia)) {
                     
                     // Extraer los datos correctos de la base de datos
+                    int dbId = rs.getInt("id");
                     String dbNombre = rs.getString("nombre");
                     String dbApellidos = rs.getString("apellidos");
                     String dbRol = rs.getString("tipo_rol");
+                    String dbUsuario = rs.getString("usuario");
                     
                     String nombreCompleto = (dbNombre != null ? dbNombre : "") + " " + (dbApellidos != null ? dbApellidos : "");
                     nombreCompleto = nombreCompleto.trim();
                     
                     // Llenar la sesión activa (el 'backpack')
                     com.mycompany.aplicacion.modelo.UserSession session = com.mycompany.aplicacion.modelo.UserSession.getInstance();
+                    session.setUserId(dbId);
                     session.setUserName(nombreCompleto.isEmpty() ? "Usuario sin Nombre" : nombreCompleto);
-                    session.setUserAlias(dbNombre != null ? dbNombre : "Sin Alias");
+                    session.setUserAlias(dbUsuario != null ? dbUsuario : "Sin Alias");
                     session.setUsernameChanged(false);
                     
                     if (dbRol != null) {

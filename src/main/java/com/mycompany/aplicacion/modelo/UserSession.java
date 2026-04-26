@@ -19,6 +19,8 @@ public class UserSession {
     // ═══════════════════════════════════════════
     private static UserSession instance;
 
+    private int userId;
+
     private UserSession() {
         // Valores por defecto
         userName = new SimpleStringProperty("Dr. Emmanuel"); // Nombre real
@@ -58,6 +60,10 @@ public class UserSession {
     public StringProperty userNameProperty()       { return userName; }
     public String getUserName()                    { return userName.get(); }
     public void   setUserName(String name)         { userName.set(name); }
+
+    // --- Accessors userId ---
+    public int getUserId()                         { return userId; }
+    public void setUserId(int id)                  { this.userId = id; }
 
     // --- Accessors userRole ---
     public StringProperty userRoleProperty()       { return userRole; }

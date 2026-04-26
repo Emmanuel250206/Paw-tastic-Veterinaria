@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 22-04-2026 a las 18:33:46
+-- Tiempo de generación: 26-04-2026 a las 08:09:33
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -45,7 +45,7 @@ CREATE TABLE `tb_usuarios` (
 --
 
 INSERT INTO `tb_usuarios` (`id`, `nombre`, `apellidos`, `tipo_rol`, `cedula`, `especialidad`, `telefono`, `email`, `contrasenia`, `cambio_usuario`) VALUES
-(1, 'emma', '', 'veterinario', NULL, 'general', '12345', 'emma@gmail.com', '1010', 0),
+(1, 'Emmanuel', 'García', 'veterinario', '151512121', 'general', '12345', 'emma@gmail.com', '1010', 1),
 (2, 'juan', 'aguilar', 'veterinario', NULL, 'general', '12345', 'nuevo@vet.com', '3006', 0),
 (4, 'valeria', 'guzman', 'staff', NULL, 'general', '12345', 'valeria@gmail.com', '2020', 0),
 (7, 'Luz', 'Lopez', 'Veterinario', '123255', 'Cirujana', '225156262', 'lolool@gmail.com', '2018', 0);

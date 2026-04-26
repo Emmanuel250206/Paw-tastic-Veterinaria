@@ -74,10 +74,8 @@ public class DashboardController {
                 cardStaff.setManaged(false);
             }
         } else if ("Veterinario".equalsIgnoreCase(App.getRolUsuario())) {
-            if (cardReportes != null) {
-                cardReportes.setVisible(false);
-                cardReportes.setManaged(false);
-            }
+            // Staff is for admins, veterinario usually shouldn't see it either, 
+            // but we follow existing logic. User only asked to NOT hide Reportes.
         }
 
         renderizarTarjetas();
@@ -255,7 +253,7 @@ public class DashboardController {
         detalleReportes.add("• Venta: Croquetas DogChow ($180.0)");
         detalleReportes.add("• Consulta: Boby ($500.0)");
         detalleReportes.add("• Vacuna: Luna ($850.0)");
-        crearTarjetaDinamica(cardReportes, "Reportes", 8, "Ventas recientes", "/images/Icon_Reporte.png", "#E1BEE7", detalleReportes);
+        crearTarjetaDinamica(cardReportes, "Reportes", 8, "Ventas recientes", "/images/Icon_Reporte.png", "#FFCC80", detalleReportes);
 
         // Staff (Activity List Style)
         populateStaffCard(cardStaff);
@@ -475,7 +473,11 @@ public class DashboardController {
     @FXML
     private void irACitas(MouseEvent event) {
         if (padre != null && padre.getbCitas() != null) {
-            padre.navegar(padre.getbCitas(), "SeccionCitas");
+            if ("Staff".equalsIgnoreCase(App.getRolUsuario())) {
+                padre.navegar(padre.getbCitas(), "SeccionCitasStaff");
+            } else {
+                padre.navegar(padre.getbCitas(), "SeccionCitas");
+            }
         }
     }
 

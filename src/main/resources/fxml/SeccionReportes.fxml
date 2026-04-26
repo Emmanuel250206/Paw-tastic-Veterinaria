@@ -70,6 +70,8 @@
                                  <children>
                                     <Label styleClass="titulo" stylesheets="@estilos.css" text="Historial de Ventas y Consultas" />
                                     <Region HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="btnAceptar" onAction="#aceptarReporte" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Aceptar" />
+                                    <Button fx:id="btnRechazar" onAction="#rechazarReporte" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Rechazar" />
                                     <Button fx:id="btnVenta" onAction="#abrirDialogoVenta" style="-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Venta" />
                                     <Button fx:id="btnSolicitarAutorizacion" onAction="#solicitarAutorizacion" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Solicitar autorización" />
                                  </children>

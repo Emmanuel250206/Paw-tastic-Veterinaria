@@ -60,12 +60,6 @@ public class VeterinarioController implements Initializable {
                 bStaff.setVisible(false);
                 bStaff.setManaged(false);
             }
-        } else if ("Veterinario".equalsIgnoreCase(App.getRolUsuario())) {
-            // Veterinario no ve Reportes
-            if (bReportes != null) {
-                bReportes.setVisible(false);
-                bReportes.setManaged(false);
-            }
         }
 
         navegar(bDashboard, "SeccionDashboard");
@@ -144,7 +138,11 @@ public class VeterinarioController implements Initializable {
 
     @FXML
     public void mostrarVistaCitas(ActionEvent event) {
-        navegar(bCitas, "SeccionCitas");
+        if ("Staff".equalsIgnoreCase(App.getRolUsuario())) {
+            navegar(bCitas, "SeccionCitasStaff");
+        } else {
+            navegar(bCitas, "SeccionCitas");
+        }
     }
 
     @FXML

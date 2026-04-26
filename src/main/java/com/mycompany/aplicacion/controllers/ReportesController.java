@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import javafx.fxml.Initializable;
 
+import com.mycompany.aplicacion.App;
 import com.mycompany.aplicacion.modelo.UserSession;
 import com.mycompany.aplicacion.modelo.Inventario;
 import com.mycompany.aplicacion.modelo.Mascota;
@@ -59,6 +60,11 @@ public class ReportesController implements Initializable {
     @FXML private HBox      hboxPerfil;
     private ContextMenu menuPerfil;
 
+    @FXML private Button btnAceptar;
+    @FXML private Button btnRechazar;
+    @FXML private Button btnVenta;
+    @FXML private Button btnSolicitarAutorizacion;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // --- Perfil de usuario en el header ---
@@ -74,6 +80,14 @@ public class ReportesController implements Initializable {
         colMonto.setCellValueFactory(cell -> new javafx.beans.property.SimpleDoubleProperty(cell.getValue().getMonto()).asObject());
 
         cargarDatosSimulados();
+
+        if ("Veterinario".equalsIgnoreCase(App.getRolUsuario())) {
+            if (btnVenta != null) { btnVenta.setVisible(false); btnVenta.setManaged(false); }
+            if (btnSolicitarAutorizacion != null) { btnSolicitarAutorizacion.setVisible(false); btnSolicitarAutorizacion.setManaged(false); }
+        } else {
+            if (btnAceptar != null) { btnAceptar.setVisible(false); btnAceptar.setManaged(false); }
+            if (btnRechazar != null) { btnRechazar.setVisible(false); btnRechazar.setManaged(false); }
+        }
     }
 
     private void construirMenuPerfil() {
@@ -142,6 +156,24 @@ public class ReportesController implements Initializable {
         alert.setTitle("Solicitud Enviada");
         alert.setHeaderText(null);
         alert.setContentText("Se ha enviado la solicitud de autorización al administrador.");
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void aceptarReporte(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Reporte Aceptado");
+        alert.setHeaderText(null);
+        alert.setContentText("Has aceptado el reporte de ventas y cierres.");
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void rechazarReporte(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Reporte Rechazado");
+        alert.setHeaderText(null);
+        alert.setContentText("Has rechazado el reporte de ventas y cierres. Se notificará a Staff.");
         alert.showAndWait();
     }
 

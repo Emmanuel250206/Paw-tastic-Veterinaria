@@ -114,8 +114,15 @@ public class StaffController implements Initializable {
         btnAgregar.setCursor(javafx.scene.Cursor.HAND);
         btnAgregar.setOnAction(e -> mostrarDialogoAgregar());
 
+        // Botón temporal para testear el UI Toast
+        Button btnTestUI = new Button("Test UI");
+        btnTestUI.setStyle(
+                "-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-background-radius: 5;");
+        btnTestUI.setCursor(javafx.scene.Cursor.HAND);
+        btnTestUI.setOnAction(e -> com.mycompany.aplicacion.util.Toast.showToast("¡Prueba de Sistema! 🐾\nUsuario: dev_mode"));
+
         // HBox para alinear el botón de agregar a la derecha
-        HBox headerContainer = new HBox(btnAgregar);
+        HBox headerContainer = new HBox(15, btnTestUI, btnAgregar);
         headerContainer.setAlignment(Pos.CENTER_RIGHT);
         headerContainer.setPadding(new Insets(0, 0, 10, 0));
         vboxContenedor.getChildren().add(headerContainer);
@@ -465,14 +472,9 @@ public class StaffController implements Initializable {
             final String lambdaA = a != null ? a : "";
             final String lambdaGenUser = genUsuario;
             
-            // Mostrar Alert de éxito con el nombre de usuario generado
-            javafx.application.Platform.runLater(() -> {
-                javafx.scene.control.Alert alertExito = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
-                alertExito.setTitle("Staff Creado Exitosamente");
-                alertExito.setHeaderText("Nuevo miembro añadido al sistema");
-                alertExito.setContentText("El usuario generado automáticamente para " + lambdaN + " " + lambdaA + " es:\n\n" + lambdaGenUser + "\n\nPor favor, entrega este usuario para que pueda iniciar sesión.");
-                alertExito.showAndWait();
-            });
+            // Mostrar Toast moderno con el nombre de usuario generado
+            String toastMsg = "¡Registro Exitoso! 🐾\nEl nuevo miembro del staff ha sido creado.\nUsuario asignado: " + lambdaGenUser;
+            com.mycompany.aplicacion.util.Toast.showToast(toastMsg);
         } catch (Exception ex) {
             String errorMsg = "SQL ERROR al insertar tb_usuarios: " + ex.getMessage();
             System.err.println(errorMsg);

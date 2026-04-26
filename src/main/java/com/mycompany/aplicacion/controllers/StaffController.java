@@ -1,12 +1,7 @@
 package com.mycompany.aplicacion.controllers;
-
-
-
-import com.mycompany.aplicacion.modelo.DatosSimulados;
 import com.mycompany.aplicacion.modelo.Staff;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -47,8 +42,11 @@ public class StaffController implements Initializable {
     @FXML private HBox      hboxPerfil;
     private ContextMenu menuPerfil;
 
+    private static StaffController instance;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        instance = this;
         // --- Perfil de usuario en el header ---
         UserSession.loadProfileImage(imgPerfilStaff);
         lblNombreStaff.setText(UserSession.getInstance().getUserName());
@@ -96,12 +94,17 @@ public class StaffController implements Initializable {
         menuPerfil.show(hboxPerfil, Side.BOTTOM, hboxPerfil.getWidth() - 185, 4);
     }
 
+    public static void refreshStaffCards() {
+        if (instance != null) {
+            javafx.application.Platform.runLater(() -> {
+                instance.cargarPersonalEnPantalla();
+            });
+        }
+    }
+
     private void cargarPersonalEnPantalla() {
         // Validación de seguridad por si el VBox no está enlazado correctamente
-        if (vboxContenedor == null) {
-            System.out.println("ADVERTENCIA: vboxContenedor es null. Verifica el fx:id en el Scene Builder.");
-            return;
-        }
+        if (vboxContenedor == null) return;
 
         vboxContenedor.getChildren().clear();
         vboxContenedor.setSpacing(15);
@@ -114,15 +117,8 @@ public class StaffController implements Initializable {
         btnAgregar.setCursor(javafx.scene.Cursor.HAND);
         btnAgregar.setOnAction(e -> mostrarDialogoAgregar());
 
-        // Botón temporal para testear el UI Toast
-        Button btnTestUI = new Button("Test UI");
-        btnTestUI.setStyle(
-                "-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-background-radius: 5;");
-        btnTestUI.setCursor(javafx.scene.Cursor.HAND);
-        btnTestUI.setOnAction(e -> com.mycompany.aplicacion.util.Toast.showToast("¡Prueba de Sistema! 🐾\nUsuario: dev_mode"));
-
         // HBox para alinear el botón de agregar a la derecha
-        HBox headerContainer = new HBox(15, btnTestUI, btnAgregar);
+        HBox headerContainer = new HBox(btnAgregar);
         headerContainer.setAlignment(Pos.CENTER_RIGHT);
         headerContainer.setPadding(new Insets(0, 0, 10, 0));
         vboxContenedor.getChildren().add(headerContainer);
@@ -317,6 +313,12 @@ public class StaffController implements Initializable {
         errEmail.setStyle(styleError);
         errEmail.setVisible(false);
 
+        // Horario — asignado por el sistema/admin, nunca editable por el usuario
+        TextField tfHorario = new TextField("Matutino");
+        tfHorario.setStyle(styleTextField);
+        tfHorario.setDisable(true);
+        tfHorario.setOpacity(0.7);
+
         Label lbl1 = new Label("Nombre:");
         lbl1.setStyle(styleLabel);
         Label lbl2 = new Label("Apellidos:");
@@ -357,6 +359,11 @@ public class StaffController implements Initializable {
         lbl7.setStyle(styleLabel);
         grid.add(lbl7, 0, 7);
         grid.add(new VBox(2, tfEmail, errEmail), 1, 7);
+
+        Label lbl8 = new Label("Horario:");
+        lbl8.setStyle(styleLabel);
+        grid.add(lbl8, 0, 8);
+        grid.add(tfHorario, 1, 8);
         
         dialog.getDialogPane().setContent(grid);
 
@@ -473,8 +480,8 @@ public class StaffController implements Initializable {
             final String lambdaGenUser = genUsuario;
             
             // Mostrar Toast moderno con el nombre de usuario generado
-            String toastMsg = "¡Registro Exitoso! 🐾\nEl nuevo miembro del staff ha sido creado.\nUsuario asignado: " + lambdaGenUser;
-            com.mycompany.aplicacion.util.Toast.showToast(toastMsg);
+            String toastMsg = "¡Registro Exitoso! 🐾\nEl nuevo miembro del staff (" + lambdaN + " " + lambdaA + ") ha sido creado.\nUsuario asignado: " + lambdaGenUser;
+            com.mycompany.aplicacion.util.Toast.showToast(toastMsg, 5); // 5s: usuario necesita leer el username generado
         } catch (Exception ex) {
             String errorMsg = "SQL ERROR al insertar tb_usuarios: " + ex.getMessage();
             System.err.println(errorMsg);
@@ -567,6 +574,14 @@ public class StaffController implements Initializable {
         errEmail.setStyle(styleError);
         errEmail.setVisible(false);
 
+        // Horario — asignado por el sistema/admin, nunca editable
+        String turnoActual = staffAEditar.getTurno() != null && !staffAEditar.getTurno().trim().isEmpty()
+                ? staffAEditar.getTurno() : "Matutino";
+        TextField tfHorario = new TextField(turnoActual);
+        tfHorario.setStyle(styleTextField);
+        tfHorario.setDisable(true);
+        tfHorario.setOpacity(0.7);
+
         Label lbl1 = new Label("Nombre:"); lbl1.setStyle(styleLabel);
         Label lbl2 = new Label("Apellidos:"); lbl2.setStyle(styleLabel);
         Label lbl3 = new Label("Rol:"); lbl3.setStyle(styleLabel);
@@ -575,6 +590,7 @@ public class StaffController implements Initializable {
         Label lbl5 = new Label("Teléfono:"); lbl5.setStyle(styleLabel);
         Label lbl6 = new Label("Contraseña:"); lbl6.setStyle(styleLabel);
         Label lbl7 = new Label("Email:"); lbl7.setStyle(styleLabel);
+        Label lbl8 = new Label("Horario:"); lbl8.setStyle(styleLabel);
 
         grid.add(lbl1, 0, 0); grid.add(new VBox(2, tfNombre, errNombre), 1, 0);
         grid.add(lbl2, 0, 1); grid.add(new VBox(2, tfApellidos, errApellidos), 1, 1);
@@ -584,6 +600,7 @@ public class StaffController implements Initializable {
         grid.add(lbl5, 0, 5); grid.add(new VBox(2, tfTel, errTel), 1, 5);
         grid.add(lbl6, 0, 6); grid.add(tfContrasena, 1, 6);
         grid.add(lbl7, 0, 7); grid.add(new VBox(2, tfEmail, errEmail), 1, 7);
+        grid.add(lbl8, 0, 8); grid.add(tfHorario, 1, 8);
 
         dialog.getDialogPane().setContent(grid);
 
@@ -629,17 +646,13 @@ public class StaffController implements Initializable {
                 String pwd = tfContrasena.getText().trim();
                 String sql;
                 PreparedStatement ps;
-                String genUsuario = "user";
-                String n = staffEditado.getNombre();
-                String a = staffEditado.getApellidos();
-                if (n != null && !n.trim().isEmpty() && a != null && !a.trim().isEmpty()) {
-                    genUsuario = n.trim().substring(0, 1).toLowerCase() + a.trim().split(" ")[0].toLowerCase();
-                } else if (n != null && !n.trim().isEmpty()) {
-                    genUsuario = n.trim().toLowerCase();
-                }
+                // NOTA: 'usuario' queda excluido del UPDATE — el username de login
+                // es permanente para evitar romper autenticaciones existentes.
+                boolean isVet = staffEditado.getRol().trim().equalsIgnoreCase("Veterinario");
+                String cedulaVal = isVet && staffEditado.getCedula() != null ? staffEditado.getCedula().trim() : "";
 
                 if (!pwd.isEmpty()) {
-                    sql = "UPDATE tb_usuarios SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, contrasenia=?, cedula=?, usuario=? WHERE id=?";
+                    sql = "UPDATE tb_usuarios SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, contrasenia=?, cedula=? WHERE id=?";
                     ps = conn.prepareStatement(sql);
                     ps.setString(1, staffEditado.getNombre());
                     ps.setString(2, staffEditado.getApellidos());
@@ -648,12 +661,10 @@ public class StaffController implements Initializable {
                     ps.setString(5, staffEditado.getTelefono());
                     ps.setString(6, staffEditado.getEmail());
                     ps.setString(7, pwd);
-                    boolean isVet = staffEditado.getRol().trim().equalsIgnoreCase("Veterinario");
-                    ps.setString(8, isVet && staffEditado.getCedula() != null ? staffEditado.getCedula().trim() : "");
-                    ps.setString(9, genUsuario);
-                    ps.setInt(10, staffEditado.getId());
+                    ps.setString(8, cedulaVal);
+                    ps.setInt(9, staffEditado.getId());
                 } else {
-                    sql = "UPDATE tb_usuarios SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, cedula=?, usuario=? WHERE id=?";
+                    sql = "UPDATE tb_usuarios SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, cedula=? WHERE id=?";
                     ps = conn.prepareStatement(sql);
                     ps.setString(1, staffEditado.getNombre());
                     ps.setString(2, staffEditado.getApellidos());
@@ -661,10 +672,8 @@ public class StaffController implements Initializable {
                     ps.setString(4, staffEditado.getEspecialidad());
                     ps.setString(5, staffEditado.getTelefono());
                     ps.setString(6, staffEditado.getEmail());
-                    boolean isVet = staffEditado.getRol().trim().equalsIgnoreCase("Veterinario");
-                    ps.setString(7, isVet && staffEditado.getCedula() != null ? staffEditado.getCedula().trim() : "");
-                    ps.setString(8, genUsuario);
-                    ps.setInt(9, staffEditado.getId());
+                    ps.setString(7, cedulaVal);
+                    ps.setInt(8, staffEditado.getId());
                 }
                 ps.executeUpdate();
             } catch (Exception ex) {

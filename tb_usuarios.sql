@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 26-04-2026 a las 08:42:20
+-- Tiempo de generación: 26-04-2026 a las 10:24:43
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -46,10 +46,13 @@ CREATE TABLE `tb_usuarios` (
 --
 
 INSERT INTO `tb_usuarios` (`id`, `usuario`, `nombre`, `apellidos`, `tipo_rol`, `cedula`, `especialidad`, `telefono`, `email`, `contrasenia`, `cambio_usuario`) VALUES
-(1, 'egarcia', 'Emmanuel', 'García', 'Veterinario', '151512121', 'General', '12345', 'emma@gmail.com', '1010', 1),
-(2, NULL, 'Juan', 'Aguilar', 'veterinario', NULL, 'General', '12345', 'nuevo@vet.com', '3006', 0),
-(4, NULL, 'Valeria', 'Guzman', 'Staff', NULL, 'General', '12345', 'valeria@gmail.com', '2020', 0),
-(7, NULL, 'Luz', 'Lopez', 'Veterinario', '123255', 'Cirujana', '225156262', 'lolool@gmail.com', '2018', 0);
+(1, 'ehernandez', 'Emmanuel', 'Hernandez', 'Veterinario', '151512121', 'General', '12345', 'emma@gmail.com', '1010', 1),
+(2, 'jpancho', 'Juan', 'Aguilar', 'veterinario', NULL, 'General', '12345', 'nuevo@vet.com', '3006', 1),
+(4, 'vguzman', 'Valeria', 'Guzman', 'Staff', NULL, 'General', '12345', 'valeria@gmail.com', '2020', 1),
+(7, 'llopez', 'Luz', 'Lopez', 'Veterinario', '123255', 'Cirujana', '225156262', 'lolool@gmail.com', '2018', 1),
+(8, 'lfalfan', 'Luisa', 'Falfan Lopez', 'Staff', '', 'Limpieza', '202021515', 'falfan@gmail.com', '3030', 0),
+(9, 'ksanchez', 'Kaito', 'Sanchez Perez', 'Veterinario', '125156262', 'Revisor de Patas', '22255122322', 'kaito@gmail.com', '5050', 0),
+(10, 'rpancho', 'robot', 'pancho', 'veterinario', '115152', 'sepalabola', '2252525', 'pancjho@gmail.com', '7777', 0);
 
 --
 -- Índices para tablas volcadas
@@ -70,7 +73,7 @@ ALTER TABLE `tb_usuarios`
 -- AUTO_INCREMENT de la tabla `tb_usuarios`
 --
 ALTER TABLE `tb_usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

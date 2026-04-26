@@ -164,23 +164,9 @@ public class VeterinarioController implements Initializable {
 
     @FXML
     private void onCerrarSesionClick(ActionEvent event) {
-        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Cerrar Sesión");
-        alert.setHeaderText(null);
-        alert.setContentText("¿Estás seguro de que deseas salir del sistema?");
+        Stage owner = (Stage) bpPrincipal.getScene().getWindow();
 
-        try {
-            java.net.URL cssURL = getClass().getResource("/fxml/estilos.css");
-            if (cssURL != null) {
-                alert.getDialogPane().getStylesheets().add(cssURL.toExternalForm());
-                alert.getDialogPane().getStyleClass().add("recuadros-informacion");
-            }
-        } catch (Exception e) {
-            System.err.println("No se pudo cargar estilos para Alert: " + e.getMessage());
-        }
-
-        java.util.Optional<javafx.scene.control.ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == javafx.scene.control.ButtonType.OK) {
+        com.mycompany.aplicacion.util.ExitDialog.mostrar(owner, () -> {
             try {
                 App.setRoot("fxml/VeterinariaP1");
 
@@ -192,7 +178,7 @@ public class VeterinarioController implements Initializable {
                     stage.setResizable(true);
                     stage.sizeToScene();
 
-                    // Medidas estándar para tu Login
+                    // Medidas estándar para el Login
                     stage.setWidth(852);
                     stage.setHeight(535);
                     stage.setResizable(false);
@@ -202,7 +188,7 @@ public class VeterinarioController implements Initializable {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+        });
     }
 
     // Getters para que el Dashboard pueda acceder a los botones del menú

@@ -22,7 +22,27 @@ import javafx.util.Duration;
 
 public class Toast {
 
+    /**
+     * Muestra un Toast con la duración predeterminada (6 segundos).
+     * Ideal para mensajes de alta importancia donde el usuario necesita leer
+     * información generada (ej. nombres de usuario asignados automáticamente).
+     */
     public static void showToast(String message) {
+        showToast(message, 6);
+    }
+
+    /**
+     * Muestra un Toast con una duración personalizada en segundos.
+     * La barra de progreso (verde → amarillo → rojo) y el fade-out se sincronizan
+     * automáticamente con el valor proporcionado.
+     *
+     * @param message          Texto a mostrar en el Toast.
+     * @param durationInSeconds Tiempo en segundos que el Toast permanece visible.
+     */
+    public static void showToast(String message, int durationInSeconds) {
+        // Garantizamos un mínimo razonable para que la animación sea legible
+        final double d = Math.max(1, durationInSeconds);
+
         Platform.runLater(() -> {
             Stage owner = App.getStage();
             if (owner == null) return;
@@ -92,28 +112,29 @@ public class Toast {
                     }
                 };
 
-                // 2. Animación de barra de progreso (Ancho y Color)
+                // 2. Animación de barra de progreso (Ancho y Color) — sincronizada con 'd'
+                // Proporciones: Verde hasta 50%, Amarillo hasta 83%, Rojo hasta 100%
                 double maxW = root.getWidth() - 40; // restando el padding
                 progressBar.setWidth(maxW);
                 
                 Timeline progressTimeline = new Timeline(
-                    new KeyFrame(Duration.ZERO, 
+                    new KeyFrame(Duration.ZERO,
                         new KeyValue(progressBar.widthProperty(), maxW),
                         new KeyValue(progressBar.fillProperty(), Color.web("#4CAF50"))
                     ),
-                    new KeyFrame(Duration.seconds(3), 
+                    new KeyFrame(Duration.seconds(d * 0.50),
                         new KeyValue(progressBar.fillProperty(), Color.web("#FFC107"))
                     ),
-                    new KeyFrame(Duration.seconds(5), 
+                    new KeyFrame(Duration.seconds(d * 0.83),
                         new KeyValue(progressBar.fillProperty(), Color.web("#F44336"))
                     ),
-                    new KeyFrame(Duration.seconds(6), 
+                    new KeyFrame(Duration.seconds(d),
                         new KeyValue(progressBar.widthProperty(), 0)
                     )
                 );
 
-                // 3. Fade Out Final
-                Timeline fadeOutTimeline = new Timeline(new KeyFrame(Duration.seconds(6), evt -> {
+                // 3. Fade Out Final — se dispara exactamente cuando la barra llega a 0
+                Timeline fadeOutTimeline = new Timeline(new KeyFrame(Duration.seconds(d), evt -> {
                     FadeTransition fadeOut = new FadeTransition(Duration.millis(400), root);
                     fadeOut.setFromValue(1.0);
                     fadeOut.setToValue(0.0);

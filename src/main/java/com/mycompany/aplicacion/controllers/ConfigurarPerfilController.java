@@ -1,6 +1,7 @@
 package com.mycompany.aplicacion.controllers;
 
 import com.mycompany.aplicacion.modelo.UserSession;
+import com.mycompany.aplicacion.persistencia.Conexion;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,6 +18,9 @@ import javafx.stage.StageStyle;
 import javafx.scene.Node;
 
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,10 +73,16 @@ public class ConfigurarPerfilController {
         "Ava_conejo.png"
     };
 
+    // ── Estilo de campo bloqueado (identidad del sistema) ─────────────────────
+    /** Bloquea visualmente un campo: disabled + opacidad reducida para señalizar que es solo lectura. */
+    private static void bloquearCampo(TextField tf) {
+        tf.setDisable(true);
+        tf.setOpacity(0.7);
+    }
+
     // ── initialize ────────────────────────────────────────────────────────────
     @FXML
     public void initialize() {
-        System.out.println("[DEBUG] Current Session Role: " + UserSession.getInstance().getUserRole());
         UserSession session = UserSession.getInstance();
         avatarSeleccionado = session.getCurrentAvatarName();
 
@@ -85,26 +95,28 @@ public class ConfigurarPerfilController {
         // Subtítulo con rol
         lblSubtituloRol.setText(currentRole + "  ·  Clínica Paw-tastic");
 
-        // Poblar formulario
+        // Poblar formulario (datos editables)
         txtNombreCompleto.setText(session.getUserName());
+
+        // ── Campos de identidad — BLOQUEADOS permanentemente ─────────────────
+        // txtAlias: el username se genera una sola vez; nunca debe cambiar para
+        //           evitar romper el login del usuario.
         txtAlias.setText(session.getUserAlias());
+        bloquearCampo(txtAlias);
+
+        // txtRol: asignado por el administrador, no editable por el propio usuario.
+        txtRol.setText(currentRole != null ? currentRole : "");
+        bloquearCampo(txtRol);
+
+        // txtHorario: asignado por administración/sistema.
         txtHorario.setText("Lunes–Viernes  8:00 – 17:00");
+        bloquearCampo(txtHorario);
 
-        // Lógica condicional según el rol
+        // txtCedula: solo visible para veterinarios; siempre bloqueada (dato oficial).
+        // Se carga desde la BD para que muestre el valor real, no el placeholder del FXML.
         boolean isStaff = currentRole != null && currentRole.trim().equalsIgnoreCase("Staff");
-        boolean isVet = currentRole != null && currentRole.trim().equalsIgnoreCase("Veterinario");
-
-        // Bloqueo General: el rol nunca debe ser editable por el usuario
-        txtRol.setEditable(false);
-        txtRol.setStyle(txtRol.getStyle() + " -fx-background-color: #EEEEEE; -fx-text-fill: #777777;");
-
-        // Bloqueo Condicional: El usuario/alias ahora se autogenera, por lo que es de solo lectura
-        txtAlias.setEditable(false);
-        txtAlias.setStyle(txtAlias.getStyle() + " -fx-background-color: #EEEEEE; -fx-text-fill: #777777;");
 
         if (isStaff) {
-            txtRol.setText("Staff");
-            
             // Ocultar Cédula y su Label para Staff
             txtCedula.setVisible(false);
             txtCedula.setManaged(false);
@@ -113,15 +125,13 @@ public class ConfigurarPerfilController {
                 lblCedula.setManaged(false);
             }
         } else {
-            txtRol.setText(currentRole);
-            
-            // Mostrar Cédula para Veterinarios
+            // Veterinarios: cargar la cédula real desde la BD y mostrarla bloqueada
+            cargarCedulaDesdeBD();
+            String cedula = session.getUserCedula();
+            txtCedula.setText(cedula != null ? cedula : "");  // texto real, nunca placeholder
             txtCedula.setVisible(true);
             txtCedula.setManaged(true);
-            txtCedula.setDisable(false);
-            if (isVet) {
-                txtCedula.setEditable(false); // Vet Special Lock
-            }
+            bloquearCampo(txtCedula);  // disable + opacity DESPUÉS de setText
             if (lblCedula != null) {
                 lblCedula.setVisible(true);
                 lblCedula.setManaged(true);
@@ -130,6 +140,44 @@ public class ConfigurarPerfilController {
 
         // Construir galería de avatares
         construirGaleria();
+    }
+
+    /**
+     * Consulta la cédula profesional del usuario actual desde {@code tb_usuarios}
+     * y la persiste en {@link UserSession} para evitar consultas repetidas.
+     * Si ya existe un valor en la sesión (de una apertura anterior), se omite la consulta.
+     */
+    private void cargarCedulaDesdeBD() {
+        UserSession session = UserSession.getInstance();
+
+        // Evitar re-consulta si ya se cargó en esta sesión
+        if (session.getUserCedula() != null && !session.getUserCedula().isEmpty()) {
+            return;
+        }
+
+        int userId = session.getUserId();
+        if (userId <= 0) {
+            System.err.println("[ConfigurarPerfil] userId no disponible — no se puede consultar la cédula.");
+            return;
+        }
+
+        Conexion conexion = new Conexion();
+        try (Connection con = conexion.estableceConexion()) {
+            if (con == null) return;
+            String sql = "SELECT cedula FROM tb_usuarios WHERE id = ?";
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        String cedula = rs.getString("cedula");
+                        session.setUserCedula(cedula);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("[ConfigurarPerfil] Error al cargar cédula: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     // ── Galería ───────────────────────────────────────────────────────────────
@@ -210,6 +258,7 @@ public class ConfigurarPerfilController {
     private void guardarCambios() {
         UserSession session = UserSession.getInstance();
 
+        // Solo los campos editables: nombre completo y avatar.
         String full = txtNombreCompleto.getText().trim();
         String n = full;
         String a = "";
@@ -219,42 +268,45 @@ public class ConfigurarPerfilController {
             a = full.substring(spaceIdx + 1).trim();
         }
 
-        String genUsuario = "user";
-        if (!n.isEmpty() && !a.isEmpty()) {
-            genUsuario = n.substring(0, 1).toLowerCase() + a.split(" ")[0].toLowerCase();
-        } else if (!n.isEmpty()) {
-            genUsuario = n.toLowerCase();
-        }
-
-        // Persistir valores en el singleton
+        // Persistir solo los datos que el usuario puede cambiar.
+        // El alias/username NO se regenera: permanece igual al original.
         session.setUserName(full);
-        session.setUserAlias(genUsuario);
-        session.setUserRole(txtRol.getText().trim());
         session.setCurrentAvatarName(avatarSeleccionado);
 
-        // Actualizar en base de datos
-        actualizarBaseDatos(n, a, genUsuario);
+        // Actualizar nombre en BD (sin tocar usuario, rol, horario, cédula)
+        actualizarBaseDatos(n, a);
 
         cerrarModal();
+
+        com.mycompany.aplicacion.util.Toast.showToast("Perfil actualizado correctamente 🐾", 2);
 
         // Refrescar el header de la vista activa (si se registró un callback)
         if (refreshCallback != null) {
             refreshCallback.run();
         }
+
+        // Sincronización inmediata: recargar las tarjetas del Staff en cuanto
+        // aparece el Toast, sin esperar a que el usuario cambie de pestaña.
+        StaffController.refreshStaffCards();
     }
 
-    private void actualizarBaseDatos(String nombre, String apellidos, String usuario) {
+    /**
+     * Persiste únicamente los datos que el usuario puede modificar: nombre y apellidos.
+     * El campo 'usuario' (username de login) queda excluido del UPDATE para garantizar
+     * que el login nunca se rompa por un cambio de nombre.
+     */
+    private void actualizarBaseDatos(String nombre, String apellidos) {
         UserSession session = UserSession.getInstance();
         com.mycompany.aplicacion.persistencia.Conexion conexion = new com.mycompany.aplicacion.persistencia.Conexion();
         try (java.sql.Connection con = conexion.estableceConexion()) {
             if (con != null) {
-                String sql = "UPDATE tb_usuarios SET nombre = ?, apellidos = ?, usuario = ? WHERE id = ?";
-                
+                // Solo nombre y apellidos — usuario, rol, horario y cédula son inmutables
+                String sql = "UPDATE tb_usuarios SET nombre = ?, apellidos = ? WHERE id = ?";
+
                 try (java.sql.PreparedStatement ps = con.prepareStatement(sql)) {
                     ps.setString(1, nombre);
                     ps.setString(2, apellidos);
-                    ps.setString(3, usuario);
-                    ps.setInt(4, session.getUserId());
+                    ps.setInt(3, session.getUserId());
                     ps.executeUpdate();
                 }
             }

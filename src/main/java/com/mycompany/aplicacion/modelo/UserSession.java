@@ -27,6 +27,7 @@ public class UserSession {
         userAlias = new SimpleStringProperty("emmanuel_v"); // Alias/Username
         userRole = new SimpleStringProperty("Veterinario");
         currentAvatarName = new SimpleStringProperty("Ava_huella.png");
+        userCedula = new SimpleStringProperty("");
     }
 
     /** Devuelve la única instancia de UserSession (thread-safe básico). */
@@ -52,7 +53,10 @@ public class UserSession {
 
     /** Nombre del archivo de avatar dentro de /images/ (p. ej. "Ava_huella.png"). */
     private final StringProperty currentAvatarName;
-    
+
+    /** Cédula profesional del veterinario (vacío para otros roles). */
+    private final StringProperty userCedula;
+
     /** Flag que indica si el usuario ya cambió su alias de login */
     private boolean usernameChanged;
 
@@ -88,6 +92,11 @@ public class UserSession {
     public String getCurrentAvatarName()              { return currentAvatarName.get(); }
     public void   setCurrentAvatarName(String name)   { currentAvatarName.set(name); }
     
+    // --- Accessors userCedula ---
+    public StringProperty userCedulaProperty()        { return userCedula; }
+    public String getUserCedula()                     { return userCedula.get(); }
+    public void   setUserCedula(String cedula)        { userCedula.set(cedula != null ? cedula : ""); }
+
     // --- Accessors usernameChanged ---
     public boolean isUsernameChanged() { return usernameChanged; }
     public void setUsernameChanged(boolean usernameChanged) { this.usernameChanged = usernameChanged; }

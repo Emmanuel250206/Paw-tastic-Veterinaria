@@ -29,6 +29,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import com.mycompany.aplicacion.persistencia.Conexion;
+import com.mycompany.aplicacion.util.Toast;
 
 public class StaffController implements Initializable {
 
@@ -127,7 +128,7 @@ public class StaffController implements Initializable {
     Conexion conexion = new Conexion();
     Connection con = conexion.estableceConexion();
     try {
-        String sql = "SELECT id, nombre, apellidos, tipo_rol, especialidad, telefono, email, cedula " +
+        String sql = "SELECT id, nombre, apellidos, tipo_rol, especialidad, telefono, email, cedula, contrasenia, usuario " +
              "FROM tb_usuarios WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista')";
         PreparedStatement ps = con.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
@@ -140,8 +141,9 @@ public class StaffController implements Initializable {
                 rs.getString("especialidad"),
                 rs.getString("telefono"),
                 rs.getString("email"),
-                "",
-                rs.getString("cedula")
+                rs.getString("contrasenia"),
+                rs.getString("cedula"),
+                rs.getString("usuario")
             ));
         }
     } catch (Exception e) {
@@ -169,10 +171,7 @@ public class StaffController implements Initializable {
             Label lblRol = new Label(s.getRol() + " | Especialidad: " + s.getEspecialidad() + extraCedula);
             lblRol.setStyle("-fx-font-size: 14px; -fx-text-fill: #7f8c8d;");
 
-            Label lblTurno = new Label("Turno: " + s.getTurno());
-            lblTurno.setStyle("-fx-font-size: 13px; -fx-text-fill: #34495e; -fx-font-style: italic;");
-
-            infoPrincipal.getChildren().addAll(lblNombre, lblRol, lblTurno);
+            infoPrincipal.getChildren().addAll(lblNombre, lblRol);
 
             Region spacer = new Region();
             HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -313,11 +312,14 @@ public class StaffController implements Initializable {
         errEmail.setStyle(styleError);
         errEmail.setVisible(false);
 
-        // Horario — asignado por el sistema/admin, nunca editable por el usuario
-        TextField tfHorario = new TextField("Matutino");
-        tfHorario.setStyle(styleTextField);
-        tfHorario.setDisable(true);
-        tfHorario.setOpacity(0.7);
+        TextField tfUsuario = new TextField();
+        tfUsuario.setPromptText("Usuario");
+        tfUsuario.setStyle(styleTextField);
+        Label errUsuario = new Label("Debes rellenar este campo");
+        errUsuario.setStyle(styleError);
+        errUsuario.setVisible(false);
+
+
 
         Label lbl1 = new Label("Nombre:");
         lbl1.setStyle(styleLabel);
@@ -360,10 +362,12 @@ public class StaffController implements Initializable {
         grid.add(lbl7, 0, 7);
         grid.add(new VBox(2, tfEmail, errEmail), 1, 7);
 
-        Label lbl8 = new Label("Horario:");
+        Label lbl8 = new Label("Usuario:");
         lbl8.setStyle(styleLabel);
         grid.add(lbl8, 0, 8);
-        grid.add(tfHorario, 1, 8);
+        grid.add(new VBox(2, tfUsuario, errUsuario), 1, 8);
+
+
         
         dialog.getDialogPane().setContent(grid);
 
@@ -417,6 +421,11 @@ public class StaffController implements Initializable {
                     errEmail.setVisible(true);
                     hasError = true;
                 } else errEmail.setVisible(false);
+
+                if (tfUsuario.getText().trim().isEmpty()) {
+                    errUsuario.setVisible(true);
+                    hasError = true;
+                } else errUsuario.setVisible(false);
                 
                 if (hasError) {
                     event.consume(); // Cancela que se cierre la ventana
@@ -435,7 +444,7 @@ public class StaffController implements Initializable {
                 // El ID se autogenerará en la base de datos, usamos 0 temporalmente
                 int nuevoId = 0;
                 return new Staff(nuevoId, tfNombre.getText(), tfApellidos.getText(), tfRol.getText(),
-                        tfEspecialidad.getText(), tfTel.getText(), tfEmail.getText(), "Matutino", tfCedula.getText());
+                        tfEspecialidad.getText(), tfTel.getText(), tfEmail.getText(), tfContrasena.getText(), tfCedula.getText(), tfUsuario.getText());
             }
             return null;
         });
@@ -461,27 +470,19 @@ public class StaffController implements Initializable {
             String cedulaValue = isVet && tfCedula.getText() != null ? tfCedula.getText().trim() : "";
             ps.setString(8, cedulaValue);
             
-            // Generar usuario automáticamente
-            String n = nuevoStaff.getNombre();
-            String a = nuevoStaff.getApellidos();
-            String genUsuario = "user";
-            if (n != null && !n.trim().isEmpty() && a != null && !a.trim().isEmpty()) {
-                genUsuario = n.trim().substring(0, 1).toLowerCase() + a.trim().split(" ")[0].toLowerCase();
-            } else if (n != null && !n.trim().isEmpty()) {
-                genUsuario = n.trim().toLowerCase();
-            }
+            // Usar el usuario ingresado
+            String genUsuario = nuevoStaff.getUsuario();
             ps.setString(9, genUsuario);
-            
 
             ps.executeUpdate();
             
-            final String lambdaN = n != null ? n : "";
-            final String lambdaA = a != null ? a : "";
+            final String lambdaN = nuevoStaff.getNombre() != null ? nuevoStaff.getNombre() : "";
+            final String lambdaA = nuevoStaff.getApellidos() != null ? nuevoStaff.getApellidos() : "";
             final String lambdaGenUser = genUsuario;
             
-            // Mostrar Toast moderno con el nombre de usuario generado
+            // Mostrar Toast moderno con el nombre de usuario
             String toastMsg = "¡Registro Exitoso! 🐾\nEl nuevo miembro del staff (" + lambdaN + " " + lambdaA + ") ha sido creado.\nUsuario asignado: " + lambdaGenUser;
-            com.mycompany.aplicacion.util.Toast.showToast(toastMsg, 5); // 5s: usuario necesita leer el username generado
+            Toast.showToast(toastMsg, 5);
         } catch (Exception ex) {
             String errorMsg = "SQL ERROR al insertar tb_usuarios: " + ex.getMessage();
             System.err.println(errorMsg);
@@ -563,10 +564,11 @@ public class StaffController implements Initializable {
         errTel.setStyle(styleError);
         errTel.setVisible(false);
 
-        // La contraseña se deja en blanco, si la llena se actualiza, si no, se mantiene
-        TextField tfContrasena = new TextField();
-        tfContrasena.setPromptText("Dejar en blanco para no cambiar");
+        TextField tfContrasena = new TextField(staffAEditar.getContrasenia() != null ? staffAEditar.getContrasenia() : "");
         tfContrasena.setStyle(styleTextField);
+        Label errContrasena = new Label("Debes rellenar este campo");
+        errContrasena.setStyle(styleError);
+        errContrasena.setVisible(false);
 
         TextField tfEmail = new TextField(staffAEditar.getEmail());
         tfEmail.setStyle(styleTextField);
@@ -574,13 +576,13 @@ public class StaffController implements Initializable {
         errEmail.setStyle(styleError);
         errEmail.setVisible(false);
 
-        // Horario — asignado por el sistema/admin, nunca editable
-        String turnoActual = staffAEditar.getTurno() != null && !staffAEditar.getTurno().trim().isEmpty()
-                ? staffAEditar.getTurno() : "Matutino";
-        TextField tfHorario = new TextField(turnoActual);
-        tfHorario.setStyle(styleTextField);
-        tfHorario.setDisable(true);
-        tfHorario.setOpacity(0.7);
+        TextField tfUsuario = new TextField(staffAEditar.getUsuario() != null ? staffAEditar.getUsuario() : "");
+        tfUsuario.setStyle(styleTextField);
+        Label errUsuario = new Label("Debes rellenar este campo");
+        errUsuario.setStyle(styleError);
+        errUsuario.setVisible(false);
+
+
 
         Label lbl1 = new Label("Nombre:"); lbl1.setStyle(styleLabel);
         Label lbl2 = new Label("Apellidos:"); lbl2.setStyle(styleLabel);
@@ -590,7 +592,8 @@ public class StaffController implements Initializable {
         Label lbl5 = new Label("Teléfono:"); lbl5.setStyle(styleLabel);
         Label lbl6 = new Label("Contraseña:"); lbl6.setStyle(styleLabel);
         Label lbl7 = new Label("Email:"); lbl7.setStyle(styleLabel);
-        Label lbl8 = new Label("Horario:"); lbl8.setStyle(styleLabel);
+        Label lbl8 = new Label("Usuario:"); lbl8.setStyle(styleLabel);
+
 
         grid.add(lbl1, 0, 0); grid.add(new VBox(2, tfNombre, errNombre), 1, 0);
         grid.add(lbl2, 0, 1); grid.add(new VBox(2, tfApellidos, errApellidos), 1, 1);
@@ -598,9 +601,9 @@ public class StaffController implements Initializable {
         grid.add(lblCedula, 0, 3); grid.add(new VBox(2, tfCedula, errCedula), 1, 3);
         grid.add(lbl4, 0, 4); grid.add(new VBox(2, tfEspecialidad, errEspecialidad), 1, 4);
         grid.add(lbl5, 0, 5); grid.add(new VBox(2, tfTel, errTel), 1, 5);
-        grid.add(lbl6, 0, 6); grid.add(tfContrasena, 1, 6);
+        grid.add(lbl6, 0, 6); grid.add(new VBox(2, tfContrasena, errContrasena), 1, 6);
         grid.add(lbl7, 0, 7); grid.add(new VBox(2, tfEmail, errEmail), 1, 7);
-        grid.add(lbl8, 0, 8); grid.add(tfHorario, 1, 8);
+        grid.add(lbl8, 0, 8); grid.add(new VBox(2, tfUsuario, errUsuario), 1, 8);
 
         dialog.getDialogPane().setContent(grid);
 
@@ -618,6 +621,8 @@ public class StaffController implements Initializable {
                 if (tfEspecialidad.getText().trim().isEmpty()) { errEspecialidad.setVisible(true); hasError = true; } else errEspecialidad.setVisible(false);
                 if (tfTel.getText().trim().isEmpty()) { errTel.setVisible(true); hasError = true; } else errTel.setVisible(false);
                 if (tfEmail.getText().trim().isEmpty()) { errEmail.setVisible(true); hasError = true; } else errEmail.setVisible(false);
+                if (tfContrasena.getText().trim().isEmpty()) { errContrasena.setVisible(true); hasError = true; } else errContrasena.setVisible(false);
+                if (tfUsuario.getText().trim().isEmpty()) { errUsuario.setVisible(true); hasError = true; } else errUsuario.setVisible(false);
 
                 if (hasError) {
                     event.consume();
@@ -633,7 +638,7 @@ public class StaffController implements Initializable {
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == btnTypeGuardar) {
                 return new Staff(staffAEditar.getId(), tfNombre.getText(), tfApellidos.getText(), tfRol.getText(),
-                        tfEspecialidad.getText(), tfTel.getText(), tfEmail.getText(), staffAEditar.getTurno(), tfCedula.getText());
+                        tfEspecialidad.getText(), tfTel.getText(), tfEmail.getText(), tfContrasena.getText(), tfCedula.getText(), tfUsuario.getText());
             }
             return null;
         });
@@ -646,13 +651,11 @@ public class StaffController implements Initializable {
                 String pwd = tfContrasena.getText().trim();
                 String sql;
                 PreparedStatement ps;
-                // NOTA: 'usuario' queda excluido del UPDATE — el username de login
-                // es permanente para evitar romper autenticaciones existentes.
                 boolean isVet = staffEditado.getRol().trim().equalsIgnoreCase("Veterinario");
                 String cedulaVal = isVet && staffEditado.getCedula() != null ? staffEditado.getCedula().trim() : "";
 
                 if (!pwd.isEmpty()) {
-                    sql = "UPDATE tb_usuarios SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, contrasenia=?, cedula=? WHERE id=?";
+                    sql = "UPDATE tb_usuarios SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, contrasenia=?, cedula=?, usuario=? WHERE id=?";
                     ps = conn.prepareStatement(sql);
                     ps.setString(1, staffEditado.getNombre());
                     ps.setString(2, staffEditado.getApellidos());
@@ -662,9 +665,10 @@ public class StaffController implements Initializable {
                     ps.setString(6, staffEditado.getEmail());
                     ps.setString(7, pwd);
                     ps.setString(8, cedulaVal);
-                    ps.setInt(9, staffEditado.getId());
+                    ps.setString(9, staffEditado.getUsuario());
+                    ps.setInt(10, staffEditado.getId());
                 } else {
-                    sql = "UPDATE tb_usuarios SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, cedula=? WHERE id=?";
+                    sql = "UPDATE tb_usuarios SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, cedula=?, usuario=? WHERE id=?";
                     ps = conn.prepareStatement(sql);
                     ps.setString(1, staffEditado.getNombre());
                     ps.setString(2, staffEditado.getApellidos());
@@ -673,7 +677,8 @@ public class StaffController implements Initializable {
                     ps.setString(5, staffEditado.getTelefono());
                     ps.setString(6, staffEditado.getEmail());
                     ps.setString(7, cedulaVal);
-                    ps.setInt(8, staffEditado.getId());
+                    ps.setString(8, staffEditado.getUsuario());
+                    ps.setInt(9, staffEditado.getId());
                 }
                 ps.executeUpdate();
             } catch (Exception ex) {

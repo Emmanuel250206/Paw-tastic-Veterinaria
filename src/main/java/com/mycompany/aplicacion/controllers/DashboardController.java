@@ -34,6 +34,8 @@ public class DashboardController {
     private VBox cardInventario;
     @FXML
     private VBox cardStaff;
+    @FXML
+    private VBox cardReportes;
 
     @FXML
     private ImageView imgPerfilHeader;
@@ -66,10 +68,15 @@ public class DashboardController {
         construirMenuPerfil();
 
         if ("Staff".equalsIgnoreCase(App.getRolUsuario())) {
-            // Solo ocultar tarjeta Staff (El inventario sí podrán verlo para recepcionar insumos)
+            // Solo ocultar tarjeta Staff
             if (cardStaff != null) {
                 cardStaff.setVisible(false);
                 cardStaff.setManaged(false);
+            }
+        } else if ("Veterinario".equalsIgnoreCase(App.getRolUsuario())) {
+            if (cardReportes != null) {
+                cardReportes.setVisible(false);
+                cardReportes.setManaged(false);
             }
         }
 
@@ -200,7 +207,7 @@ public class DashboardController {
             return;
         }
 
-        // Alinear el borde derecho del men\u00fa con el del HBox de perfil
+        // Alinear el borde derecho del menú con el del HBox de perfil
         double offsetX = hboxPerfil.getWidth() - 185;
         menuPerfil.show(hboxPerfil, Side.BOTTOM, offsetX, 4);
     }
@@ -242,6 +249,13 @@ public class DashboardController {
             detalleInv.add("• " + inv.getNombreProducto() + " - Stock: " + inv.getCantidad());
         }
         crearTarjetaDinamica(cardInventario, "Inventario", DatosSimulados.getInventario().size(), "En stock", "/images/Icon_Inventario.png", "#FFF3E0", detalleInv);
+
+        // Reportes
+        java.util.List<String> detalleReportes = new java.util.ArrayList<>();
+        detalleReportes.add("• Venta: Croquetas DogChow ($180.0)");
+        detalleReportes.add("• Consulta: Boby ($500.0)");
+        detalleReportes.add("• Vacuna: Luna ($850.0)");
+        crearTarjetaDinamica(cardReportes, "Reportes", 8, "Ventas recientes", "/images/Icon_Reporte.png", "#E1BEE7", detalleReportes);
 
         // Staff (Activity List Style)
         populateStaffCard(cardStaff);

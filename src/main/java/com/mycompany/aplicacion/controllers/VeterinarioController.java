@@ -13,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import com.mycompany.aplicacion.util.ExitDialog;
 
 public class VeterinarioController implements Initializable {
 
@@ -53,15 +54,17 @@ public class VeterinarioController implements Initializable {
         });
         // 2. Verificar rol de usuario (Tu lógica actual)
         if ("Staff".equalsIgnoreCase(App.getRolUsuario())) {
-            // El Staff puede ver Mascotas, Citas e Inventario.
-            // Ocultamos Reportes y Sección Staff (Admin)
-            if (bReportes != null) {
-                bReportes.setVisible(false);
-                bReportes.setManaged(false);
-            }
+            // El Staff puede ver Mascotas, Citas, Inventario y Reportes.
+            // Ocultamos Sección Staff (Admin)
             if (bStaff != null) {
                 bStaff.setVisible(false);
                 bStaff.setManaged(false);
+            }
+        } else if ("Veterinario".equalsIgnoreCase(App.getRolUsuario())) {
+            // Veterinario no ve Reportes
+            if (bReportes != null) {
+                bReportes.setVisible(false);
+                bReportes.setManaged(false);
             }
         }
 
@@ -166,7 +169,7 @@ public class VeterinarioController implements Initializable {
     private void onCerrarSesionClick(ActionEvent event) {
         Stage owner = (Stage) bpPrincipal.getScene().getWindow();
 
-        com.mycompany.aplicacion.util.ExitDialog.mostrar(owner, () -> {
+        ExitDialog.mostrar(owner, () -> {
             try {
                 App.setRoot("fxml/VeterinariaP1");
 

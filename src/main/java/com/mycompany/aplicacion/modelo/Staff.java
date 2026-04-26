@@ -9,11 +9,12 @@ public class Staff {
     private String especialidad;
     private String telefono;
     private String email;
-    private String turno;
+    private String contrasenia;
     private String cedula;
+    private String usuario;
 
     public Staff(int id, String nombre, String apellidos, String rol, String especialidad, String telefono,
-            String email, String turno, String cedula) {
+            String email, String contrasenia, String cedula, String usuario) {
         this.id = id;
         this.nombre = nombre;
         this.apellidos = apellidos;
@@ -21,8 +22,9 @@ public class Staff {
         this.especialidad = especialidad;
         this.telefono = telefono;
         this.email = email;
-        this.turno = turno;
+        this.contrasenia = contrasenia;
         this.cedula = cedula;
+        this.usuario = usuario;
     }
 
     public String getCedula() { return cedula; }
@@ -84,12 +86,20 @@ public class Staff {
         this.email = email;
     }
 
-    public String getTurno() {
-        return turno;
+    public String getContrasenia() {
+        return contrasenia;
     }
 
-    public void setTurno(String turno) {
-        this.turno = turno;
+    public void setContrasenia(String contrasenia) {
+        this.contrasenia = contrasenia;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     @Override

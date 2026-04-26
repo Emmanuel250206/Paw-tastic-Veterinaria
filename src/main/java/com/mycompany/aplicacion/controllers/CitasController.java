@@ -16,6 +16,7 @@ import javafx.geometry.Side;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.DatePicker;
@@ -27,53 +28,28 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.ResourceBundle;
 import com.mycompany.aplicacion.modelo.UserSession;
 
-/**
- * Controlador del módulo Citas.
- *
- * Flujo: Programada → En Consulta → Finalizada (auto-guarda reporte con fecha actual).
- * "Completada" o "Finalizada" son estados terminales — no se pueden reabrir.
- * El historial soporta filtrado por rango de fechas y detalle expandido al hacer clic.
- */
 public class CitasController implements Initializable {
 
-    // ── Lateral izquierdo ─────────────────────────────────────────────────────
     @FXML private TableView<Citas>              tablaColaCitas;
     @FXML private TableColumn<Citas, String>    colHora;
     @FXML private TableColumn<Citas, String>    colPaciente;
+    @FXML private TableColumn<Citas, String>    colDueno;
+    @FXML private TableColumn<Citas, String>    colMotivo;
     @FXML private TableColumn<Citas, Prioridad> colPrioridad;
     @FXML private Label                         lblContadorCitas;
-
-    // ── Panel Consulta Activa ─────────────────────────────────────────────────
-    @FXML private Label    lblNombrePaciente;
-    @FXML private Label    lblMotivoConsulta;
-    @FXML private Label    lblHoraCita;
-    @FXML private Label    lblEstadoCita;
-    @FXML private HBox     hboxSignosVitales;
-    @FXML private TextArea txtReporteCita;
-    @FXML private Button   bAccionCita;
-    @FXML private Button   btnCancelarCita;
-
-    // ── Historial ─────────────────────────────────────────────────────────────
-    @FXML private VBox       vboxHistorialContent;
-    @FXML private DatePicker dpDesde;
-    @FXML private DatePicker dpHasta;
 
     // ── Perfil header ─────────────────────────────────────────────────────────
     @FXML private ImageView imgPerfilCitas;
@@ -82,36 +58,17 @@ public class CitasController implements Initializable {
     @FXML private HBox      hboxPerfil;
     private ContextMenu menuPerfil;
 
-    // ── Signos Vitales (inyectados por código) ────────────────────────────────
-    private TextField txtTemp;
-    private TextField txtFreqCard;
-    private TextField txtFreqResp;
-
-    // ── Estado ────────────────────────────────────────────────────────────────
-    private Citas citaSeleccionada;
-
-    /** Lista maestra de reportes guardados para filtrado. */
-    private final List<ReporteLocal> listaReportes = new ArrayList<>();
-
-    // ── Constantes ────────────────────────────────────────────────────────────
     private static final Comparator<Citas> COMPARADOR_PRIORIDAD =
         Comparator.comparing(Citas::getPrioridad).thenComparing(Citas::getHora);
 
-    private static final DateTimeFormatter FMT_DISPLAY =
-        DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-
-    // ─────────────────────────────────────────────────────────────────────────
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // --- Perfil de usuario en el header ---
         UserSession.loadProfileImage(imgPerfilCitas);
         lblNombreCitas.setText(UserSession.getInstance().getUserName());
         lblRolCitas.setText(UserSession.getInstance().getUserRole());
         construirMenuPerfil();
 
-        configurarSignosVitales();
         configurarTabla();
-        bloquearPanelCentral();
     }
 
     private void construirMenuPerfil() {
@@ -152,39 +109,15 @@ public class CitasController implements Initializable {
         menuPerfil.show(hboxPerfil, Side.BOTTOM, hboxPerfil.getWidth() - 185, 4);
     }
 
-    private void configurarSignosVitales() {
-        txtTemp     = crearCampoSigno("Temp. (°C)");
-        txtFreqCard = crearCampoSigno("FC (ppm)");
-        txtFreqResp = crearCampoSigno("FR (rpm)");
-        hboxSignosVitales.getChildren().addAll(txtTemp, txtFreqCard, txtFreqResp);
-    }
-
-    private TextField crearCampoSigno(String prompt) {
-        TextField tf = new TextField();
-        tf.setPromptText(prompt);
-        tf.setDisable(true);
-        tf.setPrefWidth(115);
-        tf.setMaxWidth(130);
-        tf.setStyle(
-            "-fx-background-color: #f8f9fa;" +
-            "-fx-border-color: #3d8d7a;" +
-            "-fx-border-width: 0 0 2 0;" +
-            "-fx-border-radius: 5;" +
-            "-fx-background-radius: 5;" +
-            "-fx-font-size: 12px;");
-
-        // Solo acepta dígitos y un punto decimal (ej. 38.5)
-        tf.setTextFormatter(new TextFormatter<>(change -> {
-            String nuevo = change.getControlNewText();
-            return nuevo.matches("\\d*\\.?\\d*") ? change : null;
-        }));
-
-        return tf;
-    }
-
     private void configurarTabla() {
-        colHora.setCellValueFactory(new PropertyValueFactory<>("hora"));
+        colHora.setCellValueFactory(cell -> 
+            new javafx.beans.property.SimpleStringProperty(cell.getValue().getFecha() + " " + cell.getValue().getHora())
+        );
+        colHora.setText("Fecha y Hora");
+
         colPaciente.setCellValueFactory(new PropertyValueFactory<>("nombreMascota"));
+        colDueno.setCellValueFactory(new PropertyValueFactory<>("nombrePropietario"));
+        colMotivo.setCellValueFactory(new PropertyValueFactory<>("motivo"));
 
         // Columna Prioridad con badge visual
         colPrioridad.setCellValueFactory(new PropertyValueFactory<>("prioridad"));
@@ -201,16 +134,16 @@ public class CitasController implements Initializable {
                             "-fx-background-color: #e74c3c;" +
                             "-fx-text-fill: white;" +
                             "-fx-font-weight: bold;" +
-                            "-fx-font-size: 10px;" +
+                            "-fx-font-size: 11px;" +
                             "-fx-background-radius: 8;" +
-                            "-fx-padding: 2 6 2 6;");
+                            "-fx-padding: 3 8 3 8;");
                     } else {
                         badge.setStyle(
                             "-fx-background-color: #3d8d7a;" +
                             "-fx-text-fill: white;" +
-                            "-fx-font-size: 10px;" +
+                            "-fx-font-size: 11px;" +
                             "-fx-background-radius: 8;" +
-                            "-fx-padding: 2 6 2 6;");
+                            "-fx-padding: 3 8 3 8;");
                     }
                     setGraphic(badge);
                     setText(null);
@@ -219,383 +152,293 @@ public class CitasController implements Initializable {
             }
         });
 
-        // SortedList: URGENTE siempre primero
         ObservableList<Citas> datos = DatosSimulados.getCitas();
         SortedList<Citas> sorted = new SortedList<>(datos, COMPARADOR_PRIORIDAD);
         tablaColaCitas.setItems(sorted);
         lblContadorCitas.setText(datos.size() + " citas");
 
-        // Filas URGENTE con fondo rosado
-        tablaColaCitas.setRowFactory(tv -> new TableRow<Citas>() {
-            @Override
-            protected void updateItem(Citas item, boolean empty) {
-                super.updateItem(item, empty);
-                // Aplicar estilo inline para no depender del parser CSS
-                if (!empty && item != null && item.esUrgente()) {
-                    setStyle("-fx-background-color: #ffebee;");
+        tablaColaCitas.setRowFactory(tv -> {
+            TableRow<Citas> row = new TableRow<>();
+            
+            // Re-evaluar estilo cuando cambie el item (por ejemplo al cargar la tabla)
+            row.itemProperty().addListener((obs, oldItem, newItem) -> {
+                if (newItem != null && newItem.esUrgente()) {
+                    if (!row.isSelected()) {
+                        row.setStyle("-fx-background-color: #ffebee;");
+                    }
                 } else {
-                    setStyle(""); // resetear a default
+                    if (!row.isSelected()) {
+                        row.setStyle("");
+                    }
                 }
-            }
-        });
-
-        // Selección → panel central
-        tablaColaCitas.getSelectionModel().selectedItemProperty()
-            .addListener((obs, old, nueva) -> {
-                if (nueva != null) cargarCitaEnPantalla(nueva);
             });
 
-        if (!sorted.isEmpty()) {
-            tablaColaCitas.getSelectionModel().select(0);
-        }
+            // Re-evaluar estilo cuando cambie la selección
+            row.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+                if (isNowSelected) {
+                    row.setStyle(""); // El CSS de JavaFX se encarga de poner el fondo azul y texto blanco
+                } else {
+                    Citas item = row.getItem();
+                    if (item != null && item.esUrgente()) {
+                        row.setStyle("-fx-background-color: #ffebee;");
+                    } else {
+                        row.setStyle("");
+                    }
+                }
+            });
+
+            return row;
+        });
     }
 
-    // ══ LÓGICA DE CONSULTA ═══════════════════════════════════════════════════
-
-    public void cargarCitaEnPantalla(Citas cita) {
-        this.citaSeleccionada = cita;
-        lblNombrePaciente.setText(cita.getNombreMascota());
-        lblMotivoConsulta.setText(cita.getMotivo());
-        lblHoraCita.setText(cita.getHora());
-        lblEstadoCita.setText(cita.getEstado());
-        txtReporteCita.clear();
-        actualizarBotonEstado();
-    }
-
-    private void bloquearPanelCentral() {
-        lblNombrePaciente.setText("— Selecciona una cita —");
-        lblMotivoConsulta.setText("—");
-        lblHoraCita.setText("—");
-        lblEstadoCita.setText("—");
-        txtReporteCita.setDisable(true);
-        txtReporteCita.setPromptText("Selecciona una cita para habilitar el editor...");
-        bAccionCita.setDisable(true);
-        btnCancelarCita.setDisable(true);
-        setSignosVitalesDisable(true);
-    }
-
-    @FXML
-    private void manejarAccionCita(ActionEvent event) {
-        if (citaSeleccionada == null) return;
-
-        String estado = citaSeleccionada.getEstado();
-
-        if (estaTerminada(estado)) {
-            mostrarAlerta(Alert.AlertType.INFORMATION, null,
-                "Esta cita ya fue finalizada y no puede modificarse.");
+    private void actualizarHorasDisponibles(DatePicker dpFecha, ComboBox<String> cbHora, String horaActualIgnorada) {
+        cbHora.getItems().clear();
+        String[] todasLasHoras = {
+            "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", 
+            "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", 
+            "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00"
+        };
+        
+        LocalDate fecha = dpFecha.getValue();
+        if (fecha == null) {
+            cbHora.getItems().addAll(todasLasHoras);
             return;
         }
 
-        if (estado.equalsIgnoreCase("En Consulta")) {
-            citaSeleccionada.setEstado("Finalizada");
-            guardarReporteAutomatico();
-            cargarCitaEnPantalla(citaSeleccionada);
-            mostrarAlerta(Alert.AlertType.INFORMATION,
-                "Consulta Finalizada",
-                "La consulta terminó. El reporte fue guardado automáticamente.");
-        } else {
-            citaSeleccionada.setEstado("En Consulta");
-            cargarCitaEnPantalla(citaSeleccionada);
-        }
-
-        tablaColaCitas.refresh();
-    }
-
-    /**
-     * Cancela la cita seleccionada tras pedir confirmación y motivo.
-     * Actualiza el estado en la tabla y registra un evento en el historial.
-     */
-    @FXML
-    private void cancelarCita(ActionEvent event) {
-        if (citaSeleccionada == null) return;
-
-        String estado = citaSeleccionada.getEstado();
-        if (estaTerminada(estado)) {
-            mostrarAlerta(Alert.AlertType.INFORMATION, null,
-                "Esta cita ya fue finalizada y no puede cancelarse.");
-            return;
-        }
-        if (estado.equalsIgnoreCase("Cancelada")) {
-            mostrarAlerta(Alert.AlertType.INFORMATION, null,
-                "Esta cita ya está cancelada.");
-            return;
-        }
-
-        // Diálogo para elegir motivo de cancelación
-        javafx.scene.control.ChoiceDialog<String> dialogo = new javafx.scene.control.ChoiceDialog<>(
-            "Cliente no se presentó",
-            "Cliente no se presentó",
-            "Cliente rechazó la cita",
-            "Mascota no apta para consulta",
-            "Error de agenda / duplicado",
-            "Cita cancelada por la clínica",
-            "Otro motivo"
-        );
-        dialogo.setTitle("Cancelar Cita");
-        dialogo.setHeaderText("Paciente: " + citaSeleccionada.getNombreMascota());
-        dialogo.setContentText("Selecciona el motivo de cancelación:");
-
-        java.util.Optional<String> resultado = dialogo.showAndWait();
-        if (resultado.isEmpty()) return; // usuario canceló el diálogo
-
-        String motivo = resultado.get();
-
-        // Actualizar estado en el objeto de la cita
-        citaSeleccionada.setEstado("Cancelada");
-
-        // Registrar en el historial
-        ReporteLocal registro = new ReporteLocal(
-            LocalDateTime.now(),
-            citaSeleccionada.getNombreMascota(),
-            "CANCELADA — " + citaSeleccionada.getMotivo(),
-            "Motivo de cancelación: " + motivo,
-            "Cita cancelada el " + LocalDateTime.now().format(FMT_DISPLAY) +
-                ". Motivo: " + motivo
-        );
-        listaReportes.add(0, registro);
-        renderizarReportes(listaReportes);
-
-        // Refrescar tabla y panel
-        tablaColaCitas.refresh();
-        cargarCitaEnPantalla(citaSeleccionada);
-    }
-
-    // ══ HISTORIAL: GUARDADO Y FILTRADO ═══════════════════════════════════════
-
-    /**
-     * Guarda el reporte en memoria y lo renderiza en el historial.
-     * Usa la fecha/hora actual del sistema.
-     */
-    private void guardarReporteAutomatico() {
-        String notas = txtReporteCita.getText().trim();
-        if (notas.isEmpty()) notas = "(Sin notas registradas)";
-
-        ReporteLocal reporte = new ReporteLocal(
-            LocalDateTime.now(),
-            citaSeleccionada.getNombreMascota(),
-            citaSeleccionada.getMotivo(),
-            String.format("Temp: %s °C  |  FC: %s ppm  |  FR: %s rpm",
-                textoODefecto(txtTemp), textoODefecto(txtFreqCard), textoODefecto(txtFreqResp)),
-            notas
-        );
-
-        listaReportes.add(0, reporte); // más reciente primero
-        renderizarReportes(listaReportes);
-    }
-
-    /** Renderiza la lista dada en el historial (reemplaza contenido anterior). */
-    private void renderizarReportes(List<ReporteLocal> reportes) {
-        vboxHistorialContent.getChildren().clear();
-
-        if (reportes.isEmpty()) {
-            Label vacio = new Label("No hay reportes que mostrar.");
-            vacio.setStyle("-fx-text-fill: #aaaaaa; -fx-font-style: italic; -fx-font-size: 12px;");
-            vboxHistorialContent.getChildren().add(vacio);
-            return;
-        }
-
-        for (ReporteLocal r : reportes) {
-            VBox card = construirTarjeta(r);
-            // Clic → ventana de detalle
-            card.setOnMouseClicked(e -> mostrarDetalleReporte(r));
-            card.setStyle(card.getStyle() + "-fx-cursor: hand;");
-            vboxHistorialContent.getChildren().add(card);
-        }
-    }
-
-    private VBox construirTarjeta(ReporteLocal r) {
-        VBox card = new VBox(4);
-        card.setStyle(
-            "-fx-background-color: #f8f9fa;" +
-            "-fx-background-radius: 10;" +
-            "-fx-padding: 10;" +
-            "-fx-border-color: #e0e0e0;" +
-            "-fx-border-radius: 10;" +
-            "-fx-border-width: 1;");
-
-        Label lblEncabezado = new Label(
-            r.fechaHora.format(FMT_DISPLAY) + " — " + r.paciente);
-        lblEncabezado.setStyle(
-            "-fx-font-weight: bold; -fx-text-fill: #3d8d7a; -fx-font-size: 12px;");
-
-        Label lblSignos = new Label(r.signosVitales);
-        lblSignos.setStyle(
-            "-fx-text-fill: #7f8c8d; -fx-font-size: 11px; -fx-font-style: italic;");
-
-        // Vista previa de notas (primeras 80 chars)
-        String preview = r.notas.length() > 80
-            ? r.notas.substring(0, 80) + "..."
-            : r.notas;
-        Label lblPreview = new Label(preview);
-        lblPreview.setStyle("-fx-text-fill: #555555; -fx-font-size: 12px;");
-        lblPreview.setWrapText(true);
-
-        card.getChildren().addAll(lblEncabezado, lblSignos, lblPreview);
-        return card;
-    }
-
-    /** Abre un diálogo modal con el detalle completo del reporte. */
-    private void mostrarDetalleReporte(ReporteLocal r) {
-        Dialog<Void> dialog = new Dialog<>();
-        dialog.setTitle("Detalle del Reporte");
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        dialog.getDialogPane().setPrefWidth(520);
-
-        VBox contenido = new VBox(14);
-        contenido.setPadding(new Insets(20));
-        contenido.setStyle("-fx-background-color: white;");
-
-        // Encabezado
-        Label lblTitulo = new Label("📋  Reporte Clínico");
-        lblTitulo.setStyle(
-            "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #3d8d7a;");
-
-        // Datos del paciente
-        HBox filaMeta = new HBox(24);
-        filaMeta.setAlignment(Pos.CENTER_LEFT);
-        filaMeta.setStyle(
-            "-fx-background-color: #f0faf5; -fx-background-radius: 10; -fx-padding: 12;");
-        filaMeta.getChildren().addAll(
-            campoInfo("Paciente",  r.paciente),
-            campoInfo("Motivo",    r.motivo),
-            campoInfo("Fecha",     r.fechaHora.format(FMT_DISPLAY))
-        );
-
-        // Signos vitales
-        Label lblSignosTitulo = new Label("Signos Vitales");
-        lblSignosTitulo.setStyle(
-            "-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;");
-        Label lblSignosValor = new Label(r.signosVitales);
-        lblSignosValor.setStyle(
-            "-fx-text-fill: #7f8c8d; -fx-font-size: 13px; -fx-font-style: italic;" +
-            "-fx-background-color: #f8f9fa; -fx-background-radius: 8; -fx-padding: 8;");
-        lblSignosValor.setMaxWidth(Double.MAX_VALUE);
-
-        // Notas completas
-        Label lblNotasTitulo = new Label("Notas Clínicas");
-        lblNotasTitulo.setStyle(
-            "-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;");
-        TextArea areaNotas = new TextArea(r.notas);
-        areaNotas.setEditable(false);
-        areaNotas.setWrapText(true);
-        areaNotas.setPrefHeight(140);
-        areaNotas.setStyle(
-            "-fx-background-color: #f8f9fa;" +
-            "-fx-border-color: #e0e0e0;" +
-            "-fx-border-radius: 8;" +
-            "-fx-background-radius: 8;" +
-            "-fx-font-size: 13px;");
-
-        contenido.getChildren().addAll(
-            lblTitulo, filaMeta,
-            lblSignosTitulo, lblSignosValor,
-            lblNotasTitulo, areaNotas);
-
-        dialog.getDialogPane().setContent(contenido);
-        dialog.showAndWait();
-    }
-
-    /** Crea un pequeño bloque de etiqueta + valor para la fila de metadatos. */
-    private VBox campoInfo(String etiqueta, String valor) {
-        VBox box = new VBox(2);
-        Label lbl = new Label(etiqueta);
-        lbl.setStyle("-fx-font-size: 10px; -fx-text-fill: #999999;");
-        Label val = new Label(valor);
-        val.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
-        box.getChildren().addAll(lbl, val);
-        return box;
-    }
-
-    @FXML
-    private void filtrarReportes(ActionEvent event) {
-        LocalDate desde = dpDesde.getValue();
-        LocalDate hasta = dpHasta.getValue();
-
-        if (desde == null && hasta == null) {
-            renderizarReportes(listaReportes);
-            return;
-        }
-
-        List<ReporteLocal> filtrados = new ArrayList<>();
-        for (ReporteLocal r : listaReportes) {
-            LocalDate fechaReporte = r.fechaHora.toLocalDate();
-            boolean pasaDesde = (desde == null) || !fechaReporte.isBefore(desde);
-            boolean pasaHasta = (hasta == null) || !fechaReporte.isAfter(hasta);
-            if (pasaDesde && pasaHasta) {
-                filtrados.add(r);
+        String fechaStr = fecha.toString();
+        java.util.List<String> horasOcupadas = new java.util.ArrayList<>();
+        for (Citas c : DatosSimulados.getCitas()) {
+            if (c.getFecha().equals(fechaStr) && c.getPrioridad() != Prioridad.URGENTE) {
+                if (horaActualIgnorada == null || !c.getHora().equals(horaActualIgnorada)) {
+                    horasOcupadas.add(c.getHora());
+                }
             }
         }
 
-        renderizarReportes(filtrados);
+        for (String h : todasLasHoras) {
+            if (!horasOcupadas.contains(h)) {
+                cbHora.getItems().add(h);
+            }
+        }
+        if (!cbHora.getItems().isEmpty()) {
+            cbHora.getSelectionModel().selectFirst();
+        }
+    }
+
+    private void aplicarEstiloDialogo(Dialog<?> dialog) {
+        dialog.getDialogPane().getStylesheets().add(getClass().getResource("/fxml/estilos.css").toExternalForm());
+        dialog.getDialogPane().setStyle("-fx-background-color: #F0F5F2; -fx-font-family: 'Segoe UI';");
+        dialog.getDialogPane().lookup(".header-panel").setStyle("-fx-background-color: #3d8d7a;");
+        dialog.getDialogPane().lookup(".header-panel .label").setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
     }
 
     @FXML
-    private void mostrarTodosReportes(ActionEvent event) {
-        dpDesde.setValue(null);
-        dpHasta.setValue(null);
-        renderizarReportes(listaReportes);
+    private void agendarCita(ActionEvent event) {
+        Dialog<Citas> dialog = new Dialog<>();
+        dialog.setTitle("Agendar Cita");
+        dialog.setHeaderText("Programar nueva cita o registrar urgencia");
+        aplicarEstiloDialogo(dialog);
+
+        ButtonType btnTypeGuardar = new ButtonType("Guardar", javafx.scene.control.ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnTypeGuardar, ButtonType.CANCEL);
+        ((Button) dialog.getDialogPane().lookupButton(btnTypeGuardar)).setStyle("-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(15);
+        grid.setPadding(new Insets(20, 20, 10, 10));
+
+        TextField tfMascota = new TextField();
+        tfMascota.setPromptText("Nombre de la mascota");
+        tfMascota.setPrefWidth(200);
+        
+        TextField tfDueno = new TextField();
+        tfDueno.setPromptText("Nombre del dueño");
+
+        TextField tfTelefono = new TextField();
+        tfTelefono.setPromptText("Teléfono del dueño");
+
+        ComboBox<String> cbTipo = new ComboBox<>();
+        cbTipo.getItems().addAll("Revisión", "Vacunación", "Estética", "Urgente", "Otro");
+        cbTipo.setValue("Revisión");
+
+        TextField tfOtroMotivo = new TextField();
+        tfOtroMotivo.setPromptText("Especifique el motivo...");
+        tfOtroMotivo.setVisible(false);
+        tfOtroMotivo.setManaged(false);
+
+        cbTipo.valueProperty().addListener((obs, oldVal, newVal) -> {
+            boolean esOtro = "Otro".equals(newVal);
+            tfOtroMotivo.setVisible(esOtro);
+            tfOtroMotivo.setManaged(esOtro);
+            dialog.getDialogPane().getScene().getWindow().sizeToScene();
+        });
+
+        DatePicker dpFecha = new DatePicker(LocalDate.now());
+        ComboBox<String> cbHora = new ComboBox<>();
+        
+        actualizarHorasDisponibles(dpFecha, cbHora, null);
+        dpFecha.valueProperty().addListener((obs, oldVal, newVal) -> actualizarHorasDisponibles(dpFecha, cbHora, null));
+
+        grid.add(new Label("Mascota:"), 0, 0);
+        grid.add(tfMascota, 1, 0);
+        grid.add(new Label("Dueño:"), 0, 1);
+        grid.add(tfDueno, 1, 1);
+        grid.add(new Label("Teléfono:"), 0, 2);
+        grid.add(tfTelefono, 1, 2);
+        grid.add(new Label("Tipo:"), 0, 3);
+        VBox tipoBox = new VBox(5, cbTipo, tfOtroMotivo);
+        grid.add(tipoBox, 1, 3);
+        grid.add(new Label("Fecha:"), 0, 4);
+        grid.add(dpFecha, 1, 4);
+        grid.add(new Label("Hora:"), 0, 5);
+        grid.add(cbHora, 1, 5);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == btnTypeGuardar) {
+                String mascota = tfMascota.getText().trim();
+                String dueno = tfDueno.getText().trim();
+                String tel = tfTelefono.getText().trim();
+                String tipo = cbTipo.getValue();
+                if ("Otro".equals(tipo)) {
+                    tipo = tfOtroMotivo.getText().trim();
+                    if (tipo.isEmpty()) tipo = "Otro";
+                }
+                String fechaStr = dpFecha.getValue() != null ? dpFecha.getValue().toString() : "";
+                String horaStr = cbHora.getValue();
+
+                if (mascota.isEmpty() || dueno.isEmpty()) {
+                    mostrarAlerta(Alert.AlertType.ERROR, "Datos incompletos", "Debe ingresar mascota y dueño.");
+                    return null;
+                }
+
+                Prioridad prio = "Urgente".equals(tipo) ? Prioridad.URGENTE : Prioridad.NORMAL;
+
+                int nuevoId = DatosSimulados.getCitas().size() + 1;
+                return new Citas(nuevoId, fechaStr, horaStr, mascota, dueno, tel, "Pendiente", tipo, "Programada", prio);
+            }
+            return null;
+        });
+
+        java.util.Optional<Citas> result = dialog.showAndWait();
+        result.ifPresent(nuevaCita -> {
+            DatosSimulados.getCitas().add(nuevaCita);
+            lblContadorCitas.setText(DatosSimulados.getCitas().size() + " citas");
+            tablaColaCitas.refresh();
+        });
     }
 
-    // ══ MÉTODOS AUXILIARES ════════════════════════════════════════════════════
+    @FXML
+    private void editarCita(ActionEvent event) {
+        Citas seleccionada = tablaColaCitas.getSelectionModel().getSelectedItem();
+        if (seleccionada == null) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Ninguna cita seleccionada", "Por favor, seleccione una cita de la cola para editar.");
+            return;
+        }
 
-    private boolean estaTerminada(String estado) {
-        return estado.equalsIgnoreCase("Finalizada")
-            || estado.equalsIgnoreCase("Completada");
-    }
+        Dialog<Citas> dialog = new Dialog<>();
+        dialog.setTitle("Editar Cita");
+        dialog.setHeaderText("Modificar datos de la cita");
+        aplicarEstiloDialogo(dialog);
 
-    private void actualizarBotonEstado() {
-        if (citaSeleccionada == null) return;
+        ButtonType btnTypeGuardar = new ButtonType("Actualizar", javafx.scene.control.ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnTypeGuardar, ButtonType.CANCEL);
+        ((Button) dialog.getDialogPane().lookupButton(btnTypeGuardar)).setStyle("-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
 
-        boolean esStaff    = "Staff".equalsIgnoreCase(App.getRolUsuario());
-        String  estado     = citaSeleccionada.getEstado();
-        boolean enConsulta = estado.equalsIgnoreCase("En Consulta");
-        boolean terminada  = estaTerminada(estado);
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(15);
+        grid.setPadding(new Insets(20, 20, 10, 10));
 
-        boolean esCancelada  = estado.equalsIgnoreCase("Cancelada");
-        boolean bloqueado    = terminada || esCancelada;
+        TextField tfMascota = new TextField(seleccionada.getNombreMascota());
+        tfMascota.setPrefWidth(200);
+        TextField tfDueno = new TextField(seleccionada.getNombrePropietario());
+        TextField tfTelefono = new TextField(seleccionada.getTelefonoDueno() != null ? seleccionada.getTelefonoDueno() : "");
 
-        txtReporteCita.setDisable(!enConsulta);
-        txtReporteCita.setPromptText(enConsulta
-            ? "Escribe las notas médicas de la consulta..."
-            : "El editor se activa al iniciar la consulta.");
+        ComboBox<String> cbTipo = new ComboBox<>();
+        cbTipo.getItems().addAll("Revisión", "Vacunación", "Estética", "Urgente", "Otro");
+        
+        TextField tfOtroMotivo = new TextField();
+        tfOtroMotivo.setPromptText("Especifique el motivo...");
+        
+        String m = seleccionada.getMotivo();
+        if (cbTipo.getItems().contains(m)) {
+            cbTipo.setValue(m);
+            tfOtroMotivo.setVisible(false);
+            tfOtroMotivo.setManaged(false);
+        } else {
+            cbTipo.setValue("Otro");
+            tfOtroMotivo.setText(m);
+            tfOtroMotivo.setVisible(true);
+            tfOtroMotivo.setManaged(true);
+        }
 
-        setSignosVitalesDisable(!enConsulta);
-        if (bloqueado) clearSignosVitales();
+        cbTipo.valueProperty().addListener((obs, oldVal, newVal) -> {
+            boolean esOtro = "Otro".equals(newVal);
+            tfOtroMotivo.setVisible(esOtro);
+            tfOtroMotivo.setManaged(esOtro);
+            dialog.getDialogPane().getScene().getWindow().sizeToScene();
+        });
 
-        bAccionCita.setDisable(esStaff || bloqueado);
-        // Cancelar: habilitado si la cita no está finalizada/cancelada y no es Staff
-        btnCancelarCita.setDisable(esStaff || bloqueado);
+        DatePicker dpFecha = new DatePicker();
+        try {
+            dpFecha.setValue(LocalDate.parse(seleccionada.getFecha()));
+        } catch(Exception e) {
+            dpFecha.setValue(LocalDate.now());
+        }
 
-        if (esStaff)         estilizarBoton(bAccionCita, "Solo Veterinario",   "#95a5a6");
-        else if (esCancelada)estilizarBoton(bAccionCita, "Cita Cancelada",     "#bdc3c7");
-        else if (terminada)  estilizarBoton(bAccionCita, "Consulta Terminada", "#bdc3c7");
-        else if (enConsulta) estilizarBoton(bAccionCita, "Finalizar Consulta", "#e74c3c");
-        else                 estilizarBoton(bAccionCita, "Iniciar Consulta",   "#3d8d7a");
-    }
+        ComboBox<String> cbHora = new ComboBox<>();
+        actualizarHorasDisponibles(dpFecha, cbHora, seleccionada.getHora());
+        cbHora.setValue(seleccionada.getHora());
+        
+        dpFecha.valueProperty().addListener((obs, oldVal, newVal) -> {
+            actualizarHorasDisponibles(dpFecha, cbHora, null);
+        });
 
-    private void estilizarBoton(Button btn, String texto, String color) {
-        btn.setText(texto);
-        btn.setStyle(
-            "-fx-background-color:" + color + ";" +
-            "-fx-text-fill:white;" +
-            "-fx-font-weight:bold;" +
-            "-fx-background-radius:20;" +
-            "-fx-padding:7 20 7 20;" +
-            "-fx-cursor:hand;");
-    }
+        grid.add(new Label("Mascota:"), 0, 0);
+        grid.add(tfMascota, 1, 0);
+        grid.add(new Label("Dueño:"), 0, 1);
+        grid.add(tfDueno, 1, 1);
+        grid.add(new Label("Teléfono:"), 0, 2);
+        grid.add(tfTelefono, 1, 2);
+        grid.add(new Label("Tipo:"), 0, 3);
+        VBox tipoBox = new VBox(5, cbTipo, tfOtroMotivo);
+        grid.add(tipoBox, 1, 3);
+        grid.add(new Label("Fecha:"), 0, 4);
+        grid.add(dpFecha, 1, 4);
+        grid.add(new Label("Hora:"), 0, 5);
+        grid.add(cbHora, 1, 5);
 
-    private void setSignosVitalesDisable(boolean disable) {
-        txtTemp.setDisable(disable);
-        txtFreqCard.setDisable(disable);
-        txtFreqResp.setDisable(disable);
-    }
+        dialog.getDialogPane().setContent(grid);
 
-    private void clearSignosVitales() {
-        txtTemp.clear(); txtFreqCard.clear(); txtFreqResp.clear();
-    }
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == btnTypeGuardar) {
+                seleccionada.setNombreMascota(tfMascota.getText().trim());
+                seleccionada.setNombrePropietario(tfDueno.getText().trim());
+                seleccionada.setTelefonoDueno(tfTelefono.getText().trim());
+                
+                String tipo = cbTipo.getValue();
+                if ("Otro".equals(tipo)) {
+                    tipo = tfOtroMotivo.getText().trim();
+                    if (tipo.isEmpty()) tipo = "Otro";
+                }
+                seleccionada.setMotivo(tipo);
+                
+                if (dpFecha.getValue() != null) seleccionada.setFecha(dpFecha.getValue().toString());
+                if (cbHora.getValue() != null) seleccionada.setHora(cbHora.getValue());
+                
+                Prioridad prio = "Urgente".equals(tipo) ? Prioridad.URGENTE : Prioridad.NORMAL;
+                seleccionada.setPrioridad(prio);
+                return seleccionada;
+            }
+            return null;
+        });
 
-    private String textoODefecto(TextField tf) {
-        return tf.getText().isEmpty() ? "--" : tf.getText();
+        dialog.showAndWait().ifPresent(cita -> {
+            tablaColaCitas.refresh();
+        });
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String header, String contenido) {
@@ -603,28 +446,5 @@ public class CitasController implements Initializable {
         alert.setHeaderText(header);
         alert.setContentText(contenido);
         alert.showAndWait();
-    }
-
-    // ══ MODELO INTERNO: Reporte Local ════════════════════════════════════════
-
-    /**
-     * Registro inmutable de un reporte clínico guardado localmente.
-     * Tiene su propio timestamp para filtrado por fecha.
-     */
-    private static final class ReporteLocal {
-        final LocalDateTime fechaHora;
-        final String        paciente;
-        final String        motivo;
-        final String        signosVitales;
-        final String        notas;
-
-        ReporteLocal(LocalDateTime fechaHora, String paciente, String motivo,
-                     String signosVitales, String notas) {
-            this.fechaHora     = fechaHora;
-            this.paciente      = paciente;
-            this.motivo        = motivo;
-            this.signosVitales = signosVitales;
-            this.notas         = notas;
-        }
     }
 }

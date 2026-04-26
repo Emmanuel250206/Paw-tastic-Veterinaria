@@ -15,14 +15,17 @@ public class Citas {
     private String estado;
     private Prioridad prioridad;
 
+    private String telefonoDueno;
+
     /** Constructor completo con prioridad explícita. */
-    public Citas(int id, String fecha, String hora, String nombreMascota, String nombrePropietario,
+    public Citas(int id, String fecha, String hora, String nombreMascota, String nombrePropietario, String telefonoDueno,
             String veterinario, String motivo, String estado, Prioridad prioridad) {
         this.id = id;
         this.fecha = fecha;
         this.hora = hora;
         this.nombreMascota = nombreMascota;
         this.nombrePropietario = nombrePropietario;
+        this.telefonoDueno = telefonoDueno;
         this.veterinario = veterinario;
         this.motivo = motivo;
         this.estado = estado;
@@ -30,9 +33,9 @@ public class Citas {
     }
 
     /** Constructor legado: prioridad por defecto NORMAL. */
-    public Citas(int id, String fecha, String hora, String nombreMascota, String nombrePropietario,
+    public Citas(int id, String fecha, String hora, String nombreMascota, String nombrePropietario, String telefonoDueno,
             String veterinario, String motivo, String estado) {
-        this(id, fecha, hora, nombreMascota, nombrePropietario, veterinario, motivo, estado, Prioridad.NORMAL);
+        this(id, fecha, hora, nombreMascota, nombrePropietario, telefonoDueno, veterinario, motivo, estado, Prioridad.NORMAL);
     }
 
     // ── Getters / Setters ───────────────────────────────────────────────────
@@ -51,6 +54,9 @@ public class Citas {
 
     public String getNombrePropietario() { return nombrePropietario; }
     public void setNombrePropietario(String nombrePropietario) { this.nombrePropietario = nombrePropietario; }
+
+    public String getTelefonoDueno() { return telefonoDueno; }
+    public void setTelefonoDueno(String telefonoDueno) { this.telefonoDueno = telefonoDueno; }
 
     public String getVeterinario() { return veterinario; }
     public void setVeterinario(String veterinario) { this.veterinario = veterinario; }

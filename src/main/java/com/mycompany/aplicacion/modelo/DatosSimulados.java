@@ -121,23 +121,23 @@ public class DatosSimulados {
         citas = FXCollections.observableArrayList();
 
         // Cita 1 - NORMAL
-        Citas c1 = new Citas(1, "2025-03-30", "10:00", "Max", "Juan Pérez",
+        Citas c1 = new Citas(1, "2025-03-30", "10:00", "Max", "Juan Pérez", "555-1234",
                 "Ana López", "Consulta General", "Programada", Citas.Prioridad.NORMAL);
 
         // Cita 2 - NORMAL (ya completada)
-        Citas c2 = new Citas(2, "2025-03-30", "11:30", "Luna", "María García",
+        Citas c2 = new Citas(2, "2025-03-30", "11:30", "Luna", "María García", "555-5678",
                 "Carlos Martínez", "Infección urinaria", "Completada", Citas.Prioridad.NORMAL);
 
         // Cita 3 - URGENTE
-        Citas c3 = new Citas(3, "2025-03-31", "09:00", "Rocky", "Pedro Díaz",
+        Citas c3 = new Citas(3, "2025-03-31", "09:00", "Rocky", "Pedro Díaz", "555-9012",
                 "Ana López", "Reacción alérgica severa", "Programada", Citas.Prioridad.URGENTE);
 
         // Cita 4 - NORMAL
-        Citas c4 = new Citas(4, "2025-04-01", "16:00", "Nala", "Laura Méndez",
+        Citas c4 = new Citas(4, "2025-04-01", "16:00", "Nala", "Laura Méndez", "555-3456",
                 "Carlos Martínez", "Revisión dental", "Programada", Citas.Prioridad.NORMAL);
 
         // Cita 5 - URGENTE
-        Citas c5 = new Citas(5, "2025-04-02", "08:00", "Toby", "Carlos Ruiz",
+        Citas c5 = new Citas(5, "2025-04-02", "08:00", "Toby", "Carlos Ruiz", "555-7890",
                 "Ana López", "Luxación - dolor agudo", "Programada", Citas.Prioridad.URGENTE);
 
         citas.addAll(c1, c2, c3, c4, c5);

@@ -63,35 +63,28 @@
                   <!-- MAIN CONTENT (CARDS) -->
                   <HBox spacing="20.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <!-- CARD TABLA: Cierre de Recepcionista -->
-                        <VBox prefWidth="400.0" spacing="10.0" styleClass="card" stylesheets="@estilos.css" HBox.hgrow="ALWAYS">
+                        <!-- CARD TABLA: Reporte de Ventas y Consultas -->
+                        <VBox spacing="10.0" styleClass="card" stylesheets="@estilos.css" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label styleClass="titulo" stylesheets="@estilos.css" text="Cierre de Recepcionista" />
-                              <TableView fx:id="tablaCierre" stylesheets="@estilos.css" VBox.vgrow="ALWAYS">
+                              <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                 <children>
+                                    <Label styleClass="titulo" stylesheets="@estilos.css" text="Historial de Ventas y Consultas" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="btnVenta" onAction="#abrirDialogoVenta" style="-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Venta" />
+                                    <Button fx:id="btnSolicitarAutorizacion" onAction="#solicitarAutorizacion" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="Solicitar autorización" />
+                                 </children>
+                              </HBox>
+                              <TableView fx:id="tablaVentas" stylesheets="@estilos.css" VBox.vgrow="ALWAYS" minHeight="400">
                                 <columns>
-                                  <TableColumn fx:id="colConcepto" prefWidth="150.0" text="Concepto" />
-                                  <TableColumn fx:id="colCantidad" prefWidth="80.0" text="Cantidad" />
-                                  <TableColumn fx:id="colTotal" prefWidth="120.0" text="Total ($)" />
+                                  <TableColumn fx:id="colFecha" prefWidth="120.0" text="Fecha" />
+                                  <TableColumn fx:id="colMascota" prefWidth="120.0" text="Mascota" />
+                                  <TableColumn fx:id="colConcepto" prefWidth="200.0" text="Detalles / Productos" />
+                                  <TableColumn fx:id="colMonto" prefWidth="100.0" text="Monto ($)" />
                                 </columns>
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                  </columnResizePolicy>
                               </TableView>
-                              <HBox alignment="CENTER_RIGHT" spacing="15.0" style="-fx-padding: 10 0 0 0;">
-                                  <Button fx:id="btnAutorizar" mnemonicParsing="false" onAction="#autorizarCierre" styleClass="boton-verde" stylesheets="@estilos.css" text="Autorizar Cierre">
-                                     <cursor>
-                                        <Cursor fx:constant="HAND" />
-                                     </cursor>
-                                  </Button>
-                              </HBox>
-                           </children>
-                        </VBox>
-                        
-                        <!-- CARD GRAFICO: Ingresos -->
-                        <VBox prefWidth="380.0" spacing="15.0" styleClass="card" stylesheets="@estilos.css">
-                           <children>
-                              <Label styleClass="titulo" stylesheets="@estilos.css" text="Gráfico de Ingresos" />
-                              <PieChart fx:id="graficoIngresos" legendSide="BOTTOM" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
                      </children>

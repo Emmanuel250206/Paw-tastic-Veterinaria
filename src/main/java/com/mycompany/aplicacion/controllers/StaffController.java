@@ -186,6 +186,12 @@ public class StaffController implements Initializable {
 
             infoContacto.getChildren().addAll(lblTel, lblEmail);
 
+            // Botón de Editar
+            Button btnEditar = new Button("Editar");
+            btnEditar.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold;");
+            btnEditar.setCursor(javafx.scene.Cursor.HAND);
+            btnEditar.setOnAction(e -> mostrarDialogoEditar(s));
+
             // Botón de Eliminar
             Button btnEliminar = new Button("Eliminar");
             btnEliminar.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;");
@@ -205,7 +211,7 @@ public class StaffController implements Initializable {
                 cargarPersonalEnPantalla(); // Recargar visualmente
             });
 
-            VBox accionesContenedor = new VBox(btnEliminar);
+            VBox accionesContenedor = new VBox(10, btnEditar, btnEliminar);
             accionesContenedor.setAlignment(Pos.CENTER);
             accionesContenedor.setPadding(new Insets(0, 0, 0, 15));
 
@@ -456,7 +462,185 @@ public class StaffController implements Initializable {
         }
             cargarPersonalEnPantalla(); // Recargar visualmente
         });
-        
     }
-    
+
+    private void mostrarDialogoEditar(Staff staffAEditar) {
+        Dialog<Staff> dialog = new Dialog<>();
+        dialog.setTitle("Editar Staff");
+        dialog.setHeaderText("Modificar los datos del miembro del personal");
+
+        dialog.getDialogPane().setStyle("-fx-background-color: #DFF5E1; -fx-font-family: 'System';");
+
+        ButtonType btnTypeGuardar = new ButtonType("Actualizar", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnTypeGuardar, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(15);
+        grid.setPadding(new Insets(20, 50, 10, 20));
+
+        String styleTextField = "-fx-background-color: white; -fx-border-color: #3d8d7a; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 5px;";
+        String styleLabel = "-fx-text-fill: #3d8d7a; -fx-font-weight: bold; -fx-font-size: 14px;";
+        String styleError = "-fx-text-fill: #e74c3c; -fx-font-size: 11px;";
+
+        TextField tfNombre = new TextField(staffAEditar.getNombre());
+        tfNombre.setStyle(styleTextField);
+        Label errNombre = new Label("Debes rellenar este campo");
+        errNombre.setStyle(styleError);
+        errNombre.setVisible(false);
+
+        TextField tfApellidos = new TextField(staffAEditar.getApellidos());
+        tfApellidos.setStyle(styleTextField);
+        Label errApellidos = new Label("Debes rellenar este campo");
+        errApellidos.setStyle(styleError);
+        errApellidos.setVisible(false);
+
+        TextField tfRol = new TextField(staffAEditar.getRol());
+        tfRol.setStyle(styleTextField);
+        Label errRol = new Label("Debes rellenar este campo");
+        errRol.setStyle(styleError);
+        errRol.setVisible(false);
+
+        TextField tfCedula = new TextField(staffAEditar.getCedula() != null ? staffAEditar.getCedula() : "");
+        tfCedula.setStyle(styleTextField);
+        tfCedula.setDisable(!staffAEditar.getRol().trim().equalsIgnoreCase("Veterinario"));
+        Label errCedula = new Label("Debes rellenar este campo");
+        errCedula.setStyle(styleError);
+        errCedula.setVisible(false);
+
+        tfRol.textProperty().addListener((obs, oldVal, newVal) -> {
+            boolean isVet = newVal != null && newVal.trim().equalsIgnoreCase("Veterinario");
+            tfCedula.setDisable(!isVet);
+            if (!isVet) {
+                tfCedula.clear();
+                errCedula.setVisible(false);
+            }
+        });
+
+        TextField tfEspecialidad = new TextField(staffAEditar.getEspecialidad());
+        tfEspecialidad.setStyle(styleTextField);
+        Label errEspecialidad = new Label("Debes rellenar este campo");
+        errEspecialidad.setStyle(styleError);
+        errEspecialidad.setVisible(false);
+
+        TextField tfTel = new TextField(staffAEditar.getTelefono());
+        tfTel.setStyle(styleTextField);
+        Label errTel = new Label("Debes rellenar este campo");
+        errTel.setStyle(styleError);
+        errTel.setVisible(false);
+
+        // La contraseña se deja en blanco, si la llena se actualiza, si no, se mantiene
+        TextField tfContrasena = new TextField();
+        tfContrasena.setPromptText("Dejar en blanco para no cambiar");
+        tfContrasena.setStyle(styleTextField);
+
+        TextField tfEmail = new TextField(staffAEditar.getEmail());
+        tfEmail.setStyle(styleTextField);
+        Label errEmail = new Label("Debes rellenar este campo");
+        errEmail.setStyle(styleError);
+        errEmail.setVisible(false);
+
+        Label lbl1 = new Label("Nombre:"); lbl1.setStyle(styleLabel);
+        Label lbl2 = new Label("Apellidos:"); lbl2.setStyle(styleLabel);
+        Label lbl3 = new Label("Rol:"); lbl3.setStyle(styleLabel);
+        Label lblCedula = new Label("Cédula:"); lblCedula.setStyle(styleLabel);
+        Label lbl4 = new Label("Especialidad:"); lbl4.setStyle(styleLabel);
+        Label lbl5 = new Label("Teléfono:"); lbl5.setStyle(styleLabel);
+        Label lbl6 = new Label("Contraseña:"); lbl6.setStyle(styleLabel);
+        Label lbl7 = new Label("Email:"); lbl7.setStyle(styleLabel);
+
+        grid.add(lbl1, 0, 0); grid.add(new VBox(2, tfNombre, errNombre), 1, 0);
+        grid.add(lbl2, 0, 1); grid.add(new VBox(2, tfApellidos, errApellidos), 1, 1);
+        grid.add(lbl3, 0, 2); grid.add(new VBox(2, tfRol, errRol), 1, 2);
+        grid.add(lblCedula, 0, 3); grid.add(new VBox(2, tfCedula, errCedula), 1, 3);
+        grid.add(lbl4, 0, 4); grid.add(new VBox(2, tfEspecialidad, errEspecialidad), 1, 4);
+        grid.add(lbl5, 0, 5); grid.add(new VBox(2, tfTel, errTel), 1, 5);
+        grid.add(lbl6, 0, 6); grid.add(tfContrasena, 1, 6);
+        grid.add(lbl7, 0, 7); grid.add(new VBox(2, tfEmail, errEmail), 1, 7);
+
+        dialog.getDialogPane().setContent(grid);
+
+        javafx.scene.Node btnGuardarNode = dialog.getDialogPane().lookupButton(btnTypeGuardar);
+        if (btnGuardarNode != null && btnGuardarNode instanceof javafx.scene.control.Button) {
+            javafx.scene.control.Button btnGuardar = (javafx.scene.control.Button) btnGuardarNode;
+            btnGuardar.setStyle("-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+
+            btnGuardar.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+                boolean hasError = false;
+                if (tfNombre.getText().trim().isEmpty()) { errNombre.setVisible(true); hasError = true; } else errNombre.setVisible(false);
+                if (tfApellidos.getText().trim().isEmpty()) { errApellidos.setVisible(true); hasError = true; } else errApellidos.setVisible(false);
+                if (tfRol.getText().trim().isEmpty()) { errRol.setVisible(true); hasError = true; } else errRol.setVisible(false);
+                if (tfRol.getText().trim().equalsIgnoreCase("Veterinario") && tfCedula.getText().trim().isEmpty()) { errCedula.setVisible(true); hasError = true; } else errCedula.setVisible(false);
+                if (tfEspecialidad.getText().trim().isEmpty()) { errEspecialidad.setVisible(true); hasError = true; } else errEspecialidad.setVisible(false);
+                if (tfTel.getText().trim().isEmpty()) { errTel.setVisible(true); hasError = true; } else errTel.setVisible(false);
+                if (tfEmail.getText().trim().isEmpty()) { errEmail.setVisible(true); hasError = true; } else errEmail.setVisible(false);
+
+                if (hasError) {
+                    event.consume();
+                }
+            });
+        }
+
+        javafx.scene.Node btnCancelarNode = dialog.getDialogPane().lookupButton(ButtonType.CANCEL);
+        if (btnCancelarNode != null) {
+            btnCancelarNode.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+        }
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == btnTypeGuardar) {
+                return new Staff(staffAEditar.getId(), tfNombre.getText(), tfApellidos.getText(), tfRol.getText(),
+                        tfEspecialidad.getText(), tfTel.getText(), tfEmail.getText(), staffAEditar.getTurno(), tfCedula.getText());
+            }
+            return null;
+        });
+
+        java.util.Optional<Staff> result = dialog.showAndWait();
+        result.ifPresent(staffEditado -> {
+            Conexion cx = new Conexion();
+            Connection conn = cx.estableceConexion();
+            try {
+                String pwd = tfContrasena.getText().trim();
+                String sql;
+                PreparedStatement ps;
+                if (!pwd.isEmpty()) {
+                    sql = "UPDATE tb_usuarios SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, contrasenia=?, cedula=? WHERE id=?";
+                    ps = conn.prepareStatement(sql);
+                    ps.setString(1, staffEditado.getNombre());
+                    ps.setString(2, staffEditado.getApellidos());
+                    ps.setString(3, staffEditado.getRol());
+                    ps.setString(4, staffEditado.getEspecialidad());
+                    ps.setString(5, staffEditado.getTelefono());
+                    ps.setString(6, staffEditado.getEmail());
+                    ps.setString(7, pwd);
+                    boolean isVet = staffEditado.getRol().trim().equalsIgnoreCase("Veterinario");
+                    ps.setString(8, isVet && staffEditado.getCedula() != null ? staffEditado.getCedula().trim() : "");
+                    ps.setInt(9, staffEditado.getId());
+                } else {
+                    sql = "UPDATE tb_usuarios SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, cedula=? WHERE id=?";
+                    ps = conn.prepareStatement(sql);
+                    ps.setString(1, staffEditado.getNombre());
+                    ps.setString(2, staffEditado.getApellidos());
+                    ps.setString(3, staffEditado.getRol());
+                    ps.setString(4, staffEditado.getEspecialidad());
+                    ps.setString(5, staffEditado.getTelefono());
+                    ps.setString(6, staffEditado.getEmail());
+                    boolean isVet = staffEditado.getRol().trim().equalsIgnoreCase("Veterinario");
+                    ps.setString(7, isVet && staffEditado.getCedula() != null ? staffEditado.getCedula().trim() : "");
+                    ps.setInt(8, staffEditado.getId());
+                }
+                ps.executeUpdate();
+            } catch (Exception ex) {
+                String errorMsg = "SQL ERROR al actualizar tb_usuarios: " + ex.getMessage();
+                System.err.println(errorMsg);
+                ex.printStackTrace();
+                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+                alert.setTitle("Error de Base de Datos");
+                alert.setHeaderText("Fallo en la actualización del Staff");
+                alert.setContentText(errorMsg);
+                alert.showAndWait();
+            }
+            cargarPersonalEnPantalla();
+        });
+    }
+
 }

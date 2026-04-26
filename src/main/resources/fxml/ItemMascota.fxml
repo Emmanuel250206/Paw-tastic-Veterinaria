@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<!-- Cell template for the Mascotas ListView -->
+<HBox xmlns="http://javafx.com/javafx/25"
+      xmlns:fx="http://javafx.com/fxml/1"
+      alignment="CENTER_LEFT"
+      prefHeight="70.0"
+      spacing="15.0"
+      styleClass="card-item"
+      stylesheets="@estilos.css">
+   <padding>
+      <Insets bottom="8.0" left="12.0" right="12.0" top="8.0" />
+   </padding>
+   <children>
+
+      <!-- Avatar circular de la mascota -->
+      <ImageView fx:id="imgAvatar"
+                 fitHeight="45.0"
+                 fitWidth="45.0"
+                 pickOnBounds="true"
+                 preserveRatio="true">
+         <clip>
+            <Circle centerX="22.5" centerY="22.5" radius="22.5" />
+         </clip>
+      </ImageView>
+
+      <!-- Nombre y especie -->
+      <VBox alignment="CENTER_LEFT" spacing="3.0">
+         <children>
+            <Label fx:id="lblNombre"
+                   text="Nombre"
+                   styleClass="pet-name"
+                   style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold; -fx-font-size: 14px;" />
+            <Label fx:id="lblEspecie"
+                   text="Especie"
+                   styleClass="pet-species"
+                   style="-fx-font-family: 'Segoe UI'; -fx-font-size: 12px;" />
+         </children>
+      </VBox>
+
+      <!-- Spacer -->
+      <Region HBox.hgrow="ALWAYS" />
+
+      <!-- Badge de Estado -->
+      <Label fx:id="lblEstado"
+             text="Activo"
+             style="-fx-font-family: 'Segoe UI'; -fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: white; -fx-background-color: #3D8D7A; -fx-background-radius: 8; -fx-padding: 3 9 3 9;" />
+
+   </children>
+</HBox>

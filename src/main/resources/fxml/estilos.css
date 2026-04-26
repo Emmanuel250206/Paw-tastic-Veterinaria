@@ -4,6 +4,12 @@ Author     : emmanuel
 Project    : APLICACION Paw-tastic
 */
 
+/* --- NUCLEAR FOCUS OVERRIDE --- */
+* {
+    -fx-focus-color: transparent !important;
+    -fx-faint-focus-color: transparent !important;
+}
+
 /* --- CONTENEDORES DE TEXTO (Nombre y Contraseña) --- */
 .panel-login {
     -fx-background-color: transparent;
@@ -179,6 +185,21 @@ Project    : APLICACION Paw-tastic
     -fx-background-radius: 8;
 }
 
+/* This targets every component to ensure no blue rings anywhere */
+.root {
+    -fx-focus-color: transparent !important;
+    -fx-faint-focus-color: transparent !important;
+}
+
+/* Specific kill for the Lists and Tables */
+.list-view, .list-cell, .table-view, .table-row-cell, .text-field, .button {
+    -fx-focus-traversable: false !important;
+    -fx-focus-color: transparent !important;
+    -fx-faint-focus-color: transparent !important;
+    -fx-background-insets: 0 !important;
+    -fx-box-shadow: none !important;
+}
+
 .table-view {
     -fx-background-radius: 10;
 }
@@ -246,4 +267,220 @@ Project    : APLICACION Paw-tastic
     -fx-border-color: #e0e0e0;
     -fx-border-radius: 10;
     -fx-border-width: 1;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   MÓDULO MASCOTAS — Estilos premium
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── TableView principal ─────────────────────────────────────────────────── */
+.tabla-mascotas {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* Quitar líneas verticales de la cuadrícula */
+.tabla-mascotas .column-header,
+.tabla-mascotas .column-header-background .filler {
+    -fx-background-color: #3D8D7A;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+/* Encabezado de columna */
+.tabla-mascotas .column-header-background {
+    -fx-background-color: #3D8D7A;
+    -fx-background-radius: 10 10 0 0;
+}
+
+.tabla-mascotas .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-font-family: "Segoe UI";
+}
+
+/* Filas — efecto zebra */
+.tabla-mascotas .table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #EEF5EF transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-cell-size: 40px;
+}
+
+.tabla-mascotas .table-row-cell:odd {
+    -fx-background-color: #F4FAF7;
+}
+
+.tabla-mascotas .table-row-cell:even {
+    -fx-background-color: white;
+}
+
+/* Hover */
+.tabla-mascotas .table-row-cell:hover {
+    -fx-background-color: #E8F5F0;
+}
+
+/* Selección */
+.tabla-mascotas .table-row-cell:selected {
+    -fx-background-color: #3D8D7A;
+}
+
+.tabla-mascotas .table-row-cell:selected .text {
+    -fx-fill: white;
+}
+
+/* Quitar líneas verticales entre celdas */
+.tabla-mascotas .table-cell {
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13px;
+}
+
+/* ── Barra de búsqueda tipo pill ─────────────────────────────────────────── */
+.busqueda-pill {
+    -fx-background-color: white;
+    -fx-background-radius: 25;
+    -fx-padding: 4 12 4 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 12, 0, 0, 3);
+    -fx-alignment: center-left;
+    -fx-spacing: 8;
+}
+
+/* ── Etiquetas de la ficha de la mascota ─────────────────────────────────── */
+.ficha-label-key {
+    -fx-font-weight: bold;
+    -fx-text-fill: #0D2621;
+    -fx-font-size: 13px;
+    -fx-font-family: "Segoe UI";
+}
+
+.ficha-label-value {
+    -fx-text-fill: #1A1A1A;
+    -fx-font-weight: 500;
+    -fx-font-size: 13px;
+    -fx-font-family: "Segoe UI";
+}
+
+/* ── TextArea de historial clínico (Mascotas) ────────────────────────────── */
+.historial-area {
+    -fx-background-color: #F8FBF9;
+    -fx-background-radius: 10;
+    -fx-border-color: #D4EAE1;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13px;
+    -fx-text-fill: #2C3E50;
+    -fx-padding: 10;
+}
+
+.historial-area .content {
+    -fx-background-color: #F8FBF9;
+    -fx-background-radius: 10;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   MÓDULO MASCOTAS — ListView de tarjetas
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ListView contenedor: sin fondo extra */
+.lista-mascotas {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* Celda base: transparente, con padding entre tarjetas */
+.list-cell {
+    -fx-focus-traversable: false !important;
+    -fx-background-color: transparent !important;
+    -fx-focus-color: transparent !important;
+    -fx-padding: 8;
+}
+
+/* Quitar el fondo azul de selección de la celda misma */
+.list-cell:focused, .list-cell:selected {
+    -fx-background-color: transparent !important;
+    -fx-background-insets: 0 !important;
+}
+
+/* ── Tarjeta blanca (HBox raíz del item) ─────────────────────────────────── */
+.card-item {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: #EEF5EF;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.06), 6, 0, 0, 2);
+}
+
+.card-item .pet-name {
+    -fx-text-fill: #3D8D7A;
+}
+
+.card-item .pet-species {
+    -fx-text-fill: #7F8C8D;
+}
+
+/* Hover: verde muy suave */
+.list-cell:hover .card-item {
+    -fx-background-color: #F4FAF7;
+    -fx-border-color: #B8DDD0;
+    -fx-effect: dropshadow(gaussian, rgba(61, 141, 122, 0.15), 10, 0, 0, 3);
+}
+
+/* CSS cell selection highlight removed to allow Java controller to handle it */
+
+/* Texto de alta contrast dentro de la tarjeta seleccionada */
+.list-cell:selected .label {
+    -fx-text-fill: #143D34;
+    -fx-font-weight: bold;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   MÓDULO MASCOTAS — Badges de estado y panel de detalle
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Badge base ──────────────────────────────────────────────────────────── */
+.status-badge {
+    -fx-background-radius: 15;
+    -fx-padding: 2 10 2 10;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-font-family: "Segoe UI";
+}
+
+/* Verde: mascota saludable */
+.status-healthy {
+    -fx-background-color: #E8F5E9;
+    -fx-text-fill: #2E7D32;
+}
+
+/* Azul: en tratamiento */
+.status-treatment {
+    -fx-background-color: #E3F2FD;
+    -fx-text-fill: #1565C0;
+}
+
+/* ── Panel derecho de detalle ────────────────────────────────────────────── */
+.detail-card {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.10), 10, 0, 0, 5);
+    -fx-padding: 18;
+}
+
+/* ── Separador visual entre secciones de la ficha ───────────────────────── */
+.seccion-titulo {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #95A5A6;
+    -fx-padding: 8 0 4 0;
 }

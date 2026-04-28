@@ -51,33 +51,34 @@ public class Toast {
             toastStage.initOwner(owner);
             toastStage.initStyle(StageStyle.TRANSPARENT);
 
+            Label lblIcon = new Label("\ud83d\udc3e"); // Paw icon
+            lblIcon.setStyle("-fx-text-fill: #E67E22; -fx-font-size: 24px;");
+
             Label lblMessage = new Label(message);
-            // Estilo alineado al diseño
-            lblMessage.setStyle("-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-alignment: center;");
+            lblMessage.setStyle("-fx-text-fill: #2C3E50; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-alignment: center;");
             lblMessage.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
 
-            HBox content = new HBox(lblMessage);
+            HBox content = new HBox(10, lblIcon, lblMessage);
             content.setAlignment(Pos.CENTER);
             content.setPadding(new Insets(20));
 
-            // Barra de progreso dinámica
+            // Barra de progreso Vibrant Orange
             Rectangle progressBar = new Rectangle(0, 4);
             progressBar.setArcWidth(4);
             progressBar.setArcHeight(4);
-            progressBar.setFill(Color.web("#4CAF50")); // Inicia en verde
+            progressBar.setFill(Color.web("#E67E22")); // Vibrant Orange
 
             HBox barContainer = new HBox(progressBar);
             barContainer.setAlignment(Pos.CENTER_LEFT);
-            barContainer.setPadding(new Insets(0, 20, 15, 20)); // Espaciado inferior y lateral
+            barContainer.setPadding(new Insets(0, 20, 15, 20));
 
-            // VBox principal
+            // VBox principal: Fondo blanco
             VBox root = new VBox(content, barContainer);
             root.setAlignment(Pos.CENTER);
-            // Dark green background (#2D5A4C), 15px rounded corners
-            root.setStyle("-fx-background-color: #2D5A4C; -fx-background-radius: 15; -fx-border-radius: 15;");
+            root.setStyle("-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: #E67E22; -fx-border-width: 1.5;");
             
-            // Sombra para un look moderno
-            root.setEffect(new javafx.scene.effect.DropShadow(15, Color.rgb(0,0,0,0.25)));
+            // Sombra suave
+            root.setEffect(new javafx.scene.effect.DropShadow(15, Color.rgb(0,0,0,0.12)));
 
             Scene scene = new Scene(root);
             scene.setFill(Color.TRANSPARENT);

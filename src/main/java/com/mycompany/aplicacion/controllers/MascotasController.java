@@ -7,6 +7,8 @@ package com.mycompany.aplicacion.controllers;
 import com.mycompany.aplicacion.modelo.DatosSimulados;
 import com.mycompany.aplicacion.modelo.Mascota;
 import com.mycompany.aplicacion.modelo.UserSession;
+import com.mycompany.aplicacion.util.ExitDialog;
+import com.mycompany.aplicacion.util.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import javafx.fxml.FXML;
@@ -39,6 +41,9 @@ public class MascotasController {
 
     @FXML private TextArea   txtHistorial;
     @FXML private TextField  txtBuscar;
+    @FXML private Button     btnGuardar;
+    @FXML private Button     btnCancelar;
+    @FXML private HBox       containerBotones;
 
     // Perfil header
     @FXML private ImageView imgPerfilMascotas;
@@ -158,6 +163,88 @@ public class MascotasController {
                     }
                 }
         );
+
+        // 3. Role Enforcement (Visibility)
+        String role = UserSession.getInstance().getUserRole();
+        if ("Staff".equals(role)) {
+            txtHistorial.setEditable(false);
+            if (containerBotones != null) {
+                containerBotones.setVisible(false);
+                containerBotones.setManaged(false);
+            }
+        } else {
+            // Veterinarians can edit
+            txtHistorial.setEditable(true);
+            if (containerBotones != null) {
+                containerBotones.setVisible(true);
+                containerBotones.setManaged(true);
+                
+                // Estilos base (Professional Palette)
+                String styleGuardar = "-fx-background-color: #27AE60; -fx-text-fill: white; -fx-font-family: 'Segoe UI Bold'; -fx-font-size: 15px; -fx-background-radius: 15; -fx-pref-height: 40; -fx-cursor: hand;";
+                String styleGuardarHover = "-fx-background-color: #2ECC71; -fx-text-fill: white; -fx-font-family: 'Segoe UI Bold'; -fx-font-size: 15px; -fx-background-radius: 15; -fx-pref-height: 40; -fx-cursor: hand;";
+                
+                String styleCancelar = "-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-font-family: 'Segoe UI Semibold'; -fx-font-size: 14px; -fx-background-radius: 15; -fx-pref-height: 40; -fx-cursor: hand;";
+                String styleCancelarHover = "-fx-background-color: #C0392B; -fx-text-fill: white; -fx-font-family: 'Segoe UI Semibold'; -fx-font-size: 14px; -fx-background-radius: 15; -fx-pref-height: 40; -fx-cursor: hand;";
+
+                // Aplicar Hover Effects
+                btnGuardar.setOnMouseEntered(e -> btnGuardar.setStyle(styleGuardarHover));
+                btnGuardar.setOnMouseExited(e -> btnGuardar.setStyle(styleGuardar));
+                
+                btnCancelar.setOnMouseEntered(e -> btnCancelar.setStyle(styleCancelarHover));
+                btnCancelar.setOnMouseExited(e -> btnCancelar.setStyle(styleCancelar));
+
+                btnGuardar.setOnAction(e -> manejarGuardar());
+                btnCancelar.setOnAction(e -> manejarCancelar());
+            }
+        }
+    }
+
+    private void manejarCancelar() {
+        limpiarFicha();
+    }
+
+    /**
+     * Lógica de guardado seguro con Modal de Confirmación (Estilo Dribbble).
+     */
+    private void manejarGuardar() {
+        javafx.stage.Stage stage = (javafx.stage.Stage) btnGuardar.getScene().getWindow();
+        
+        ExitDialog.mostrar(
+            stage, 
+            "\u00bfGuardar historial cl\u00ednico?", 
+            "Esta acci\u00f3n actualizar\u00e1 el registro m\u00e9dico del paciente de forma permanente.", 
+            "S\u00cd", 
+            "NO", 
+            () -> {
+                // Éxito confirmado
+                Toast.showToast("Historial cl\u00ednico actualizado con \u00e9xito \ud83d\udc3e", 2);
+                
+                // Simulación: Limpieza temporizada tras el Toast (2s)
+                javafx.animation.Timeline timeline = new javafx.animation.Timeline(
+                    new javafx.animation.KeyFrame(javafx.util.Duration.seconds(2), e -> limpiarFicha())
+                );
+                timeline.play();
+            }
+        );
+    }
+
+    private void limpiarFicha() {
+        lblNombre.setText("-");
+        lblEspecie.setText("-");
+        lblRaza.setText("-");
+        lblEdad.setText("-");
+        lblPropietario.setText("-");
+        txtHistorial.setText("");
+        
+        if (imgMascotaFicha != null) {
+            imgMascotaFicha.setImage(null);
+        }
+        if (lblEstadoFicha != null) {
+            lblEstadoFicha.setText("-");
+            lblEstadoFicha.getStyleClass().removeAll("status-healthy", "status-treatment");
+        }
+        
+        listaMascotas.getSelectionModel().clearSelection();
     }
 
     /** Devuelve la ruta de imagen segun la especie. */
@@ -234,8 +321,9 @@ public class MascotasController {
         menuPerfil.show(hboxPerfil, Side.BOTTOM, hboxPerfil.getWidth() - 185, 4);
     }
 
-    // Metodo clave: rellena la ficha de detalle
+    // Metodo clave: rellena la ficha de detalle (Punto 1)
     private void mostrarMascota(Mascota m) {
+        // Direct FXML injections
         lblNombre.setText(m.getNombre());
         lblEspecie.setText(m.getEspecie());
         lblRaza.setText(m.getRaza());

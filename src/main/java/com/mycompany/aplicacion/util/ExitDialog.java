@@ -33,11 +33,11 @@ import java.io.InputStream;
 public class ExitDialog {
 
     // ── Paleta de marca ──────────────────────────────────────────────────────
-    private static final String COLOR_BG        = "#468a6fff";   // 
-    private static final String COLOR_BORDER    = "#2D5A4C";   // Verde marca — borde sutil de identidad
-    private static final String COLOR_BTN_SI    = "#E74C3C";   // Soft Red — acción destructiva visible
-    private static final String COLOR_BTN_SI_HV = "#C0392B";   // Rojo más oscuro al hover
-    private static final String COLOR_SUBTITLE  = "#D1D1D1";   // Gris claro — texto secundario
+    private static final String COLOR_BG        = "#1A3A2F";   // Professional Pine Green
+    private static final String COLOR_BORDER    = "#142D24";   // Sutil border
+    private static final String COLOR_BTN_SI    = "#4e9364ff";   // Emerald Green
+    private static final String COLOR_BTN_SI_HV = "#2ECC71";   // Lighter Emerald
+    private static final String COLOR_SUBTITLE  = "#A0A0A0";   // Light gray
     private static final String FONT_FAMILY     = "'Segoe UI', 'Inter', sans-serif";
 
     /**
@@ -47,6 +47,13 @@ public class ExitDialog {
      * @param onConfirm  Acción a ejecutar si el usuario pulsa "Sí".
      */
     public static void mostrar(Stage ownerStage, Runnable onConfirm) {
+        mostrar(ownerStage, "¿Estás seguro de que\nquieres salir?", "Perderás la sesión activa.", "Sí, salir", "No, quedarme", onConfirm);
+    }
+
+    /**
+     * Versión genérica del modal de confirmación.
+     */
+    public static void mostrar(Stage ownerStage, String title, String subtext, String btnSiText, String btnNoText, Runnable onConfirm) {
 
         Stage modal = new Stage();
         modal.initOwner(ownerStage);
@@ -56,24 +63,21 @@ public class ExitDialog {
 
         // ── Logo oficial Paw-Tastic ───────────────────────────────────────────
         ImageView imgLogo = new ImageView();
-        imgLogo.setFitWidth(80);
+        imgLogo.setFitWidth(90);
         imgLogo.setPreserveRatio(true);
         imgLogo.setSmooth(true);
         InputStream logoStream = ExitDialog.class.getResourceAsStream("/images/logo_paw.png");
         if (logoStream != null) {
             imgLogo.setImage(new Image(logoStream));
-            // Glow blanco sutil — hace que el logo flote sobre el fondo oscuro
             DropShadow logoGlow = new DropShadow();
-            logoGlow.setColor(Color.rgb(255, 255, 255, 0.75));
-            logoGlow.setRadius(18);
-            logoGlow.setSpread(0.15);
+            logoGlow.setColor(Color.rgb(255, 255, 255, 0.85));
+            logoGlow.setRadius(25);
+            logoGlow.setSpread(0.2);
             imgLogo.setEffect(logoGlow);
-        } else {
-            System.err.println("[ExitDialog] logo_paw.png no encontrado — usando emoji fallback");
         }
 
         // ── Pregunta principal ────────────────────────────────────────────────
-        Label lblPregunta = new Label("¿Estás seguro de que\nquieres salir?");
+        Label lblPregunta = new Label(title);
         lblPregunta.setStyle(
             "-fx-font-family: " + FONT_FAMILY + ";" +
             "-fx-font-size: 20px;" +
@@ -83,84 +87,92 @@ public class ExitDialog {
         );
         lblPregunta.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
 
-        // ── Subtexto — gris claro, nunca blanco puro ─────────────────────────────
-        Label lblSub = new Label("Perderás la sesión activa.");
+        // ── Subtexto ─────────────────────────────────────────────────────────
+        Label lblSub = new Label(subtext);
         lblSub.setStyle(
             "-fx-font-family: " + FONT_FAMILY + ";" +
-            "-fx-font-size: 13px;" +
-            "-fx-text-fill: " + COLOR_SUBTITLE + ";" +
+            "-fx-font-size: 14px;" +
+            "-fx-text-fill: #A0A0A0;" +
             "-fx-text-alignment: center;"
         );
         lblSub.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+        lblSub.setWrapText(true);
+        lblSub.setMaxWidth(300);
 
-        // ── Botón "Sí, salir" (rojo) ──────────────────────────────────────────
-        Button btnSi = new Button("Sí, salir");
-        String siBase = styleBtn(COLOR_BTN_SI, "white", "transparent");
-        String siHover = styleBtn(COLOR_BTN_SI_HV, "white", "transparent");
-        btnSi.setStyle(siBase);
+        // ── Botones ──────────────────────────────────────────────────────────
+        Button btnSi = new Button(btnSiText);
+        btnSi.setPrefWidth(120);
+        btnSi.setPrefHeight(45);
+        String siBase = styleBtn("#27AE60", "white", "transparent");
+        String siHover = styleBtn("#2ECC71", "white", "transparent");
+        btnSi.setStyle(siBase + "-fx-background-radius: 25;");
         btnSi.setCursor(javafx.scene.Cursor.HAND);
-        btnSi.setOnMouseEntered(e -> btnSi.setStyle(siHover));
-        btnSi.setOnMouseExited(e  -> btnSi.setStyle(siBase));
+        
+        btnSi.setOnMouseEntered(e -> {
+            btnSi.setStyle(siHover + "-fx-background-radius: 25;");
+            ScaleTransition st = new ScaleTransition(Duration.millis(150), btnSi);
+            st.setToX(1.05); st.setToY(1.05); st.play();
+        });
+        btnSi.setOnMouseExited(e  -> {
+            btnSi.setStyle(siBase + "-fx-background-radius: 25;");
+            ScaleTransition st = new ScaleTransition(Duration.millis(150), btnSi);
+            st.setToX(1.0); st.setToY(1.0); st.play();
+        });
         btnSi.setOnAction(e -> {
             modal.close();
             if (onConfirm != null) onConfirm.run();
         });
 
-        // ── Botón “No” (ghost — borde blanco, fondo transparente) ───────────────
-        Button btnNo = new Button("No, quedarme");
-        // Hover: gris muy sutil — sin volverse blanco (demasiado brillante)
-        String noBase  = styleBtnGhost("transparent",            "white", "rgba(255,255,255,0.70)");
-        String noHover = styleBtnGhost("rgba(255, 255, 255, 0.37)", "white", "white");
+        Button btnNo = new Button(btnNoText);
+        btnNo.setPrefWidth(120);
+        btnNo.setPrefHeight(45);
+        String noBase  = "-fx-background-color: #FDFEFE; -fx-text-fill: #2C3E50; -fx-font-family: 'Segoe UI Semibold'; -fx-font-size: 14px; -fx-background-radius: 25;";
+        String noHover = "-fx-background-color: #F4F6F6; -fx-text-fill: #2C3E50; -fx-font-family: 'Segoe UI Semibold'; -fx-font-size: 14px; -fx-background-radius: 25;";
         btnNo.setStyle(noBase);
         btnNo.setCursor(javafx.scene.Cursor.HAND);
         btnNo.setOnMouseEntered(e -> btnNo.setStyle(noHover));
         btnNo.setOnMouseExited(e  -> btnNo.setStyle(noBase));
-        btnNo.setOnAction(e -> modal.close());
 
-        // ── Fila de botones ───────────────────────────────────────────────────
         HBox hboxBotones = new HBox(15, btnNo, btnSi);
         hboxBotones.setAlignment(Pos.CENTER);
         hboxBotones.setPadding(new Insets(8, 0, 0, 0));
-
-        // ── Contenedor principal ───────────────────────────────────────────────
         VBox root = new VBox(16, imgLogo, lblPregunta, lblSub, hboxBotones);
+        
+        btnNo.setOnAction(e -> {
+            FadeTransition ft = new FadeTransition(Duration.millis(200), root);
+            ft.setFromValue(1.0); ft.setToValue(0.0);
+            ft.setOnFinished(evt -> modal.close());
+            ft.play();
+        });
+
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(36, 40, 32, 40));
         root.setStyle(
             "-fx-background-color: " + COLOR_BG + ";" +
             "-fx-background-radius: 25;" +
             "-fx-border-radius: 25;" +
-            "-fx-border-color: " + COLOR_BORDER + ";" +   // borde verde marca
+            "-fx-border-color: " + COLOR_BORDER + ";" +
             "-fx-border-width: 1.5;"
         );
-        root.setMaxWidth(360);
-        // Sombra flotante — da profundidad sobre cualquier fondo
         root.setEffect(new DropShadow(60, Color.rgb(0, 0, 0, 0.60)));
 
-        // ── Drag-to-move (arrastar el modal) ──────────────────────────────────
-        // Captura el offset entre el cursor y la esquina del stage al presionar.
         final double[] dragOffset = new double[2];
         root.setOnMousePressed(e -> {
             dragOffset[0] = modal.getX() - e.getScreenX();
             dragOffset[1] = modal.getY() - e.getScreenY();
-            root.setCursor(javafx.scene.Cursor.CLOSED_HAND);
         });
         root.setOnMouseDragged(e -> {
             modal.setX(e.getScreenX() + dragOffset[0]);
             modal.setY(e.getScreenY() + dragOffset[1]);
         });
-        root.setOnMouseReleased(e -> root.setCursor(javafx.scene.Cursor.DEFAULT));
 
-        // ── Escena transparente ───────────────────────────────────────────────
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
         modal.setScene(scene);
 
-        // ── Animación de entrada: fade + scale ────────────────────────────────
         root.setOpacity(0);
         root.setScaleX(0.88);
         root.setScaleY(0.88);
-
         modal.show();
 
         FadeTransition fade = new FadeTransition(Duration.millis(220), root);
@@ -176,9 +188,6 @@ public class ExitDialog {
 
         fade.play();
         scale.play();
-
-        // Centrar en pantalla — garantiza que el modal capte la atención
-        // independientemente de la posición/tamaño de la ventana principal.
         modal.centerOnScreen();
     }
 

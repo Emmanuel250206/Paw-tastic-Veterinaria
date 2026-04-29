@@ -156,11 +156,11 @@ public class DatosSimulados {
     private static void cargarInventario() {
         inventario = FXCollections.observableArrayList();
         
-        Inventario i1 = new Inventario(1, "Vacuna Antirrábica", "Medicamento", 50, 250.0);
-        Inventario i2 = new Inventario(2, "Alimento Premium 5kg", "Comida", 20, 450.0);
-        Inventario i3 = new Inventario(3, "Collar Antipulgas", "Accesorios", 15, 300.0);
-        Inventario i4 = new Inventario(4, "Antibiótico Amoxicilina", "Medicamento", 100, 150.0);
-        Inventario i5 = new Inventario(5, "Shampoo Medicado", "Higiene", 30, 200.0);
+        Inventario i1 = new Inventario(1, "Vacuna Antirrábica", "Medicamento", "Vacuna anual", 50, 10, "Dosis", 150.0, 250.0, "2026-12-31", 1);
+        Inventario i2 = new Inventario(2, "Alimento Premium 5kg", "Comida", "Alimento seco para perros", 20, 5, "Bolsa", 300.0, 450.0, "2027-05-20", 2);
+        Inventario i3 = new Inventario(3, "Collar Antipulgas", "Accesorios", "Collar para perros", 15, 5, "Unidad", 150.0, 300.0, "2030-01-01", 3);
+        Inventario i4 = new Inventario(4, "Antibiótico Amoxicilina", "Medicamento", "Uso general", 100, 20, "Caja", 80.0, 150.0, "2025-10-15", 1);
+        Inventario i5 = new Inventario(5, "Shampoo Medicado", "Higiene", "Shampoo para dermatitis", 30, 10, "Botella", 100.0, 200.0, "2026-08-01", 4);
         
         inventario.addAll(i1, i2, i3, i4, i5);
     }

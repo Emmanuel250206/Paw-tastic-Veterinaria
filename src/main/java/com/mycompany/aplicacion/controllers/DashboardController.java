@@ -244,7 +244,7 @@ public class DashboardController {
         int maxInv = Math.min(3, DatosSimulados.getInventario().size());
         for (int i = 0; i < maxInv; i++) {
             var inv = DatosSimulados.getInventario().get(i);
-            detalleInv.add("• " + inv.getNombreProducto() + " - Stock: " + inv.getCantidad());
+            detalleInv.add("• " + inv.getNombre() + " - Stock: " + inv.getStock_actual());
         }
         crearTarjetaDinamica(cardInventario, "Inventario", DatosSimulados.getInventario().size(), "En stock", "/images/Icon_Inventario.png", "#FFF3E0", detalleInv);
 

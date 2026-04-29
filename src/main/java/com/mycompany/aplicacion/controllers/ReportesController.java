@@ -250,9 +250,9 @@ public class ReportesController implements Initializable {
         Runnable actualizarTotales = () -> {
             Inventario p = cbProducto.getValue();
             if (p != null) {
-                double precio = p.getPrecio() * spCantidad.getValue();
+                double precio = p.getPrecio_venta() * spCantidad.getValue();
                 lblPrecioTotal.setText(String.format("Total: $%.2f", precio));
-                int stockRestante = p.getCantidad() - spCantidad.getValue();
+                int stockRestante = p.getStock_actual() - spCantidad.getValue();
                 if (stockRestante < 0) {
                     lblStock.setText("⚠️ No hay suficiente stock (Faltan " + Math.abs(stockRestante) + ")");
                     lblStock.setStyle("-fx-text-fill: #e74c3c; -fx-font-weight: bold;");
@@ -289,16 +289,16 @@ public class ReportesController implements Initializable {
         dialog.setResultConverter(btn -> {
             if (btn == btnConfirmar) {
                 Inventario prod = cbProducto.getValue();
-                if (prod != null && prod.getCantidad() >= spCantidad.getValue()) {
+                if (prod != null && prod.getStock_actual() >= spCantidad.getValue()) {
                     // Restar stock local
-                    prod.setCantidad(prod.getCantidad() - spCantidad.getValue());
+                    prod.setStock_actual(prod.getStock_actual() - spCantidad.getValue());
                     
                     String nombreMascota = tfBuscarMascota.getText().trim();
                     if (nombreMascota.isEmpty()) {
                         nombreMascota = "N/A";
                     }
-                    String concepto = spCantidad.getValue() + "x " + prod.getNombreProducto();
-                    double total = prod.getPrecio() * spCantidad.getValue();
+                    String concepto = spCantidad.getValue() + "x " + prod.getNombre();
+                    double total = prod.getPrecio_venta() * spCantidad.getValue();
                     String fecha = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                     return new VentaSimulada(fecha, nombreMascota, concepto, total);
                 }

@@ -129,7 +129,7 @@ public class PrimaryController {
         Conexion conexion = new Conexion();
         Connection con = conexion.estableceConexion();
         try {
-            String sql = "SELECT * FROM tb_usuarios WHERE usuario = ? AND contrasenia = ?";
+            String sql = "SELECT * FROM tb_usuario_web WHERE usuario = ? AND contrasenia = ?";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, usuario);
             ps.setString(2, contrasena);

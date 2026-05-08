@@ -128,8 +128,8 @@ public class StaffController implements Initializable {
     Conexion conexion = new Conexion();
     Connection con = conexion.estableceConexion();
     try {
-        String sql = "SELECT id, nombre, apellidos, tipo_rol, especialidad, telefono, email, cedula, contrasenia, usuario " +
-             "FROM tb_usuarios WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista')";
+        String sql = "SELECT id,id_clinica, nombre, apellidos, tipo_rol, especialidad, telefono, email, cedula, contrasenia, usuario " +
+             "FROM tb_usuario_web WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista')";
         PreparedStatement ps = con.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
@@ -203,7 +203,7 @@ public class StaffController implements Initializable {
             Conexion cx = new Conexion();
             Connection conn = cx.estableceConexion();
             try {
-                String sql = "DELETE FROM tb_usuarios WHERE id = ?";
+                String sql = "DELETE FROM tb_usuario_web WHERE id = ?";
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ps.setInt(1, s.getId());
                 ps.executeUpdate();
@@ -455,7 +455,7 @@ public class StaffController implements Initializable {
         Conexion cx = new Conexion();
         Connection conn = cx.estableceConexion();
         try {
-            String sql = "INSERT INTO tb_usuarios (nombre, apellidos, tipo_rol, especialidad, telefono, email, contrasenia, cedula, usuario, cambio_usuario) VALUES (?,?,?,?,?,?,?,?,?,0)";
+            String sql = "INSERT INTO tb_usuario_web (nombre, apellidos, tipo_rol, especialidad, telefono, email, contrasenia, cedula, usuario) VALUES (?,?,?,?,?,?,?,?,?)";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, nuevoStaff.getNombre());
             ps.setString(2, nuevoStaff.getApellidos());
@@ -484,7 +484,7 @@ public class StaffController implements Initializable {
             String toastMsg = "¡Registro Exitoso! 🐾\nEl nuevo miembro del staff (" + lambdaN + " " + lambdaA + ") ha sido creado.\nUsuario asignado: " + lambdaGenUser;
             Toast.showToast(toastMsg, 5);
         } catch (Exception ex) {
-            String errorMsg = "SQL ERROR al insertar tb_usuarios: " + ex.getMessage();
+            String errorMsg = "SQL ERROR al insertar tb_usuario_web: " + ex.getMessage();
             System.err.println(errorMsg);
             ex.printStackTrace();
             
@@ -655,7 +655,7 @@ public class StaffController implements Initializable {
                 String cedulaVal = isVet && staffEditado.getCedula() != null ? staffEditado.getCedula().trim() : "";
 
                 if (!pwd.isEmpty()) {
-                    sql = "UPDATE tb_usuarios SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, contrasenia=?, cedula=?, usuario=? WHERE id=?";
+                    sql = "UPDATE tb_usuario_web SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, contrasenia=?, cedula=?, usuario=? WHERE id=?";
                     ps = conn.prepareStatement(sql);
                     ps.setString(1, staffEditado.getNombre());
                     ps.setString(2, staffEditado.getApellidos());
@@ -668,7 +668,7 @@ public class StaffController implements Initializable {
                     ps.setString(9, staffEditado.getUsuario());
                     ps.setInt(10, staffEditado.getId());
                 } else {
-                    sql = "UPDATE tb_usuarios SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, cedula=?, usuario=? WHERE id=?";
+                    sql = "UPDATE tb_usuario_web SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, cedula=?, usuario=? WHERE id=?";
                     ps = conn.prepareStatement(sql);
                     ps.setString(1, staffEditado.getNombre());
                     ps.setString(2, staffEditado.getApellidos());

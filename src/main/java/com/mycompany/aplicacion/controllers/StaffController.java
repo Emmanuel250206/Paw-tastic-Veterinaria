@@ -127,28 +127,33 @@ public class StaffController implements Initializable {
     List<Staff> listaStaff = new ArrayList<>();
     Conexion conexion = new Conexion();
     Connection con = conexion.estableceConexion();
-    try {
-        String sql = "SELECT id,id_clinica, nombre, apellidos, tipo_rol, especialidad, telefono, email, cedula, contrasenia, usuario " +
-             "FROM tb_usuario_web WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista')";
-        PreparedStatement ps = con.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            listaStaff.add(new Staff(
-                rs.getInt("id"),
-                rs.getString("nombre"),
-                rs.getString("apellidos"),
-                rs.getString("tipo_rol"),
-                rs.getString("especialidad"),
-                rs.getString("telefono"),
-                rs.getString("email"),
-                rs.getString("contrasenia"),
-                rs.getString("cedula"),
-                rs.getString("usuario")
-            ));
+    
+    if (con != null) {
+        try {
+            String sql = "SELECT id,id_clinica, nombre, apellidos, tipo_rol, especialidad, telefono, email, cedula, contrasenia, usuario " +
+                 "FROM tb_usuario_web WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista')";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                listaStaff.add(new Staff(
+                    rs.getInt("id"),
+                    rs.getString("nombre"),
+                    rs.getString("apellidos"),
+                    rs.getString("tipo_rol"),
+                    rs.getString("especialidad"),
+                    rs.getString("telefono"),
+                    rs.getString("email"),
+                    rs.getString("contrasenia"),
+                    rs.getString("cedula"),
+                    rs.getString("usuario")
+                ));
+            }
+        } catch (Exception e) {
+            // Error loading staff
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
+        } else {
+            // DB connection failure
+        }
     
         for (Staff s : listaStaff) {
             // Contenedor principal de la tarjeta
@@ -484,9 +489,8 @@ public class StaffController implements Initializable {
             String toastMsg = "¡Registro Exitoso! 🐾\nEl nuevo miembro del staff (" + lambdaN + " " + lambdaA + ") ha sido creado.\nUsuario asignado: " + lambdaGenUser;
             Toast.showToast(toastMsg, 5);
         } catch (Exception ex) {
-            String errorMsg = "SQL ERROR al insertar tb_usuario_web: " + ex.getMessage();
-            System.err.println(errorMsg);
-            ex.printStackTrace();
+            String errorMsg = "Fallo en la comunicación con la base de datos.";
+            // Error handling
             
             // Mostrar Alert al usuario
             javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
@@ -682,9 +686,8 @@ public class StaffController implements Initializable {
                 }
                 ps.executeUpdate();
             } catch (Exception ex) {
-                String errorMsg = "SQL ERROR al actualizar tb_usuario_web: " + ex.getMessage();
-                System.err.println(errorMsg);
-                ex.printStackTrace();
+                String errorMsg = "No se pudieron guardar los cambios.";
+                // Error handling
                 javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
                 alert.setTitle("Error de Base de Datos");
                 alert.setHeaderText("Fallo en la actualización del Staff");

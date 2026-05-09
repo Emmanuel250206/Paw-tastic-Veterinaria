@@ -79,6 +79,154 @@ public class DashboardController {
         }
 
         renderizarTarjetas();
+
+        // Aplicar efectos de micro-interacción (Hover)
+        aplicarEfectoHover(cardCitas);
+        aplicarEfectoHover(cardMascotas);
+        aplicarEfectoHover(cardInventario);
+        aplicarEfectoHover(cardReportes);
+        aplicarEfectoHover(cardStaff);
+
+        // --- SECUENCIA DE ENTRADA STAGGERED ---
+        animarEntradaEscalonada();
+    }
+
+    private void animarEntradaEscalonada() {
+        VBox[] tarjetas = {cardCitas, cardMascotas, cardInventario, cardReportes, cardStaff};
+        int delay = 100;
+        for (VBox t : tarjetas) {
+            if (t != null && t.isVisible()) {
+                t.setOpacity(0);
+                t.setTranslateY(20);
+                
+                javafx.animation.FadeTransition fade = new javafx.animation.FadeTransition(javafx.util.Duration.millis(600), t);
+                fade.setToValue(1);
+                fade.setDelay(javafx.util.Duration.millis(delay));
+                
+                javafx.animation.TranslateTransition slide = new javafx.animation.TranslateTransition(javafx.util.Duration.millis(600), t);
+                slide.setToY(0);
+                slide.setDelay(javafx.util.Duration.millis(delay));
+                
+                fade.play();
+                slide.play();
+                delay += 120;
+            }
+        }
+    }
+
+    private void animarConteo(Label label, int valorFinal) {
+        if (label == null || valorFinal <= 0) return;
+        
+        javafx.animation.Timeline timeline = new javafx.animation.Timeline();
+        int pasos = Math.min(valorFinal, 20); // Máximo 20 pasos para suavidad
+        for (int i = 0; i <= pasos; i++) {
+            final int currentVal = (int) ((double) valorFinal * i / pasos);
+            javafx.animation.KeyFrame frame = new javafx.animation.KeyFrame(
+                javafx.util.Duration.millis(800.0 * i / pasos),
+                e -> label.setText(String.valueOf(currentVal))
+            );
+            timeline.getKeyFrames().add(frame);
+        }
+        timeline.play();
+    }
+
+    /**
+     * Aplica efectos de micro-interacción usando la técnica 'Ghost Layer'.
+     * Los eventos se vinculan a una Región estática (triggerArea) que está al frente,
+     * mientras que la animación se aplica al contenedor de la tarjeta detrás.
+     */
+    private void aplicarEfectoHover(VBox card) {
+        if (card == null || !(card.getParent() instanceof javafx.scene.layout.StackPane)) return;
+
+        javafx.scene.layout.StackPane parent = (javafx.scene.layout.StackPane) card.getParent();
+        
+        // El triggerArea es la Región transparente al frente (último hijo en FXML)
+        javafx.scene.Node triggerNode = parent.getChildren().get(parent.getChildren().size() - 1);
+        if (!(triggerNode instanceof javafx.scene.layout.Region)) return;
+        
+        javafx.scene.layout.Region trigger = (javafx.scene.layout.Region) triggerNode;
+        trigger.setCursor(javafx.scene.Cursor.HAND);
+
+        // Sombra base (Normal: Radius 10, Opacity 0.1)
+        javafx.scene.effect.DropShadow shadow = new javafx.scene.effect.DropShadow(10, javafx.scene.paint.Color.rgb(0,0,0,0.1));
+        shadow.setOffsetY(4);
+        card.setEffect(shadow);
+
+        // Buscar el icono para la animación de rotación
+        javafx.scene.image.ImageView icono = buscarIcono(card);
+
+        // Animación de Desplazamiento (Lift: -8px en Y)
+        javafx.animation.TranslateTransition tt = new javafx.animation.TranslateTransition(javafx.util.Duration.millis(200), card);
+        tt.setInterpolator(javafx.animation.Interpolator.EASE_OUT);
+
+        javafx.animation.RotateTransition rt = null;
+        if (icono != null) {
+            rt = new javafx.animation.RotateTransition(javafx.util.Duration.millis(200), icono);
+            rt.setInterpolator(javafx.animation.Interpolator.EASE_OUT);
+        }
+
+        final javafx.animation.RotateTransition rtFinal = rt;
+
+        // EVENTOS EN EL TRIGGER (Área estática que no se mueve)
+        trigger.setOnMouseEntered(e -> {
+            tt.stop();
+            tt.setToY(-8);
+            tt.play();
+            
+            if (rtFinal != null) {
+                rtFinal.stop();
+                rtFinal.setToAngle(15);
+                rtFinal.play();
+            }
+            
+            // Animación de sombra (Hover: Radius 20, Opacity 0.25)
+            javafx.animation.Timeline shadowIn = new javafx.animation.Timeline(
+                new javafx.animation.KeyFrame(javafx.util.Duration.millis(200),
+                    new javafx.animation.KeyValue(shadow.radiusProperty(), 20, javafx.animation.Interpolator.EASE_OUT),
+                    new javafx.animation.KeyValue(shadow.colorProperty(), javafx.scene.paint.Color.rgb(0,0,0,0.25), javafx.animation.Interpolator.EASE_OUT),
+                    new javafx.animation.KeyValue(shadow.offsetYProperty(), 10, javafx.animation.Interpolator.EASE_OUT)
+                )
+            );
+            shadowIn.play();
+        });
+
+        trigger.setOnMouseExited(e -> {
+            tt.stop();
+            tt.setToY(0);
+            tt.play();
+
+            if (rtFinal != null) {
+                rtFinal.stop();
+                rtFinal.setToAngle(0);
+                rtFinal.play();
+            }
+
+            // Retorno de sombra a estado normal
+            javafx.animation.Timeline shadowOut = new javafx.animation.Timeline(
+                new javafx.animation.KeyFrame(javafx.util.Duration.millis(200),
+                    new javafx.animation.KeyValue(shadow.radiusProperty(), 10, javafx.animation.Interpolator.EASE_OUT),
+                    new javafx.animation.KeyValue(shadow.colorProperty(), javafx.scene.paint.Color.rgb(0,0,0,0.1), javafx.animation.Interpolator.EASE_OUT),
+                    new javafx.animation.KeyValue(shadow.offsetYProperty(), 4, javafx.animation.Interpolator.EASE_OUT)
+                )
+            );
+            shadowOut.play();
+        });
+    }
+
+    private javafx.scene.image.ImageView buscarIcono(VBox card) {
+        // Buscamos el ImageView en la jerarquía (VBox -> HBox -> Region/StackPane -> ImageView)
+        for (javafx.scene.Node n : card.getChildren()) {
+            if (n instanceof HBox) {
+                for (javafx.scene.Node m : ((HBox)n).getChildren()) {
+                    if (m instanceof javafx.scene.layout.StackPane) {
+                        for (javafx.scene.Node o : ((javafx.scene.layout.StackPane)m).getChildren()) {
+                            if (o instanceof ImageView) return (ImageView) o;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private void generarSaludoDinamico() {
@@ -109,7 +257,7 @@ public class DashboardController {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error fetching user name for greeting: " + e.getMessage());
+            // Silently fail or use a logger
         }
 
         // Fallback a UserSession si falla la BD
@@ -281,7 +429,8 @@ public class DashboardController {
         numberBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         numberBox.setPadding(new javafx.geometry.Insets(5, 0, 15, 0));
         
-        Label lblCantidad = new Label(String.valueOf(cantidad));
+        Label lblCantidad = new Label("0");
+        animarConteo(lblCantidad, cantidad);
         lblCantidad.setStyle("-fx-text-fill: #3D8D7A; -fx-font-weight: bold; -fx-font-size: 40px;");
         
         Label lblSubLabel = new Label(subLabelText.toUpperCase());
@@ -294,7 +443,7 @@ public class DashboardController {
         ImageView icon = new ImageView();
         try {
             icon.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream(iconPath)));
-        } catch(Exception e) { System.err.println("Icono no encontrado: " + iconPath); }
+        } catch(Exception e) { /* Icon not found */ }
         icon.setFitWidth(24);
         icon.setFitHeight(24);
         
@@ -376,7 +525,8 @@ public class DashboardController {
         numberBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         numberBox.setPadding(new javafx.geometry.Insets(5, 0, 15, 0));
         
-        Label lblCantidad = new Label("3");
+        Label lblCantidad = new Label("0");
+        animarConteo(lblCantidad, 3); // Valor simulado para Staff
         lblCantidad.setStyle("-fx-text-fill: #3D8D7A; -fx-font-weight: bold; -fx-font-size: 40px;");
         
         Label lblSubLabel = new Label("ACTIVOS");
@@ -389,7 +539,7 @@ public class DashboardController {
         ImageView icon = new ImageView();
         try {
             icon.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/images/Icon_Staff.png")));
-        } catch(Exception e) { System.err.println("Icono no encontrado: /images/Icon_Staff.png"); }
+        } catch(Exception e) { /* Icon not found */ }
         icon.setFitWidth(24);
         icon.setFitHeight(24);
         
@@ -434,7 +584,7 @@ public class DashboardController {
                     try {
                         avatar.setImage(new javafx.scene.image.Image(getClass().getResourceAsStream("/images/" + avatarName)));
                     } catch(Exception ex) {
-                        System.err.println("No se pudo cargar " + avatarName + ": " + ex.getMessage());
+                        // Avatar not found
                     }
                     avatar.setFitWidth(32);
                     avatar.setFitHeight(32);
@@ -454,7 +604,7 @@ public class DashboardController {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error cargando staff: " + e.getMessage());
+            // Error loading staff
         }
     }
 

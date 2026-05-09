@@ -1,17 +1,15 @@
 module com.mycompany.aplicacion {
     requires java.sql;
+    requires mysql.connector.j;
     requires javafx.controls;
     requires javafx.fxml;
     requires java.base;
+    requires javafx.graphics;
 
-    // Esto permite que el FXMLLoader lea tus archivos FXML
-    opens fxml to javafx.fxml;
+    // Permite que el FXMLLoader acceda a los controladores y modelos
     opens com.mycompany.aplicacion to javafx.fxml;
-
     opens com.mycompany.aplicacion.controllers to javafx.fxml;
     opens com.mycompany.aplicacion.modelo to javafx.base;
 
     exports com.mycompany.aplicacion;
-    
-    // Configuración de módulos completada
 }

@@ -23,11 +23,16 @@
             <artifactId>javafx-fxml</artifactId>
             <version>21.0.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>21.0.2</version>
+        </dependency>
         <!-- Source: https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>9.6.0</version>
+            <version>9.1.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -44,6 +49,7 @@
                     <include>**/*.jpg</include>
                     <include>**/*.jpeg</include>
                     <include>**/*.gif</include>
+                    <include>**/*.sql</include>
                 </includes>
             </resource>
         </resources>
@@ -52,7 +58,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.13.0</version>
                 <configuration>
                     <release>21</release>
                 </configuration>
@@ -62,7 +68,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>com.mycompany.aplicacion.App</mainClass>
+                    <mainClass>com.mycompany.aplicacion/com.mycompany.aplicacion.App</mainClass>
                 </configuration>
             </plugin>
         </plugins>

@@ -36,6 +36,16 @@ public class VeterinarioController implements Initializable {
     @FXML
     private Button btnCerrarSesion;
 
+    // Reloj digital de la barra lateral
+    @FXML
+    private javafx.scene.control.Label lblClockHours;
+    @FXML
+    private javafx.scene.control.Label lblClockColon;
+    @FXML
+    private javafx.scene.control.Label lblClockMinutes;
+    @FXML
+    private javafx.scene.control.Label lblClockDate;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // 1. Candado de tamaño para proteger el menú lateral
@@ -63,6 +73,34 @@ public class VeterinarioController implements Initializable {
         }
 
         navegar(bDashboard, "SeccionDashboard");
+
+        // 3. Iniciar el reloj digital de la barra lateral
+        iniciarRelojDigital();
+    }
+
+    private void iniciarRelojDigital() {
+        java.time.format.DateTimeFormatter dateFormatter = java.time.format.DateTimeFormatter.ofPattern("EEE, dd MMM", new java.util.Locale("es", "ES"));
+
+        javafx.animation.Timeline clock = new javafx.animation.Timeline(
+            new javafx.animation.KeyFrame(javafx.util.Duration.ZERO, e -> {
+                java.time.LocalTime now = java.time.LocalTime.now();
+                if (lblClockHours != null) lblClockHours.setText(String.format("%02d", now.getHour()));
+                if (lblClockMinutes != null) lblClockMinutes.setText(String.format("%02d", now.getMinute()));
+                if (lblClockDate != null) {
+                    String dateStr = java.time.LocalDate.now().format(dateFormatter);
+                    // Capitalizar primera letra (ej: sáb -> Sáb)
+                    lblClockDate.setText(dateStr.substring(0, 1).toUpperCase() + dateStr.substring(1));
+                }
+                
+                // Efecto de parpadeo del colon para indicar que está activo
+                if (lblClockColon != null) {
+                    lblClockColon.setOpacity(lblClockColon.getOpacity() == 1.0 ? 0.3 : 1.0);
+                }
+            }),
+            new javafx.animation.KeyFrame(javafx.util.Duration.seconds(1))
+        );
+        clock.setCycleCount(javafx.animation.Animation.INDEFINITE);
+        clock.play();
     }
 
     /**
@@ -94,7 +132,6 @@ public class VeterinarioController implements Initializable {
             URL url = getClass().getResource(ruta);
 
             if (url == null) {
-                System.err.println("❌ ERROR: No se encuentra el archivo en: " + ruta);
                 return;
             }
 
@@ -102,7 +139,6 @@ public class VeterinarioController implements Initializable {
             Node vista = loader.load();
 
             if (bpPrincipal == null) {
-                System.err.println("❌ ERROR: bpPrincipal es NULL. Revisa el fx:id en Scene Builder.");
                 return;
             }
 
@@ -116,10 +152,8 @@ public class VeterinarioController implements Initializable {
             }
 
             bpPrincipal.setCenter(vista);
-            System.out.println("✅ Vista cargada con éxito: " + nombreFXML);
 
         } catch (IOException e) {
-            System.err.println("❌ ERROR CRÍTICO al cargar " + nombreFXML);
             e.printStackTrace();
         }
     }

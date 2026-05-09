@@ -46,15 +46,34 @@ public class PrimaryController {
     @FXML
     private void mostrarRecuperarContrasena(ActionEvent event) {
         try {
+            // 1. Añadir overlay de oscurecimiento al login original
+            javafx.scene.layout.Region dimmingOverlay = new javafx.scene.layout.Region();
+            dimmingOverlay.setStyle("-fx-background-color: rgba(0,0,0,0.4);");
+            AnchorPane.setTopAnchor(dimmingOverlay, 0.0);
+            AnchorPane.setBottomAnchor(dimmingOverlay, 0.0);
+            AnchorPane.setLeftAnchor(dimmingOverlay, 0.0);
+            AnchorPane.setRightAnchor(dimmingOverlay, 0.0);
+            rootPane.getChildren().add(dimmingOverlay);
+
+            // 2. Crear el nuevo Stage modal
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/RecuperarContrasena.fxml"));
             Parent root = loader.load();
-            Stage stage = new Stage();
-            stage.setTitle("Recuperar Contraseña");
-            stage.initStyle(javafx.stage.StageStyle.TRANSPARENT);
+            
+            Stage modalStage = new Stage();
+            modalStage.initOwner(rootPane.getScene().getWindow());
+            modalStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            modalStage.initStyle(javafx.stage.StageStyle.TRANSPARENT);
+            
             javafx.scene.Scene scene = new javafx.scene.Scene(root);
             scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
-            stage.setScene(scene);
-            stage.show();
+            modalStage.setScene(scene);
+
+            // 3. Quitar el overlay al cerrar el modal
+            modalStage.setOnHidden(e -> rootPane.getChildren().remove(dimmingOverlay));
+
+            modalStage.show();
+            modalStage.centerOnScreen();
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -185,56 +204,39 @@ public class PrimaryController {
 
     @FXML
     private void iniciarSesion() throws IOException {
-        if (!validarCampos()) {
-            return;
-        }
+        if (!validarCampos()) return;
 
-        // Configurar rol según el nombre ingresado
-        String usuario = txtNombre.getText().trim();
-        String contrasenia = txtContrasenaOculta.getText().trim();
+        String nombre = txtNombre.getText().trim();
+        String contrasena = txtContrasenaOculta.getText();
 
-    String rol = validarUsuarioBD(usuario, contrasenia);
-        
+        // 1. Validar contra la Base de Datos
+        String rol = validarUsuarioBD(nombre, contrasena);
+
         if (rol != null) {
-
+            // LOGIN EXITOSO
             App.setRolUsuario(rol);
+            String view = rol.equalsIgnoreCase("Staff") ? "fxml/InterfazStaff" : "fxml/InterfazVeterinario";
 
-            if (rol.equalsIgnoreCase("Veterinario") || rol.equalsIgnoreCase("Staff")) {
-
-                // 1. Primero habilitamos el redimensionamiento ANTES de cambiar la vista
-                Stage stage = App.getStage();
-                if (stage != null) {
-                    stage.setResizable(true);
-                    stage.setMinWidth(836);
-                    stage.setMinHeight(600);
-                }
-
-                // 2. Cambiamos la vista
-                App.setRoot("fxml/InterfazVeterinario");
-
-                // 3. Maximizamos en el siguiente ciclo del layout para que tome efecto
-                javafx.application.Platform.runLater(() -> {
-                    javafx.application.Platform.runLater(() -> {
-                        Stage s = App.getStage();
-                        if (s != null) {
-                            javafx.stage.Screen screen = javafx.stage.Screen.getPrimary();
-                            javafx.geometry.Rectangle2D bounds = screen.getVisualBounds();
-                            s.setX(bounds.getMinX());
-                            s.setY(bounds.getMinY());
-                            s.setWidth(bounds.getWidth());
-                            s.setHeight(bounds.getHeight());
-                            s.setMaximized(true);
-                        }
-                    });
-                });
+            // Habilitar redimensionamiento y establecer límites mínimos
+            Stage stage = App.getStage();
+            if (stage != null) {
+                stage.setResizable(true);
+                stage.setMinWidth(1100);
+                stage.setMinHeight(760);
             }
 
-        } else if ("CONNECTION_ERROR".equals(rol)) {
-            txtErrorDatos.setText("Error: No hay conexión con la base de datos");
-            txtErrorDatos.setVisible(true);
+            // Navegar a la vista correspondiente
+            App.setRoot(view);
+
+            // Maximizar la ventana automáticamente
+            javafx.application.Platform.runLater(() -> {
+                Stage s = App.getStage();
+                if (s != null) {
+                    s.setMaximized(true);
+                }
+            });
         } else {
-            // Si validación es null, asegurar limpieza por seguridad
-            com.mycompany.aplicacion.modelo.UserSession.clear();
+            // LOGIN FALLIDO
             txtErrorDatos.setText("Usuario o contraseña incorrectos");
             txtErrorDatos.setVisible(true);
         }

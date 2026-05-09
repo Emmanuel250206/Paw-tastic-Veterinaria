@@ -2,13 +2,17 @@ package com.mycompany.aplicacion.controllers;
 
 import com.mycompany.aplicacion.modelo.UserSession;
 import com.mycompany.aplicacion.persistencia.Conexion;
+import com.mycompany.aplicacion.util.Toast;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
@@ -16,8 +20,14 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.scene.Node;
-
+import javafx.animation.*;
+import javafx.util.Duration;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.geometry.Pos;
 import java.io.InputStream;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,50 +41,75 @@ import java.util.List;
  */
 public class ConfigurarPerfilController {
 
+    @FXML
+    private StackPane rootWrapper;
+    @FXML
+    private VBox profileCard;
+    @FXML
+    private HBox hboxHeader;
+    @FXML
+    private VBox vboxBody;
+    @FXML
+    private VBox sectionAvatar;
+    @FXML
+    private GridPane gridForm;
+    @FXML
+    private HBox hboxFooter;
     // ── FXML fields ───────────────────────────────────────────────────────────
-    @FXML private ImageView imgAvatarActual;
-    @FXML private Label     lblSubtituloRol;
+    @FXML
+    private ImageView imgAvatarActual;
+    @FXML
+    private Label lblSubtituloRol;
 
-    @FXML private HBox      hboxAvatares;
+    @FXML
+    private HBox hboxAvatares;
 
-    @FXML private TextField txtNombreCompleto;
-    @FXML private TextField txtAlias;
-    @FXML private TextField txtRol;
-    @FXML private TextField txtCedula;
-    @FXML private TextField txtHorario;
-    @FXML private Label     lblCedula;
+    @FXML
+    private TextField txtNombreCompleto;
+    @FXML
+    private TextField txtAlias;
+    @FXML
+    private TextField txtRol;
+    @FXML
+    private TextField txtCedula;
+    @FXML
+    private TextField txtHorario;
+    @FXML
+    private Label lblCedula;
 
     // Avatar seleccionado actualmente en la galería
     private String avatarSeleccionado;
-    // Lista de nodos visuales de la galería para resetear borde al cambiar selección
+    // Lista de nodos visuales de la galería para resetear borde al cambiar
+    // selección
     private final List<ImageView> galeria = new ArrayList<>();
 
-    // Callback ejecutado tras guardar cambios (actualiza el header de la vista activa)
+    // Callback ejecutado tras guardar cambios (actualiza el header de la vista
+    // activa)
     private Runnable refreshCallback;
 
     // ── Estilos reutilizables ─────────────────────────────────────────────────
-    private static final String STYLE_AVATAR_BASE =
-        "-fx-background-color: transparent; -fx-border-color: transparent; -fx-border-width: 2; -fx-background-radius: 25; -fx-cursor: hand;";
-    private static final String STYLE_AVATAR_HOVER =
-        "-fx-background-color: #E9F5F2; -fx-border-color: #3D8D7A; -fx-border-width: 2; -fx-background-radius: 25; -fx-cursor: hand;";
-    private static final String STYLE_AVATAR_SELECTED =
-        "-fx-background-color: #D1E8E2; -fx-border-color: #3D8D7A; -fx-border-width: 2.5; -fx-background-radius: 25;";
+    private static final String STYLE_AVATAR_BASE = "-fx-background-color: transparent; -fx-border-color: transparent; -fx-border-width: 2; -fx-background-radius: 25; -fx-cursor: hand;";
+    private static final String STYLE_AVATAR_HOVER = "-fx-background-color: #E9F5F2; -fx-border-color: #3D8D7A; -fx-border-width: 2; -fx-background-radius: 25; -fx-cursor: hand;";
+    private static final String STYLE_AVATAR_SELECTED = "-fx-background-color: #D1E8E2; -fx-border-color: #3D8D7A; -fx-border-width: 2.5; -fx-background-radius: 25;";
 
     // Avatares disponibles — solo los que existen en /images/
     private static final String[] AVATARES = {
-        "Ava_huella.png",
-        "Ava_perro1.png",
-        "Ava_perro2.png",
-        "Ava_perro3.png",
-        "Ava_perro4.png",
-        "Ava_perro5.png",
-        "Ava_perro6.png",
-        "Ava_gato.png",
-        "Ava_conejo.png"
+            "Ava_huella.png",
+            "Ava_perro1.png",
+            "Ava_perro2.png",
+            "Ava_perro3.png",
+            "Ava_perro4.png",
+            "Ava_perro5.png",
+            "Ava_perro6.png",
+            "Ava_gato.png",
+            "Ava_conejo.png"
     };
 
     // ── Estilo de campo bloqueado (identidad del sistema) ─────────────────────
-    /** Bloquea visualmente un campo: disabled + opacidad reducida para señalizar que es solo lectura. */
+    /**
+     * Bloquea visualmente un campo: disabled + opacidad reducida para señalizar que
+     * es solo lectura.
+     */
     private static void bloquearCampo(TextField tf) {
         tf.setDisable(true);
         tf.setOpacity(0.7);
@@ -100,7 +135,7 @@ public class ConfigurarPerfilController {
 
         // ── Campos de identidad — BLOQUEADOS permanentemente ─────────────────
         // txtAlias: el username se genera una sola vez; nunca debe cambiar para
-        //           evitar romper el login del usuario.
+        // evitar romper el login del usuario.
         txtAlias.setText(session.getUserAlias());
         bloquearCampo(txtAlias);
 
@@ -113,7 +148,8 @@ public class ConfigurarPerfilController {
         bloquearCampo(txtHorario);
 
         // txtCedula: solo visible para veterinarios; siempre bloqueada (dato oficial).
-        // Se carga desde la BD para que muestre el valor real, no el placeholder del FXML.
+        // Se carga desde la BD para que muestre el valor real, no el placeholder del
+        // FXML.
         boolean isStaff = currentRole != null && currentRole.trim().equalsIgnoreCase("Staff");
 
         if (isStaff) {
@@ -128,10 +164,10 @@ public class ConfigurarPerfilController {
             // Veterinarios: cargar la cédula real desde la BD y mostrarla bloqueada
             cargarCedulaDesdeBD();
             String cedula = session.getUserCedula();
-            txtCedula.setText(cedula != null ? cedula : "");  // texto real, nunca placeholder
+            txtCedula.setText(cedula != null ? cedula : ""); // texto real, nunca placeholder
             txtCedula.setVisible(true);
             txtCedula.setManaged(true);
-            bloquearCampo(txtCedula);  // disable + opacity DESPUÉS de setText
+            bloquearCampo(txtCedula); // disable + opacity DESPUÉS de setText
             if (lblCedula != null) {
                 lblCedula.setVisible(true);
                 lblCedula.setManaged(true);
@@ -140,12 +176,29 @@ public class ConfigurarPerfilController {
 
         // Construir galería de avatares
         construirGaleria();
+
+        // ── Garantizar visibilidad (Instrucción 3) ───────────────────────────
+        profileCard.setOpacity(1.0);
+        profileCard.setVisible(true);
+        
+        // Animación de entrada suave
+        javafx.application.Platform.runLater(this::playSlideUpEntrance);
+    }
+
+    private void playSlideUpEntrance() {
+        TranslateTransition slide = new TranslateTransition(Duration.millis(400), profileCard);
+        slide.setFromY(30);
+        slide.setToY(0);
+        slide.setInterpolator(Interpolator.EASE_OUT);
+        slide.play();
     }
 
     /**
-     * Consulta la cédula profesional del usuario actual desde {@code tb_usuario_web}
+     * Consulta la cédula profesional del usuario actual desde
+     * {@code tb_usuario_web}
      * y la persiste en {@link UserSession} para evitar consultas repetidas.
-     * Si ya existe un valor en la sesión (de una apertura anterior), se omite la consulta.
+     * Si ya existe un valor en la sesión (de una apertura anterior), se omite la
+     * consulta.
      */
     private void cargarCedulaDesdeBD() {
         UserSession session = UserSession.getInstance();
@@ -163,7 +216,8 @@ public class ConfigurarPerfilController {
 
         Conexion conexion = new Conexion();
         try (Connection con = conexion.estableceConexion()) {
-            if (con == null) return;
+            if (con == null)
+                return;
             String sql = "SELECT cedula FROM tb_usuario_web WHERE id = ?";
             try (PreparedStatement ps = con.prepareStatement(sql)) {
                 ps.setInt(1, userId);
@@ -175,7 +229,6 @@ public class ConfigurarPerfilController {
                 }
             }
         } catch (Exception e) {
-            System.err.println("[ConfigurarPerfil] Error al cargar cédula: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -211,12 +264,22 @@ public class ConfigurarPerfilController {
                 contenedor.setStyle(STYLE_AVATAR_SELECTED + " -fx-padding: 3;");
             }
 
-            // Eventos de hover y clic sobre el VBox contenedor
             final String nombreFinal = nombre;
+
+            // --- EFECTO HOVER: SCALE-UP (1.1x) ---
+            ScaleTransition scaleIn = new ScaleTransition(Duration.millis(200), contenedor);
+            scaleIn.setToX(1.1);
+            scaleIn.setToY(1.1);
+
+            ScaleTransition scaleOut = new ScaleTransition(Duration.millis(200), contenedor);
+            scaleOut.setToX(1.0);
+            scaleOut.setToY(1.0);
+
             contenedor.setOnMouseEntered(e -> {
                 if (!nombreFinal.equals(avatarSeleccionado)) {
                     contenedor.setStyle(STYLE_AVATAR_HOVER + " -fx-padding: 3;");
                 }
+                scaleIn.playFromStart();
             });
             contenedor.setOnMouseExited(e -> {
                 if (!nombreFinal.equals(avatarSeleccionado)) {
@@ -224,6 +287,7 @@ public class ConfigurarPerfilController {
                 } else {
                     contenedor.setStyle(STYLE_AVATAR_SELECTED + " -fx-padding: 3;");
                 }
+                scaleOut.playFromStart();
             });
             contenedor.setOnMouseClicked(e -> seleccionarAvatar(nombreFinal, contenedor));
 
@@ -249,7 +313,10 @@ public class ConfigurarPerfilController {
 
     // ── Acciones de botones ───────────────────────────────────────────────────
 
-    /** Permite inyectar una acción de refresco desde el controlador que abre este modal. */
+    /**
+     * Permite inyectar una acción de refresco desde el controlador que abre este
+     * modal.
+     */
     public void setRefreshCallback(Runnable callback) {
         this.refreshCallback = callback;
     }
@@ -278,7 +345,7 @@ public class ConfigurarPerfilController {
 
         cerrarModal();
 
-        com.mycompany.aplicacion.util.Toast.showToast("Perfil actualizado correctamente 🐾", 2);
+        Toast.showToast("Perfil actualizado correctamente 🐾", 2);
 
         // Refrescar el header de la vista activa (si se registró un callback)
         if (refreshCallback != null) {
@@ -291,13 +358,15 @@ public class ConfigurarPerfilController {
     }
 
     /**
-     * Persiste únicamente los datos que el usuario puede modificar: nombre y apellidos.
-     * El campo 'usuario' (username de login) queda excluido del UPDATE para garantizar
+     * Persiste únicamente los datos que el usuario puede modificar: nombre y
+     * apellidos.
+     * El campo 'usuario' (username de login) queda excluido del UPDATE para
+     * garantizar
      * que el login nunca se rompa por un cambio de nombre.
      */
     private void actualizarBaseDatos(String nombre, String apellidos) {
         UserSession session = UserSession.getInstance();
-        com.mycompany.aplicacion.persistencia.Conexion conexion = new com.mycompany.aplicacion.persistencia.Conexion();
+        Conexion conexion = new Conexion();
         try (java.sql.Connection con = conexion.estableceConexion()) {
             if (con != null) {
                 // Solo nombre y apellidos — usuario, rol, horario y cédula son inmutables
@@ -311,7 +380,6 @@ public class ConfigurarPerfilController {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Error al actualizar la base de datos: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -322,13 +390,81 @@ public class ConfigurarPerfilController {
     }
 
     private void cerrarModal() {
-        Stage stage = (Stage) txtNombreCompleto.getScene().getWindow();
-        stage.close();
+        if (rootWrapper != null && profileCard != null) {
+            playDrawerExit(rootWrapper, profileCard, () -> {
+                Parent parent = rootWrapper.getParent();
+                if (parent instanceof Pane) {
+                    ((Pane) parent).getChildren().remove(rootWrapper);
+                }
+            });
+        }
+    }
+
+    // ── Animaciones Cinemáticas ──────────────────────────────────────────────
+
+    public void playDrawerEntrance(Region dimming, VBox drawer) {
+        // 1. Animación del Panel (Slide)
+        TranslateTransition slide = new TranslateTransition(Duration.millis(400), drawer);
+        slide.setFromX(520);
+        slide.setToX(0);
+        slide.setInterpolator(Interpolator.EASE_BOTH);
+
+        // 2. Animación de Dimming
+        FadeTransition fadeDim = new FadeTransition(Duration.millis(400), dimming);
+        fadeDim.setFromValue(0);
+        fadeDim.setToValue(1);
+
+        // 3. Staggered Elements Appearance
+        List<Node> elements = new ArrayList<>();
+        elements.add(hboxHeader);
+        elements.add(sectionAvatar);
+        elements.add(gridForm);
+        elements.add(hboxFooter);
+
+        int delay = 150;
+        for (Node node : elements) {
+            if (node != null) {
+                node.setOpacity(0);
+                node.setTranslateY(15);
+
+                FadeTransition ft = new FadeTransition(Duration.millis(350), node);
+                ft.setToValue(1);
+                ft.setDelay(Duration.millis(delay));
+
+                TranslateTransition tt = new TranslateTransition(Duration.millis(350), node);
+                tt.setToY(0);
+                tt.setDelay(Duration.millis(delay));
+
+                ft.play();
+                tt.play();
+                delay += 60;
+            }
+        }
+
+        slide.play();
+        fadeDim.play();
+    }
+
+    public void playDrawerExit(Region dimming, VBox drawer, Runnable onFinished) {
+        TranslateTransition slide = new TranslateTransition(Duration.millis(350), drawer);
+        slide.setToY(50);
+        slide.setInterpolator(Interpolator.EASE_BOTH);
+
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(350), drawer);
+        fadeOut.setToValue(0);
+
+        FadeTransition fadeDim = new FadeTransition(Duration.millis(350), dimming);
+        fadeDim.setToValue(0);
+
+        ParallelTransition pt = new ParallelTransition(slide, fadeOut, fadeDim);
+        pt.setOnFinished(e -> onFinished.run());
+        pt.play();
     }
 
     // ── Utilidad de imagen ────────────────────────────────────────────────────
     private void cargarImagenEnView(ImageView iv, String nombreArchivo) {
-        if (iv == null || nombreArchivo == null) return;
+        if (iv == null || nombreArchivo == null)
+            return;
         String path = "/images/" + nombreArchivo;
         InputStream stream = getClass().getResourceAsStream(path);
         if (stream != null) {
@@ -337,14 +473,16 @@ public class ConfigurarPerfilController {
     }
 
     // ═════════════════════════════════════════════════════════════════════════
-    //  MÉTODOS ESTÁTICOS DE APERTURA — punto de entrada desde cualquier controller
+    // MÉTODOS ESTÁTICOS DE APERTURA — punto de entrada desde cualquier controller
     // ═════════════════════════════════════════════════════════════════════════
 
     /**
      * Abre el modal "Configurar Perfil" como ventana modal bloqueante.
-     * Llama desde cualquier controller: ConfigurarPerfilController.abrir(hboxPerfil);
+     * Llama desde cualquier controller:
+     * ConfigurarPerfilController.abrir(hboxPerfil);
      *
-     * @param ownerNode cualquier Node de la escena padre (para calcular la Stage dueña)
+     * @param ownerNode cualquier Node de la escena padre (para calcular la Stage
+     *                  dueña)
      */
     public static void abrir(Node ownerNode) {
         abrir(ownerNode, null);
@@ -354,46 +492,61 @@ public class ConfigurarPerfilController {
      * Abre el modal "Configurar Perfil" con un callback de refresco.
      * El callback se ejecuta automáticamente tras guardar los cambios.
      *
-     * @param ownerNode      cualquier Node de la escena padre (para calcular la Stage dueña)
-     * @param onSaved        Runnable que actualiza el header de la vista activa; puede ser null
+     * @param ownerNode cualquier Node de la escena padre (para calcular la Stage
+     *                  dueña)
+     * @param onSaved   Runnable que actualiza el header de la vista activa; puede
+     *                  ser null
      */
     public static void abrir(Node ownerNode, Runnable onSaved) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                ConfigurarPerfilController.class.getResource("/fxml/ConfigurarPerfil.fxml")
-            );
-            VBox root = loader.load();
-
-            // Inyectar el callback ANTES de mostrar el modal
+                    ConfigurarPerfilController.class.getResource("/fxml/ConfigurarPerfil.fxml"));
+            StackPane profileOverlay = loader.load();
             ConfigurarPerfilController controller = loader.getController();
+
             if (onSaved != null) {
                 controller.setRefreshCallback(onSaved);
             }
 
-            Stage modal = new Stage();
-            modal.initModality(Modality.APPLICATION_MODAL);
-            modal.initStyle(StageStyle.UNDECORATED); // Sin barra de título nativa → aspecto limpio
-            modal.setResizable(false);
+            // 1. Intentar encontrar el StackPane principal (Overlay)
+            Scene ownerScene = ownerNode.getScene();
+            StackPane mainStack = null;
 
-            // Centrar respecto al owner
-            if (ownerNode != null && ownerNode.getScene() != null) {
-                Stage owner = (Stage) ownerNode.getScene().getWindow();
-                modal.initOwner(owner);
+            if (ownerScene.getRoot() instanceof StackPane) {
+                mainStack = (StackPane) ownerScene.getRoot();
+            } else {
+                mainStack = (StackPane) ownerScene.getRoot().lookup("#stackPrincipal");
             }
 
-            Scene scene = new Scene(root);
-            // Cargar hoja de estilos de la app para que los TextField hereden .text-field:focused etc.
-            java.net.URL css = ConfigurarPerfilController.class.getResource("/fxml/estilos.css");
-            if (css != null) {
-                scene.getStylesheets().add(css.toExternalForm());
-            }
-            modal.setScene(scene);
+            if (mainStack != null) {
+                // 2. Inyectar como Overlay
+                if (!mainStack.getChildren().contains(profileOverlay)) {
+                    mainStack.getChildren().add(profileOverlay);
+                }
+                profileOverlay.toFront();
+                
+                // Centrado dinámico
+                StackPane.setAlignment(controller.profileCard, Pos.CENTER);
+            } else {
+                // 3. Fallback: Abrir en Stage independiente (Si no hay StackPane de soporte)
+                Stage ownerStage = (Stage) ownerScene.getWindow();
+                Stage modal = new Stage();
+                modal.initModality(Modality.APPLICATION_MODAL);
+                modal.initOwner(ownerStage);
+                modal.initStyle(StageStyle.TRANSPARENT);
 
-            // Mostrar como modal bloqueante
-            modal.showAndWait();
+                Scene scene = new Scene(profileOverlay, ownerStage.getWidth(), ownerStage.getHeight());
+                scene.setFill(Color.TRANSPARENT);
+                
+                // Aplicar CSS al fallback
+                URL css = ConfigurarPerfilController.class.getResource("/fxml/estilos.css");
+                if (css != null) scene.getStylesheets().add(css.toExternalForm());
+                
+                modal.setScene(scene);
+                modal.show();
+            }
 
         } catch (Exception e) {
-            System.err.println("Error al abrir ConfigurarPerfil: " + e.getMessage());
             e.printStackTrace();
         }
     }

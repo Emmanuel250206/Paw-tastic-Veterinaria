@@ -12,10 +12,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.DashboardController">
+<AnchorPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.DashboardController">
    <children>
       <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <content>
@@ -70,20 +71,35 @@
                         </HBox>
                      </children>
                   </HBox>
-                  <VBox alignment="TOP_CENTER" spacing="20.0" VBox.vgrow="ALWAYS">
-                     <children>
-                        <VBox fx:id="cardCitas" onMouseClicked="#irACitas" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css">
-                        </VBox>
-                        <VBox fx:id="cardMascotas" onMouseClicked="#irAMascotas" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css">
-                        </VBox>
-                        <VBox fx:id="cardInventario" onMouseClicked="#irAInventario" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css">
-                        </VBox>
-                        <VBox fx:id="cardReportes" onMouseClicked="#irAReportes" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css">
-                        </VBox>
-                        <VBox fx:id="cardStaff" onMouseClicked="#irAStaff" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css">
-                        </VBox>
-                     </children>
-                  </VBox>
+                   <VBox alignment="TOP_CENTER" spacing="20.0" VBox.vgrow="ALWAYS">
+                      <children>
+                         <StackPane prefHeight="200.0">
+                            <VBox fx:id="cardCitas" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css">
+                            </VBox>
+                            <Region fx:id="triggerCitas" onMouseClicked="#irACitas" style="-fx-cursor: hand;" />
+                         </StackPane>
+                         <StackPane prefHeight="200.0">
+                            <VBox fx:id="cardMascotas" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css">
+                            </VBox>
+                            <Region fx:id="triggerMascotas" onMouseClicked="#irAMascotas" style="-fx-cursor: hand;" />
+                         </StackPane>
+                         <StackPane prefHeight="200.0">
+                            <VBox fx:id="cardInventario" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css">
+                            </VBox>
+                            <Region fx:id="triggerInventario" onMouseClicked="#irAInventario" style="-fx-cursor: hand;" />
+                         </StackPane>
+                         <StackPane prefHeight="200.0">
+                            <VBox fx:id="cardReportes" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css">
+                            </VBox>
+                            <Region fx:id="triggerReportes" onMouseClicked="#irAReportes" style="-fx-cursor: hand;" />
+                         </StackPane>
+                         <StackPane prefHeight="200.0">
+                            <VBox fx:id="cardStaff" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css">
+                            </VBox>
+                            <Region fx:id="triggerStaff" onMouseClicked="#irAStaff" style="-fx-cursor: hand;" />
+                         </StackPane>
+                      </children>
+                   </VBox>
                </children>
                <padding>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

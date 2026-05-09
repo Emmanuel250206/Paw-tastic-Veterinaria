@@ -1,8 +1,9 @@
 package com.mycompany.aplicacion.controllers;
 
-import javafx.animation.PauseTransition;
+import javafx.animation.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -10,6 +11,7 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.PasswordField;
+import javafx.scene.effect.BoxBlur;
 
 public class RecuperarContrasenaController {
 
@@ -60,27 +62,25 @@ public class RecuperarContrasenaController {
             window.setY(event.getScreenY() - yOffset);
         });
 
-        // Process the "loading" state and alert when the button is clicked
+        // 1. Iniciar animación de entrada (Floating Card Scale)
+        playFloatingCardEntrance();
+
+        // 2. Procesar el estado de "carga" al hacer clic
         btnEnviar.setOnAction(event -> {
-            // Disable the button and change the text to show loading state
             btnEnviar.setDisable(true);
             btnEnviar.setText("Enviando...");
 
-            // Simulate a 2-second loading state
             PauseTransition pause = new PauseTransition(Duration.seconds(2));
             pause.setOnFinished(e -> {
-                // Restore the button's initial state
                 btnEnviar.setDisable(false);
                 btnEnviar.setText("Enviar Código");
 
-                // Show the alert as requested
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Recuperar Acceso");
                 alert.setHeaderText(null);
                 alert.setContentText("Código enviado. Revisa tu bandeja de entrada.");
                 alert.showAndWait();
                 
-                // Transition to new password fields
                 emailStep.setVisible(false);
                 emailStep.setManaged(false);
                 passwordStep.setVisible(true);
@@ -89,15 +89,45 @@ public class RecuperarContrasenaController {
             pause.play();
         });
 
-        // Set action for the Update Password button
+        // 3. Acción para el botón de Actualizar Contraseña
         btnActualizar.setOnAction(event -> {
-            // In a real scenario, validate fields match and call handlePasswordResetDBUpdate
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Actualización");
             alert.setHeaderText(null);
             alert.setContentText("Contraseña actualizada exitosamente.");
             alert.showAndWait();
         });
+    }
+
+    private void playFloatingCardEntrance() {
+        mainCard.setOpacity(0);
+        mainCard.setScaleX(0.8);
+        mainCard.setScaleY(0.8);
+
+        FadeTransition fade = new FadeTransition(Duration.millis(400), mainCard);
+        fade.setToValue(1);
+
+        ScaleTransition scale = new ScaleTransition(Duration.millis(400), mainCard);
+        scale.setToX(1.0);
+        scale.setToY(1.0);
+        scale.setInterpolator(Interpolator.EASE_OUT);
+
+        fade.play();
+        scale.play();
+    }
+
+    private void playExitAnimation(Runnable onFinished) {
+        FadeTransition fade = new FadeTransition(Duration.millis(300), mainCard);
+        fade.setToValue(0);
+
+        ScaleTransition scale = new ScaleTransition(Duration.millis(300), mainCard);
+        scale.setToX(0.8);
+        scale.setToY(0.8);
+        scale.setInterpolator(Interpolator.EASE_BOTH);
+
+        ParallelTransition pt = new ParallelTransition(fade, scale);
+        pt.setOnFinished(e -> onFinished.run());
+        pt.play();
     }
 
     /**
@@ -139,16 +169,11 @@ public class RecuperarContrasenaController {
      */
     @FXML
     private void cerrarAccion(ActionEvent event) {
-        try {
-            // Close the independent window
+        playExitAnimation(() -> {
             javafx.stage.Window window = rootPane.getScene().getWindow();
             if (window instanceof javafx.stage.Stage) {
                 ((javafx.stage.Stage) window).close();
-            } else {
-                window.hide();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
     }
 }

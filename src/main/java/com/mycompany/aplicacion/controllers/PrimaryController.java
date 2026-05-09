@@ -128,6 +128,10 @@ public class PrimaryController {
     public String validarUsuarioBD(String usuario, String contrasena) {
         Conexion conexion = new Conexion();
         Connection con = conexion.estableceConexion();
+        if (con == null) {
+            System.err.println("[Error] No se pudo establecer conexión con la base de datos.");
+            return "CONNECTION_ERROR";
+        }
         try {
             String sql = "SELECT * FROM tb_usuario_web WHERE usuario = ? AND contrasenia = ?";
             PreparedStatement ps = con.prepareStatement(sql);
@@ -186,8 +190,8 @@ public class PrimaryController {
         }
 
         // Configurar rol según el nombre ingresado
-        String usuario = txtNombre.getText();
-        String contrasenia = txtContrasenaOculta.getText();
+        String usuario = txtNombre.getText().trim();
+        String contrasenia = txtContrasenaOculta.getText().trim();
 
     String rol = validarUsuarioBD(usuario, contrasenia);
         
@@ -225,6 +229,9 @@ public class PrimaryController {
                 });
             }
 
+        } else if ("CONNECTION_ERROR".equals(rol)) {
+            txtErrorDatos.setText("Error: No hay conexión con la base de datos");
+            txtErrorDatos.setVisible(true);
         } else {
             // Si validación es null, asegurar limpieza por seguridad
             com.mycompany.aplicacion.modelo.UserSession.clear();

@@ -183,8 +183,39 @@ public class CitasController implements Initializable {
     }
 
     private void configurarTabla() {
+        String globalTextStyle = "-fx-text-fill: black !important; -fx-font-weight: 600; -fx-font-smoothing-type: gray;";
+        String urgentRowStyle = "-fx-background-color: #FDEDEC !important; -fx-border-color: transparent transparent #F5B7B1 transparent; -fx-border-width: 0 0 1 0;";
+        String urgentRowSelectedStyle = "-fx-background-color: #F1948A !important; -fx-border-color: #CB4335 !important; -fx-border-width: 1 !important;";
+
+        // Columna Hora: Forzar texto negro GLOBAL
         colHora.setCellValueFactory(new PropertyValueFactory<>("hora"));
+        colHora.setCellFactory(col -> new TableCell<Citas, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null); setStyle("");
+                } else {
+                    setText(item);
+                    setStyle(globalTextStyle);
+                }
+            }
+        });
+
+        // Columna Paciente: Forzar texto negro GLOBAL
         colPaciente.setCellValueFactory(new PropertyValueFactory<>("nombreMascota"));
+        colPaciente.setCellFactory(col -> new TableCell<Citas, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null); setStyle("");
+                } else {
+                    setText(item);
+                    setStyle(globalTextStyle);
+                }
+            }
+        });
 
         // Columna Prioridad con badge visual
         colPrioridad.setCellValueFactory(new PropertyValueFactory<>("prioridad"));
@@ -225,18 +256,29 @@ public class CitasController implements Initializable {
         tablaColaCitas.setItems(sorted);
         lblContadorCitas.setText(datos.size() + " citas");
 
-        // Filas URGENTE con fondo rosado
-        tablaColaCitas.setRowFactory(tv -> new TableRow<Citas>() {
-            @Override
-            protected void updateItem(Citas item, boolean empty) {
-                super.updateItem(item, empty);
-                // Aplicar estilo inline para no depender del parser CSS
-                if (!empty && item != null && item.esUrgente()) {
-                    setStyle("-fx-background-color: #ffebee;");
-                } else {
-                    setStyle(""); // resetear a default
+        // Filas URGENTE: Forzado de Estilos "Hard-Coded" con Selección Contrastada
+        tablaColaCitas.setRowFactory(tv -> {
+            TableRow<Citas> row = new TableRow<Citas>() {
+                @Override
+                protected void updateItem(Citas item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (!empty && item != null && item.esUrgente()) {
+                        setStyle(isSelected() ? urgentRowSelectedStyle : urgentRowStyle);
+                    } else {
+                        setStyle("");
+                    }
                 }
-            }
+            };
+
+            // Selection Lock: Cambiar tono de rosa y borde al seleccionar
+            row.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+                Citas item = row.getItem();
+                if (item != null && item.esUrgente()) {
+                    row.setStyle(isNowSelected ? urgentRowSelectedStyle : urgentRowStyle);
+                }
+            });
+
+            return row;
         });
 
         // Selección → panel central

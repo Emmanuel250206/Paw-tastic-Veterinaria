@@ -95,7 +95,7 @@ public class DashboardController {
         com.mycompany.aplicacion.persistencia.Conexion cx = new com.mycompany.aplicacion.persistencia.Conexion();
         try (java.sql.Connection conn = cx.estableceConexion()) {
             if (conn != null && currentUserId > 0) {
-                String sql = "SELECT nombre, apellidos FROM tb_usuarios WHERE id = ?";
+                String sql = "SELECT nombre, apellidos FROM tb_usuario_web WHERE id = ?";
                 try (java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
                     ps.setInt(1, currentUserId);
                     try (java.sql.ResultSet rs = ps.executeQuery()) {
@@ -406,7 +406,7 @@ public class DashboardController {
             com.mycompany.aplicacion.persistencia.Conexion cx = new com.mycompany.aplicacion.persistencia.Conexion();
             java.sql.Connection conn = cx.estableceConexion();
             if (conn != null) {
-                String sqlTop = "SELECT id, nombre, apellidos, tipo_rol FROM tb_usuarios WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista') LIMIT 3";
+                String sqlTop = "SELECT id, nombre, apellidos, tipo_rol FROM tb_usuario_web WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista') LIMIT 3";
                 java.sql.PreparedStatement psTop = conn.prepareStatement(sqlTop);
                 java.sql.ResultSet rsTop = psTop.executeQuery();
                 while(rsTop.next()) {

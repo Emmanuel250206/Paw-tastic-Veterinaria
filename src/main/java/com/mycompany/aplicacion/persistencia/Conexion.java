@@ -8,7 +8,7 @@ public class Conexion {
 
     private String usuario = "root";
     private String contrasenia = "";
-    private String bd = "pawtastic";
+    private String bd = "pawtastic_01";
     private String ip = "localhost";
     private String puerto = "3306";
 

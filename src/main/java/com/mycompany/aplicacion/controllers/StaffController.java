@@ -682,7 +682,7 @@ public class StaffController implements Initializable {
                 }
                 ps.executeUpdate();
             } catch (Exception ex) {
-                String errorMsg = "SQL ERROR al actualizar tb_usuarios: " + ex.getMessage();
+                String errorMsg = "SQL ERROR al actualizar tb_usuario_web: " + ex.getMessage();
                 System.err.println(errorMsg);
                 ex.printStackTrace();
                 javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);

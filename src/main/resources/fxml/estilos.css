@@ -202,13 +202,24 @@ Project    : APLICACION Paw-tastic
 
 .table-view {
     -fx-background-radius: 10;
+    -fx-selection-bar: #D5F5E3 !important; /* Soft Green */
+    -fx-selection-bar-non-focused: #E9F7EF !important;
+    -fx-selection-bar-border: transparent !important;
+    -fx-focus-color: transparent !important;
+    -fx-faint-focus-color: transparent !important;
 }
 
-.card {
-    -fx-background-color: white;
-    -fx-background-radius: 20;
-    -fx-padding: 15;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 4);
+.table-row-cell:selected {
+    -fx-background-color: #D5F5E3 !important;
+    -fx-border-color: #A9DFBF !important;
+    -fx-border-width: 1 !important;
+    -fx-background-insets: 0 !important;
+}
+
+.table-row-cell:selected .table-cell,
+.table-row-cell:filled .table-cell,
+.table-row-cell .table-cell {
+    -fx-text-fill: #000000 !important;
 }
 
 .titulo {
@@ -221,13 +232,17 @@ Project    : APLICACION Paw-tastic
  CLASES NUEVAS — Solo contornos, bordes y sombras. Sin paleta modificada.*/
 
 /* ── Módulo Citas: Fila URGENTE en TableView ─────────────────────────────── */
-.fila-urgente {
-    -fx-background-color: #ffebee;
-    -fx-font-weight: bold;
+.fila-urgente, 
+.fila-urgente:selected, 
+.fila-urgente:pressed {
+    -fx-background-color: #FDEDEC !important;
 }
 
-.fila-urgente:selected {
-    -fx-background-color: #ef9a9a;
+/* Forced black text for all cells in urgent rows, permanent in all states */
+.fila-urgente .table-cell,
+.fila-urgente:selected .table-cell,
+.fila-urgente:pressed .table-cell {
+    -fx-text-fill: #000000 !important;
 }
 
 /* Badges de prioridad en la columna de la tabla */

@@ -143,7 +143,7 @@ public class ConfigurarPerfilController {
     }
 
     /**
-     * Consulta la cédula profesional del usuario actual desde {@code tb_usuarios}
+     * Consulta la cédula profesional del usuario actual desde {@code tb_usuario_web}
      * y la persiste en {@link UserSession} para evitar consultas repetidas.
      * Si ya existe un valor en la sesión (de una apertura anterior), se omite la consulta.
      */
@@ -164,7 +164,7 @@ public class ConfigurarPerfilController {
         Conexion conexion = new Conexion();
         try (Connection con = conexion.estableceConexion()) {
             if (con == null) return;
-            String sql = "SELECT cedula FROM tb_usuarios WHERE id = ?";
+            String sql = "SELECT cedula FROM tb_usuario_web WHERE id = ?";
             try (PreparedStatement ps = con.prepareStatement(sql)) {
                 ps.setInt(1, userId);
                 try (ResultSet rs = ps.executeQuery()) {
@@ -301,7 +301,7 @@ public class ConfigurarPerfilController {
         try (java.sql.Connection con = conexion.estableceConexion()) {
             if (con != null) {
                 // Solo nombre y apellidos — usuario, rol, horario y cédula son inmutables
-                String sql = "UPDATE tb_usuarios SET nombre = ?, apellidos = ? WHERE id = ?";
+                String sql = "UPDATE tb_usuario_web SET nombre = ?, apellidos = ? WHERE id = ?";
 
                 try (java.sql.PreparedStatement ps = con.prepareStatement(sql)) {
                     ps.setString(1, nombre);

@@ -81,6 +81,15 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
+                  <Button fx:id="bPuntoVenta" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaPOS" styleClass="boton-menu" text="       Punto Venta">
+                     <graphic>
+                        <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/logo_paw.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                   <Button fx:id="bReportes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaReportes" styleClass="boton-menu" text="       Reportes">
                      <graphic>
                         <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">

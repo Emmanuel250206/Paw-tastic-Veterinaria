@@ -9,7 +9,7 @@ package com.mycompany.aplicacion.controllers;
  * @author emmanuel
  */
 import com.mycompany.aplicacion.modelo.Inventario;
-import com.mycompany.aplicacion.modelo.DatosSimulados;
+import com.mycompany.aplicacion.persistencia.InventarioDAO;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -110,7 +110,7 @@ public class InventarioController implements Initializable {
 
         boolean esStaff = "Staff".equalsIgnoreCase(com.mycompany.aplicacion.App.getRolUsuario());
 
-        for (Inventario inv : DatosSimulados.getInventario()) {
+        for (Inventario inv : InventarioDAO.getTodos()) {
             HBox tarjeta = new HBox(15);
             tarjeta.setPadding(new Insets(15, 20, 15, 20));
             tarjeta.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
@@ -148,8 +148,8 @@ public class InventarioController implements Initializable {
                 Button btnEliminar = new Button("Eliminar");
                 btnEliminar.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
                 btnEliminar.setOnAction(e -> {
-                    DatosSimulados.getInventario().remove(inv);
-                    cargarInventarioEnPantalla();
+                    boolean ok = InventarioDAO.desactivar(inv.getId());
+                    if (ok) cargarInventarioEnPantalla();
                 });
                 
                 VBox accionesContenedor = new VBox(5, btnEditar, btnEliminar);
@@ -259,7 +259,7 @@ public class InventarioController implements Initializable {
                 double pCompra = Double.parseDouble(tfPrecioCompra.getText().trim());
                 double pVenta = Double.parseDouble(tfPrecioVenta.getText().trim());
                 int provId = Integer.parseInt(tfProveedorId.getText().trim());
-                int newId = DatosSimulados.getInventario().size() + 1;
+                int newId = 0;
                 return new Inventario(newId, tfNombre.getText().trim(), tfCategoria.getText().trim(), 
                                       tfDescripcion.getText().trim(), stockAct, stockMin, 
                                       tfUnidadMedida.getText().trim(), pCompra, pVenta, 
@@ -270,8 +270,8 @@ public class InventarioController implements Initializable {
 
         java.util.Optional<Inventario> result = dialog.showAndWait();
         result.ifPresent(nuevo -> {
-            DatosSimulados.getInventario().add(nuevo);
-            cargarInventarioEnPantalla();
+            boolean ok = InventarioDAO.insertar(nuevo);
+            if (ok) cargarInventarioEnPantalla();
         });
     }
 
@@ -383,6 +383,7 @@ public class InventarioController implements Initializable {
 
         dialog.showAndWait().ifPresent(actualizado -> {
             if (actualizado) {
+                InventarioDAO.actualizar(inv);
                 cargarInventarioEnPantalla();
             }
         });

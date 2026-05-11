@@ -13,7 +13,6 @@ import javafx.stage.Stage;
 import javafx.scene.text.Text;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.event.ActionEvent;
 
@@ -179,16 +178,19 @@ public class PrimaryController {
                     session.setUsernameChanged(false);
                     
                     if (dbRol != null) {
-                        if (dbRol.trim().equalsIgnoreCase("Staff")) {
-                            session.setUserRole("Staff");
-                        } else if (dbRol.trim().equalsIgnoreCase("Veterinario")) {
+                        String rolNorm = dbRol.trim().toLowerCase();
+                        // Mapear ENUM de BD a roles internos de la app
+                        if (rolNorm.equals("veterinario") || rolNorm.equals("administrador")) {
                             session.setUserRole("Veterinario");
+                        } else if (rolNorm.equals("recepcionista") || rolNorm.equals("asistente") || rolNorm.equals("staff")) {
+                            session.setUserRole("Staff");
                         } else {
                             session.setUserRole(dbRol.trim());
                         }
                     } else {
                         session.setUserRole("Desconocido");
                     }
+
                     
                     return dbRol;
                 }
@@ -214,8 +216,9 @@ public class PrimaryController {
 
         if (rol != null) {
             // LOGIN EXITOSO
-            App.setRolUsuario(rol);
-            String view = rol.equalsIgnoreCase("Staff") ? "fxml/InterfazStaff" : "fxml/InterfazVeterinario";
+            String rolInterno = com.mycompany.aplicacion.modelo.UserSession.getInstance().getUserRole();
+            App.setRolUsuario(rolInterno);
+            String view = rolInterno.equalsIgnoreCase("Staff") ? "fxml/InterfazStaff" : "fxml/InterfazVeterinario";
 
             // Habilitar redimensionamiento y establecer límites mínimos
             Stage stage = App.getStage();

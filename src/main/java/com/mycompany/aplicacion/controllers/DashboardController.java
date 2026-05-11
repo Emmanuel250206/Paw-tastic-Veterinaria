@@ -8,14 +8,15 @@ import javafx.fxml.FXML;
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
-import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
 import com.mycompany.aplicacion.App;
-import com.mycompany.aplicacion.modelo.DatosSimulados;
+import com.mycompany.aplicacion.persistencia.CitasDAO;
+import com.mycompany.aplicacion.persistencia.MascotaDAO;
+import com.mycompany.aplicacion.persistencia.InventarioDAO;
 import com.mycompany.aplicacion.modelo.UserSession;
 
 /**
@@ -362,9 +363,10 @@ public class DashboardController {
     private void renderizarTarjetas() {
         // Citas (Info rica con AM/PM)
         java.util.List<String> detalleCitas = new java.util.ArrayList<>();
-        int maxCitas = Math.min(3, DatosSimulados.getCitas().size());
+        var citasHoy = CitasDAO.getCitasHoy();
+        int maxCitas = Math.min(3, citasHoy.size());
         for (int i = 0; i < maxCitas; i++) {
-            var c = DatosSimulados.getCitas().get(i);
+            var c = citasHoy.get(i);
             String horaStr = c.getHora();
             try {
                 String[] partes = horaStr.split(":");
@@ -376,25 +378,27 @@ public class DashboardController {
             }
             detalleCitas.add("• " + c.getNombreMascota() + " - " + c.getMotivo() + " (" + horaStr + ")");
         }
-        crearTarjetaDinamica(cardCitas, "Citas pendientes", DatosSimulados.getCitas().size(), "Próximas hoy", "/images/Icon_Citas.png", "#E3F2FD", detalleCitas);
+        crearTarjetaDinamica(cardCitas, "Citas pendientes", citasHoy.size(), "Próximas hoy", "/images/Icon_Citas.png", "#E3F2FD", detalleCitas);
 
         // Mascotas (Info rica)
         java.util.List<String> detalleMascotas = new java.util.ArrayList<>();
-        int maxMas = Math.min(3, DatosSimulados.getMascotas().size());
+        var mascotas = MascotaDAO.getTodas();
+        int maxMas = Math.min(3, mascotas.size());
         for (int i = 0; i < maxMas; i++) {
-            var m = DatosSimulados.getMascotas().get(i);
+            var m = mascotas.get(i);
             detalleMascotas.add("• " + m.getNombre() + " (" + m.getRaza() + ")");
         }
-        crearTarjetaDinamica(cardMascotas, "Mascotas", DatosSimulados.getMascotas().size(), "Registradas", "/images/Icon_Mascotas.png", "#E8F5E9", detalleMascotas);
+        crearTarjetaDinamica(cardMascotas, "Mascotas", mascotas.size(), "Registradas", "/images/Icon_Mascotas.png", "#E8F5E9", detalleMascotas);
 
         // Inventario (Info rica)
         java.util.List<String> detalleInv = new java.util.ArrayList<>();
-        int maxInv = Math.min(3, DatosSimulados.getInventario().size());
+        var inventario = InventarioDAO.getTodos();
+        int maxInv = Math.min(3, inventario.size());
         for (int i = 0; i < maxInv; i++) {
-            var inv = DatosSimulados.getInventario().get(i);
+            var inv = inventario.get(i);
             detalleInv.add("• " + inv.getNombre() + " - Stock: " + inv.getStock_actual());
         }
-        crearTarjetaDinamica(cardInventario, "Inventario", DatosSimulados.getInventario().size(), "En stock", "/images/Icon_Inventario.png", "#FFF3E0", detalleInv);
+        crearTarjetaDinamica(cardInventario, "Inventario", inventario.size(), "En stock", "/images/Icon_Inventario.png", "#FFF3E0", detalleInv);
 
         // Reportes
         java.util.List<String> detalleReportes = new java.util.ArrayList<>();

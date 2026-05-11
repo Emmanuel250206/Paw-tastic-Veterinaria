@@ -3,7 +3,8 @@ package com.mycompany.aplicacion.controllers;
 import com.mycompany.aplicacion.App;
 import com.mycompany.aplicacion.modelo.Citas;
 import com.mycompany.aplicacion.modelo.Citas.Prioridad;
-import com.mycompany.aplicacion.modelo.DatosSimulados;
+import com.mycompany.aplicacion.persistencia.CitasDAO;
+import com.mycompany.aplicacion.persistencia.MascotaDAO;
 
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
@@ -156,7 +157,7 @@ public class CitasStaffController implements Initializable {
             }
         });
 
-        ObservableList<Citas> datos = DatosSimulados.getCitas();
+        ObservableList<Citas> datos = CitasDAO.getCitasHoy();
         SortedList<Citas> sorted = new SortedList<>(datos, COMPARADOR_PRIORIDAD);
         tablaColaCitas.setItems(sorted);
         lblContadorCitas.setText(datos.size() + " citas");
@@ -211,7 +212,7 @@ public class CitasStaffController implements Initializable {
 
         String fechaStr = fecha.toString();
         java.util.List<String> horasOcupadas = new java.util.ArrayList<>();
-        for (Citas c : DatosSimulados.getCitas()) {
+        for (Citas c : CitasDAO.getCitasHoy()) {
             if (c.getFecha().equals(fechaStr) && c.getPrioridad() != Prioridad.URGENTE) {
                 if (horaActualIgnorada == null || !c.getHora().equals(horaActualIgnorada)) {
                     horasOcupadas.add(c.getHora());
@@ -235,6 +236,9 @@ public class CitasStaffController implements Initializable {
         dialog.getDialogPane().lookup(".header-panel").setStyle("-fx-background-color: #3d8d7a;");
         dialog.getDialogPane().lookup(".header-panel .label").setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
     }
+
+    // Mascota que se elija en el autocompletado
+    private Mascota mascotaElegida = null;
 
     @FXML
     private void agendarCita(ActionEvent event) {
@@ -293,8 +297,9 @@ public class CitasStaffController implements Initializable {
                 lvMascotas.setVisible(false);
                 lvMascotas.setManaged(false);
                 tfDueno.setText(""); tfTelefono.setText("");
+                mascotaElegida = null;
             } else {
-                java.util.List<Mascota> matches = DatosSimulados.getMascotas().stream()
+                java.util.List<Mascota> matches = MascotaDAO.getTodas().stream()
                         .filter(m -> m.getNombre().toLowerCase().contains(newV.toLowerCase()))
                         .collect(Collectors.toList());
                 lvMascotas.getItems().addAll(matches);
@@ -307,6 +312,7 @@ public class CitasStaffController implements Initializable {
         lvMascotas.setOnMouseClicked(e -> {
             Mascota m = lvMascotas.getSelectionModel().getSelectedItem();
             if (m != null) {
+                mascotaElegida = m;
                 tfBuscarNombre.setText(m.getNombre());
                 tfDueno.setText(m.getNombrePropietario());
                 tfTelefono.setText(m.getTelefonoPropietario() != null ? m.getTelefonoPropietario() : "");
@@ -367,10 +373,9 @@ public class CitasStaffController implements Initializable {
                 if ("Mascota Nueva".equals(cbModo.getValue())) {
                     mascota = tfNombreNueva.getText().trim();
                     if (!mascota.isEmpty() && !tfDueno.getText().trim().isEmpty()) {
-                        int mId = DatosSimulados.getMascotas().size() + 1;
+                        int mId = 0;
                         int edadInt = 0;
                         try { edadInt = Integer.parseInt(tfEdad.getText().trim()); } catch (NumberFormatException ignored) {}
-                        DatosSimulados.getMascotas().add(new Mascota(mId, mascota, tfEspecie.getText().trim(), tfRaza.getText().trim(), edadInt, "Sin collar", tfDueno.getText().trim(), tfTelefono.getText().trim(), "Sin dirección", tfDescripcion.getText().trim()));
                     }
                 } else {
                     mascota = tfBuscarNombre.getText().trim();
@@ -393,7 +398,7 @@ public class CitasStaffController implements Initializable {
 
                 Prioridad prio = "Urgente".equals(tipo) ? Prioridad.URGENTE : Prioridad.NORMAL;
 
-                int nuevoId = DatosSimulados.getCitas().size() + 1;
+                int nuevoId = 0;
                 return new Citas(nuevoId, fechaStr, horaStr, mascota, dueno, tel, "Pendiente", tipo, "Programada", prio);
             }
             return null;
@@ -401,9 +406,30 @@ public class CitasStaffController implements Initializable {
 
         java.util.Optional<Citas> result = dialog.showAndWait();
         result.ifPresent(nuevaCita -> {
-            DatosSimulados.getCitas().add(nuevaCita);
-            lblContadorCitas.setText(DatosSimulados.getCitas().size() + " citas");
-            tablaColaCitas.refresh();
+            int idMascota = -1;
+            int idUser = UserSession.getInstance().getUserId();
+
+            if ("Mascota Nueva".equals(cbModo.getValue())) {
+                idMascota = MascotaDAO.insertarBasico(nuevaCita.getNombreMascota(), nuevaCita.getNombrePropietario(), nuevaCita.getTelefonoDueno());
+            } else if (mascotaElegida != null) {
+                idMascota = mascotaElegida.getId();
+            } else {
+                // Si escribió el nombre pero no lo seleccionó de la lista, intentamos buscarlo o crearlo
+                idMascota = MascotaDAO.insertarBasico(nuevaCita.getNombreMascota(), nuevaCita.getNombrePropietario(), nuevaCita.getTelefonoDueno());
+            }
+
+            if (idMascota != -1) {
+                boolean ok = CitasDAO.insertarBasico(nuevaCita, idMascota, idUser);
+                if (ok) {
+                    tablaColaCitas.getItems().add(nuevaCita);
+                    lblContadorCitas.setText(tablaColaCitas.getItems().size() + " citas");
+                    tablaColaCitas.refresh();
+                } else {
+                    mostrarAlerta(Alert.AlertType.ERROR, "Error BD", "No se pudo guardar la cita en la base de datos.");
+                }
+            } else {
+                mostrarAlerta(Alert.AlertType.ERROR, "Error BD", "No se pudo registrar la mascota en la base de datos.");
+            }
         });
     }
 

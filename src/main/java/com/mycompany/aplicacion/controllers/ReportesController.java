@@ -4,7 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
@@ -27,7 +26,10 @@ import com.mycompany.aplicacion.App;
 import com.mycompany.aplicacion.modelo.UserSession;
 import com.mycompany.aplicacion.modelo.Inventario;
 import com.mycompany.aplicacion.modelo.Mascota;
-import com.mycompany.aplicacion.modelo.DatosSimulados;
+import com.mycompany.aplicacion.modelo.VentaDTO;
+import com.mycompany.aplicacion.persistencia.InventarioDAO;
+import com.mycompany.aplicacion.persistencia.MascotaDAO;
+import com.mycompany.aplicacion.persistencia.VentasDAO;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.ButtonType;
@@ -38,20 +40,19 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Spinner;
-import javafx.fxml.Initializable;
 
 public class ReportesController implements Initializable {
 
     @FXML
-    private TableView<VentaSimulada> tablaVentas;
+    private TableView<VentaDTO> tablaVentas;
     @FXML
-    private TableColumn<VentaSimulada, String> colFecha;
+    private TableColumn<VentaDTO, String> colFecha;
     @FXML
-    private TableColumn<VentaSimulada, String> colMascota;
+    private TableColumn<VentaDTO, String> colMascota;
     @FXML
-    private TableColumn<VentaSimulada, String> colConcepto;
+    private TableColumn<VentaDTO, String> colConcepto;
     @FXML
-    private TableColumn<VentaSimulada, Double> colMonto;
+    private TableColumn<VentaDTO, Double> colMonto;
 
     // ── Perfil header ───────────────────────────────────────────────────
     @FXML private ImageView imgPerfilReportes;
@@ -79,7 +80,7 @@ public class ReportesController implements Initializable {
         colConcepto.setCellValueFactory(cell -> new javafx.beans.property.SimpleStringProperty(cell.getValue().getConcepto()));
         colMonto.setCellValueFactory(cell -> new javafx.beans.property.SimpleDoubleProperty(cell.getValue().getMonto()).asObject());
 
-        cargarDatosSimulados();
+        cargarDatosReales();
 
         if ("Veterinario".equalsIgnoreCase(App.getRolUsuario())) {
             if (btnVenta != null) { btnVenta.setVisible(false); btnVenta.setManaged(false); }
@@ -128,18 +129,8 @@ public class ReportesController implements Initializable {
         menuPerfil.show(hboxPerfil, Side.BOTTOM, hboxPerfil.getWidth() - 185, 4);
     }
 
-    private void cargarDatosSimulados() {
-        ObservableList<VentaSimulada> ventas = FXCollections.observableArrayList();
-        
-        ventas.add(new VentaSimulada("26/04/2026", "Boby", "Consulta General", 500.00));
-        ventas.add(new VentaSimulada("26/04/2026", "N/A", "Croquetas DogChow 2kg", 180.00));
-        ventas.add(new VentaSimulada("25/04/2026", "Luna", "Vacuna Antirrábica + Desparasitante", 850.00));
-        ventas.add(new VentaSimulada("25/04/2026", "Max", "Consulta Urgencia", 1200.00));
-        ventas.add(new VentaSimulada("24/04/2026", "N/A", "Shampoo Antipulgas", 250.00));
-        ventas.add(new VentaSimulada("23/04/2026", "Milo", "Estética (Baño y Corte)", 450.00));
-        ventas.add(new VentaSimulada("22/04/2026", "N/A", "Juguete Hueso Goma", 120.00));
-        ventas.add(new VentaSimulada("21/04/2026", "Rocky", "Rayos X", 900.00));
-
+    private void cargarDatosReales() {
+        ObservableList<VentaDTO> ventas = FXCollections.observableArrayList(VentasDAO.obtenerVentasRecientes());
         tablaVentas.setItems(ventas);
     }
 
@@ -195,7 +186,7 @@ public class ReportesController implements Initializable {
 
         // 1. Producto
         ComboBox<Inventario> cbProducto = new ComboBox<>();
-        cbProducto.setItems(DatosSimulados.getInventario());
+        cbProducto.setItems(InventarioDAO.getTodos());
         cbProducto.setPrefWidth(200);
 
         // 2. Cantidad
@@ -217,7 +208,7 @@ public class ReportesController implements Initializable {
                 lvMascota.setVisible(false);
                 lvMascota.setManaged(false);
             } else {
-                java.util.List<Mascota> matches = DatosSimulados.getMascotas().stream()
+                java.util.List<Mascota> matches = MascotaDAO.getTodas().stream()
                         .filter(m -> m.getNombre().toLowerCase().contains(newV.toLowerCase()))
                         .collect(Collectors.toList());
                 lvMascota.getItems().addAll(matches);
@@ -300,7 +291,7 @@ public class ReportesController implements Initializable {
                     String concepto = spCantidad.getValue() + "x " + prod.getNombre();
                     double total = prod.getPrecio_venta() * spCantidad.getValue();
                     String fecha = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-                    return new VentaSimulada(fecha, nombreMascota, concepto, total);
+                    return new VentaDTO(fecha, nombreMascota, concepto, total);
                 }
             }
             return null;
@@ -311,23 +302,5 @@ public class ReportesController implements Initializable {
         });
     }
 
-    // Clase interna para la TableView
-    public static class VentaSimulada {
-        private String fecha;
-        private String mascota;
-        private String concepto;
-        private double monto;
-
-        public VentaSimulada(String fecha, String mascota, String concepto, double monto) {
-            this.fecha = fecha;
-            this.mascota = mascota;
-            this.concepto = concepto;
-            this.monto = monto;
-        }
-
-        public String getFecha() { return fecha; }
-        public String getMascota() { return mascota; }
-        public String getConcepto() { return concepto; }
-        public double getMonto() { return monto; }
-    }
+    // Clase interna eliminada y movida a modelo.VentaDTO
 }

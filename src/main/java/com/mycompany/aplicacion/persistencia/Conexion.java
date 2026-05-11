@@ -12,6 +12,7 @@ public class Conexion {
     private String ip = "localhost";
     private String puerto = "3306";
 
+
     public Connection estableceConexion(String user, String pass) {
         String cadena = "jdbc:mysql://" + ip + ":" + puerto + "/" + bd + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
         try {

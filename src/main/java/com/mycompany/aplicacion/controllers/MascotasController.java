@@ -4,7 +4,7 @@
  */
 package com.mycompany.aplicacion.controllers;
 
-import com.mycompany.aplicacion.modelo.DatosSimulados;
+import com.mycompany.aplicacion.persistencia.MascotaDAO;
 import com.mycompany.aplicacion.modelo.Mascota;
 import com.mycompany.aplicacion.modelo.UserSession;
 import com.mycompany.aplicacion.util.ExitDialog;
@@ -56,6 +56,9 @@ public class MascotasController {
     @FXML private ImageView imgMascotaFicha;
     @FXML private Label     lblEstadoFicha;
 
+    // Mascota actualmente seleccionada (para guardar en BD)
+    private Mascota mascotaSeleccionada;
+
     @FXML
     public void initialize() {
         // Perfil de usuario en el header
@@ -64,14 +67,14 @@ public class MascotasController {
         lblRolMascotas.setText(UserSession.getInstance().getUserRole());
         construirMenuPerfil();
 
-        // Busqueda en tiempo real
+        // Busqueda en tiempo real contra BD
         txtBuscar.textProperty().addListener((obs, oldText, newText) ->
-                listaMascotas.setItems(DatosSimulados.buscarPorNombre(newText))
+                listaMascotas.setItems(MascotaDAO.buscarPorNombre(newText))
         );
 
-        // Cargar datos y configurar celdas
+        // Cargar datos desde BD y configurar celdas
         listaMascotas.setFocusTraversable(false);
-        listaMascotas.setItems(DatosSimulados.getMascotas());
+        listaMascotas.setItems(MascotaDAO.getTodas());
         listaMascotas.setCellFactory(lv -> new ListCell<Mascota>() {
 
             // Keeps a reference to the current card so the selection
@@ -207,19 +210,27 @@ public class MascotasController {
      * Lógica de guardado seguro con Modal de Confirmación (Estilo Dribbble).
      */
     private void manejarGuardar() {
+        if (mascotaSeleccionada == null) {
+            Toast.showToast("No hay mascota seleccionada", 2);
+            return;
+        }
         javafx.stage.Stage stage = (javafx.stage.Stage) btnGuardar.getScene().getWindow();
-        
+
         ExitDialog.mostrar(
-            stage, 
-            "\u00bfGuardar historial cl\u00ednico?", 
-            "Esta acci\u00f3n actualizar\u00e1 el registro m\u00e9dico del paciente de forma permanente.", 
-            "S\u00cd", 
-            "NO", 
+            stage,
+            "\u00bfGuardar historial cl\u00ednico?",
+            "Esta acci\u00f3n actualizar\u00e1 el registro m\u00e9dico del paciente de forma permanente.",
+            "S\u00cd",
+            "NO",
             () -> {
-                // Éxito confirmado
-                Toast.showToast("Historial cl\u00ednico actualizado con \u00e9xito \ud83d\udc3e", 2);
-                
-                // Simulación: Limpieza temporizada tras el Toast (2s)
+                String historial = txtHistorial.getText();
+                boolean ok = MascotaDAO.guardarHistorial(mascotaSeleccionada.getId(), historial);
+                if (ok) {
+                    Toast.showToast("Historial cl\u00ednico actualizado con \u00e9xito \ud83d\udc3e", 2);
+                    mascotaSeleccionada.setHistorialClinico(historial);
+                } else {
+                    Toast.showToast("\u26a0 Error al guardar. Verifica la conexi\u00f3n con la BD.", 3);
+                }
                 javafx.animation.Timeline timeline = new javafx.animation.Timeline(
                     new javafx.animation.KeyFrame(javafx.util.Duration.seconds(2), e -> limpiarFicha())
                 );
@@ -323,6 +334,7 @@ public class MascotasController {
 
     // Metodo clave: rellena la ficha de detalle (Punto 1)
     private void mostrarMascota(Mascota m) {
+        this.mascotaSeleccionada = m;
         // Direct FXML injections
         lblNombre.setText(m.getNombre());
         lblEspecie.setText(m.getEspecie());

@@ -3,7 +3,6 @@ package com.mycompany.aplicacion.controllers;
 import javafx.animation.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -11,7 +10,6 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.PasswordField;
-import javafx.scene.effect.BoxBlur;
 
 public class RecuperarContrasenaController {
 
@@ -130,16 +128,10 @@ public class RecuperarContrasenaController {
         pt.play();
     }
 
-    /**
-     * TEMPLATE METHOD: Handle safe password reset connection and execution.
-     * Note: This is an unexecuted template.
-     * In a production environment, you must use a strong hashing algorithm like BCrypt
-     * before storing the password in the database (e.g., BCrypt.hashpw(password, BCrypt.gensalt())).
-     */
+    /*
     private void handlePasswordResetDBUpdate(String usernameOrEmail, String newPassword) {
         String sql = "UPDATE login SET ingresoContrasenia = ? WHERE ingresoUsuario = ? OR correo = ?";
         
-        /* 
         Conexion conexion = new Conexion();
         try (java.sql.Connection con = conexion.estableceConexion();
              java.sql.PreparedStatement ps = con.prepareStatement(sql)) {
@@ -158,8 +150,8 @@ public class RecuperarContrasenaController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        */
     }
+    */
 
     /**
      * Closes the overlay by removing it from the parent StackPane.

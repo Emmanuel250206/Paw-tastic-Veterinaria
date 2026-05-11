@@ -30,6 +30,8 @@ public class VeterinarioController implements Initializable {
     @FXML
     private Button bInventario;
     @FXML
+    private Button bPuntoVenta;
+    @FXML
     private Button bStaff;
     @FXML
     private Button bReportes;
@@ -79,7 +81,7 @@ public class VeterinarioController implements Initializable {
     }
 
     private void iniciarRelojDigital() {
-        java.time.format.DateTimeFormatter dateFormatter = java.time.format.DateTimeFormatter.ofPattern("EEE, dd MMM", new java.util.Locale("es", "ES"));
+        java.time.format.DateTimeFormatter dateFormatter = java.time.format.DateTimeFormatter.ofPattern("EEE, dd MMM", java.util.Locale.forLanguageTag("es-ES"));
 
         javafx.animation.Timeline clock = new javafx.animation.Timeline(
             new javafx.animation.KeyFrame(javafx.util.Duration.ZERO, e -> {
@@ -109,7 +111,7 @@ public class VeterinarioController implements Initializable {
      */
     public void navegar(Button botonPulsado, String nombreFXML) {
         // 1. Lista de todos los botones para resetear estilos
-        Button[] botonesMenu = { bDashboard, bMascotas, bCitas, bInventario, bStaff, bReportes };
+        Button[] botonesMenu = { bDashboard, bMascotas, bCitas, bInventario, bPuntoVenta, bStaff, bReportes };
 
         for (Button b : botonesMenu) {
             if (b != null) {
@@ -182,6 +184,11 @@ public class VeterinarioController implements Initializable {
     @FXML
     public void mostrarVistaInventario(ActionEvent event) {
         navegar(bInventario, "SeccionInventario");
+    }
+
+    @FXML
+    public void mostrarVistaPOS(ActionEvent event) {
+        navegar(bPuntoVenta, "SeccionPOS");
     }
 
     @FXML

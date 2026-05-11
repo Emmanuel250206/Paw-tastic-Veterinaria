@@ -4,10 +4,6 @@
  */
 package com.mycompany.aplicacion.modelo;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-
 public class Mascota {
 
     // Datos de ficha completa

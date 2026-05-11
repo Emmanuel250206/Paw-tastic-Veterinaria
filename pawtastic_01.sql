@@ -503,7 +503,7 @@ ALTER TABLE `tb_producto`
 
 ALTER TABLE `tb_propietarios`
   ADD CONSTRAINT `tb_propietarios_ibfk_1` FOREIGN KEY (`id_usuario_web`)   REFERENCES `tb_usuario_web`   (`id`),
-  ADD CONSTRAINT `tb_propietarios_ibfk_2` FOREIGN KEY (`id_usuario_movil`) REFERENCES `tb_usuario_movil` (`id`);
+  ADD CONSTRAINT `tb_propietarios_ibfk_2` FOREIGN KEY (`id_usuario_movil`) RnEFERENCES `tb_usuario_movil` (`id`);
 
 ALTER TABLE `tb_raza`
   ADD CONSTRAINT `tb_raza_ibfk_1` FOREIGN KEY (`id_especie`) REFERENCES `tb_especie` (`id`);
@@ -517,8 +517,49 @@ ALTER TABLE `tb_venta`
   ADD CONSTRAINT `tb_venta_ibfk_3` FOREIGN KEY (`id_usuario_movil`) REFERENCES `tb_usuario_movil`(`id`),
   ADD CONSTRAINT `tb_venta_ibfk_4` FOREIGN KEY (`id_State`)         REFERENCES `tb_state`        (`id`);
 
+-- ========================================================
+-- CAMPO ADICIONAL: nota en tb_venta (POS)
+-- ========================================================
+ALTER TABLE `tb_venta` ADD COLUMN `nota` varchar(300) DEFAULT NULL;
+
+-- ========================================================
+-- TABLA: tb_alerta_stock (generada automáticamente por el POS)
+-- ========================================================
+
+CREATE TABLE `tb_alerta_stock` (
+  `id`           int(11) NOT NULL AUTO_INCREMENT,
+  `id_producto`  int(11) NOT NULL,
+  `existencia`   int(11) NOT NULL,
+  `stock_minimo` int(11) NOT NULL,
+  `fecha`        datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `resuelta`     tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `id_producto` (`id_producto`),
+  CONSTRAINT `tb_alerta_stock_ibfk_1` FOREIGN KEY (`id_producto`) REFERENCES `tb_producto` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- ========================================================
+-- DATOS INICIALES: tb_state
+-- ========================================================
+INSERT INTO `tb_state` (`nombre`, `tipo`) VALUES
+('Activa',         'venta'),
+('Pagada',         'venta'),
+('Cancelada',      'venta'),
+('Activo',         'producto'),
+('Inactivo',       'producto'),
+('Descontinuado',  'producto'),
+('Abierto',        'caja'),
+('Cerrado',        'caja'),
+('Registrada',     'entrada'),
+('Anulada',        'entrada'),
+('Registrada',     'perdida'),
+('Resuelta',       'perdida');
+
+
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+

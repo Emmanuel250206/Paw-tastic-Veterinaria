@@ -3,7 +3,7 @@ package com.mycompany.aplicacion.controllers;
 import com.mycompany.aplicacion.App;
 import com.mycompany.aplicacion.modelo.Citas;
 import com.mycompany.aplicacion.modelo.Citas.Prioridad;
-import com.mycompany.aplicacion.modelo.DatosSimulados;
+import com.mycompany.aplicacion.persistencia.CitasDAO;
 
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
@@ -250,8 +250,8 @@ public class CitasController implements Initializable {
             }
         });
 
-        // SortedList: URGENTE siempre primero
-        ObservableList<Citas> datos = DatosSimulados.getCitas();
+        // Carga desde BD en hilo de fondo para no bloquear el UI
+        ObservableList<Citas> datos = CitasDAO.getCitasHoy();
         SortedList<Citas> sorted = new SortedList<>(datos, COMPARADOR_PRIORIDAD);
         tablaColaCitas.setItems(sorted);
         lblContadorCitas.setText(datos.size() + " citas");
@@ -330,6 +330,7 @@ public class CitasController implements Initializable {
 
         if (estado.equalsIgnoreCase("En Consulta")) {
             citaSeleccionada.setEstado("Finalizada");
+            CitasDAO.cambiarEstado(citaSeleccionada.getId(), "F");
             guardarReporteAutomatico();
             cargarCitaEnPantalla(citaSeleccionada);
             mostrarAlerta(Alert.AlertType.INFORMATION,
@@ -337,6 +338,7 @@ public class CitasController implements Initializable {
                 "La consulta terminó. El reporte fue guardado automáticamente.");
         } else {
             citaSeleccionada.setEstado("En Consulta");
+            CitasDAO.cambiarEstado(citaSeleccionada.getId(), "E");
             cargarCitaEnPantalla(citaSeleccionada);
         }
 
@@ -382,8 +384,8 @@ public class CitasController implements Initializable {
 
         String motivo = resultado.get();
 
-        // Actualizar estado en el objeto de la cita
         citaSeleccionada.setEstado("Cancelada");
+        CitasDAO.cambiarEstado(citaSeleccionada.getId(), "C");
 
         // Registrar en el historial
         ReporteLocal registro = new ReporteLocal(

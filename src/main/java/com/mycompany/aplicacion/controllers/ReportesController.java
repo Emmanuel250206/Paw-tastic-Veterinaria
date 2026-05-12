@@ -170,7 +170,7 @@ public class ReportesController implements Initializable {
 
     @FXML
     private void abrirDialogoVenta(ActionEvent event) {
-        Dialog<VentaSimulada> dialog = new Dialog<>();
+        Dialog<VentaDTO> dialog = new Dialog<>();
         dialog.setTitle("Nueva Venta");
         dialog.setHeaderText("Registrar venta de productos/servicios");
         aplicarEstiloDialogo(dialog);

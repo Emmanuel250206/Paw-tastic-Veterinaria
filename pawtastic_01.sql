@@ -95,7 +95,8 @@ CREATE TABLE `tb_detalle_entrada` (
   `id`              int(11)       NOT NULL,
   `id_entrada`      int(11)       NOT NULL,
   `costo_unitario`  decimal(10,2) NOT NULL,
-  `id_producto`     int(11)       NOT NULL
+  `id_producto`     int(11)       NOT NULL,
+  `cantidad`        int(11)       NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -503,7 +504,7 @@ ALTER TABLE `tb_producto`
 
 ALTER TABLE `tb_propietarios`
   ADD CONSTRAINT `tb_propietarios_ibfk_1` FOREIGN KEY (`id_usuario_web`)   REFERENCES `tb_usuario_web`   (`id`),
-  ADD CONSTRAINT `tb_propietarios_ibfk_2` FOREIGN KEY (`id_usuario_movil`) RnEFERENCES `tb_usuario_movil` (`id`);
+  ADD CONSTRAINT `tb_propietarios_ibfk_2` FOREIGN KEY (`id_usuario_movil`) REFERENCES `tb_usuario_movil` (`id`);
 
 ALTER TABLE `tb_raza`
   ADD CONSTRAINT `tb_raza_ibfk_1` FOREIGN KEY (`id_especie`) REFERENCES `tb_especie` (`id`);

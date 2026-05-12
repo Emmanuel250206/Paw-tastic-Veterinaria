@@ -70,6 +70,24 @@ Project    : APLICACION Paw-tastic
     -fx-scale-y: 1.05;
 }
 
+.boton-secundario {
+    -fx-background-color: linear-gradient(to right, #357A68, #2A5F52);
+    -fx-background-radius: 30;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
+    -fx-padding: 10 30 10 30;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 10, 0, 0, 4);
+}
+
+.boton-secundario:hover {
+    -fx-background-color: linear-gradient(to right, #40927C, #357A68);
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 15, 0, 0, 6);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
 .boton-transparente {
     -fx-background-color: white;
     -fx-background-radius: 25;

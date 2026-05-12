@@ -102,10 +102,10 @@ public class RecuperarContrasenaController {
         mainCard.setScaleX(0.8);
         mainCard.setScaleY(0.8);
 
-        FadeTransition fade = new FadeTransition(Duration.millis(400), mainCard);
+        FadeTransition fade = new FadeTransition(Duration.millis(250), mainCard);
         fade.setToValue(1);
 
-        ScaleTransition scale = new ScaleTransition(Duration.millis(400), mainCard);
+        ScaleTransition scale = new ScaleTransition(Duration.millis(250), mainCard);
         scale.setToX(1.0);
         scale.setToY(1.0);
         scale.setInterpolator(Interpolator.EASE_OUT);
@@ -115,10 +115,10 @@ public class RecuperarContrasenaController {
     }
 
     private void playExitAnimation(Runnable onFinished) {
-        FadeTransition fade = new FadeTransition(Duration.millis(300), mainCard);
+        FadeTransition fade = new FadeTransition(Duration.millis(250), mainCard);
         fade.setToValue(0);
 
-        ScaleTransition scale = new ScaleTransition(Duration.millis(300), mainCard);
+        ScaleTransition scale = new ScaleTransition(Duration.millis(250), mainCard);
         scale.setToX(0.8);
         scale.setToY(0.8);
         scale.setInterpolator(Interpolator.EASE_BOTH);

@@ -78,6 +78,34 @@ public class PrimaryController {
         }
     }
 
+    @FXML
+    private void mostrarRegistroClinica(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/RegistroClinica.fxml"));
+            Parent root = loader.load();
+            
+            Stage modalStage = new Stage();
+            Stage owner = (Stage) rootPane.getScene().getWindow();
+            modalStage.initOwner(owner);
+            modalStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            modalStage.initStyle(javafx.stage.StageStyle.TRANSPARENT);
+            
+            javafx.scene.Scene scene = new javafx.scene.Scene(root);
+            scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+            modalStage.setScene(scene);
+
+            // Sincronizar tamaño y posición con la ventana principal para el efecto de overlay
+            modalStage.setX(owner.getX());
+            modalStage.setY(owner.getY());
+            modalStage.setWidth(owner.getWidth());
+            modalStage.setHeight(owner.getHeight());
+
+            modalStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     @FXML
@@ -162,6 +190,7 @@ public class PrimaryController {
                     
                     // Extraer los datos correctos de la base de datos
                     int dbId = rs.getInt("id");
+                    int dbClinicId = rs.getInt("id_clinica"); // EXTRAER CLÍNICA
                     String dbNombre = rs.getString("nombre");
                     String dbApellidos = rs.getString("apellidos");
                     String dbRol = rs.getString("tipo_rol");
@@ -173,6 +202,7 @@ public class PrimaryController {
                     // Llenar la sesión activa (el 'backpack')
                     com.mycompany.aplicacion.modelo.UserSession session = com.mycompany.aplicacion.modelo.UserSession.getInstance();
                     session.setUserId(dbId);
+                    session.setClinicId(dbClinicId); // GUARDAR CLÍNICA
                     session.setUserName(nombreCompleto.isEmpty() ? "Usuario sin Nombre" : nombreCompleto);
                     session.setUserAlias(dbUsuario != null ? dbUsuario : "Sin Alias");
                     session.setUsernameChanged(false);

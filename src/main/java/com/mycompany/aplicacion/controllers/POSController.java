@@ -102,8 +102,21 @@ public class POSController implements Initializable {
         lvProductos.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2) {
                 Inventario prod = lvProductos.getSelectionModel().getSelectedItem();
-                if (prod != null && prod.getStock_actual() > 0) {
-                    agregarAlCarrito(prod);
+                if (prod != null) {
+                    if (prod.getStock_actual() > 0) {
+                        agregarAlCarrito(prod);
+                    } else {
+                        javafx.collections.ObservableList<String> results = InventarioDAO.buscarDisponibilidadGlobal(prod.getNombre());
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Disponibilidad Global");
+                        alert.setHeaderText("Disponibilidad de: " + prod.getNombre());
+                        if (results.isEmpty()) {
+                            alert.setContentText("No hay stock en ninguna otra sucursal.");
+                        } else {
+                            alert.setContentText(String.join("\n", results));
+                        }
+                        alert.showAndWait();
+                    }
                 }
             }
         });

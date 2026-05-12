@@ -131,8 +131,9 @@ public class StaffController implements Initializable {
     if (con != null) {
         try {
             String sql = "SELECT id,id_clinica, nombre, apellidos, tipo_rol, especialidad, telefono, email, cedula, contrasenia, usuario " +
-                 "FROM tb_usuario_web WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista')";
+                 "FROM tb_usuario_web WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista') AND id_clinica = ?";
             PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, UserSession.getInstance().getClinicId());
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 listaStaff.add(new Staff(
@@ -460,24 +461,25 @@ public class StaffController implements Initializable {
         Conexion cx = new Conexion();
         Connection conn = cx.estableceConexion();
         try {
-            String sql = "INSERT INTO tb_usuario_web (nombre, apellidos, tipo_rol, especialidad, telefono, email, contrasenia, cedula, usuario) VALUES (?,?,?,?,?,?,?,?,?)";
+            String sql = "INSERT INTO tb_usuario_web (id_clinica, nombre, apellidos, tipo_rol, especialidad, telefono, email, contrasenia, cedula, usuario) VALUES (?,?,?,?,?,?,?,?,?,?)";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, nuevoStaff.getNombre());
-            ps.setString(2, nuevoStaff.getApellidos());
-            ps.setString(3, nuevoStaff.getRol());
-            ps.setString(4, nuevoStaff.getEspecialidad());
-            ps.setString(5, nuevoStaff.getTelefono());
-            ps.setString(6, tfEmail.getText());
-            ps.setString(7, tfContrasena.getText());
+            ps.setInt(1, UserSession.getInstance().getClinicId());
+            ps.setString(2, nuevoStaff.getNombre());
+            ps.setString(3, nuevoStaff.getApellidos());
+            ps.setString(4, nuevoStaff.getRol());
+            ps.setString(5, nuevoStaff.getEspecialidad());
+            ps.setString(6, nuevoStaff.getTelefono());
+            ps.setString(7, tfEmail.getText());
+            ps.setString(8, tfContrasena.getText());
             
             // Lógica Nulls / Vacíos para la cédula si no es veterinario
             boolean isVet = nuevoStaff.getRol().trim().equalsIgnoreCase("Veterinario");
             String cedulaValue = isVet && tfCedula.getText() != null ? tfCedula.getText().trim() : "";
-            ps.setString(8, cedulaValue);
+            ps.setString(9, cedulaValue);
             
             // Usar el usuario ingresado
             String genUsuario = nuevoStaff.getUsuario();
-            ps.setString(9, genUsuario);
+            ps.setString(10, genUsuario);
 
             ps.executeUpdate();
             

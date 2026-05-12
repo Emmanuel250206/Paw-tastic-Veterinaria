@@ -20,6 +20,7 @@ public class UserSession {
     private static UserSession instance;
 
     private int userId;
+    private int clinicId; // ADDED FOR MULTI-TENANT
 
     private UserSession() {
         // Valores por defecto
@@ -68,6 +69,10 @@ public class UserSession {
     // --- Accessors userId ---
     public int getUserId()                         { return userId; }
     public void setUserId(int id)                  { this.userId = id; }
+
+    // --- Accessors clinicId ---
+    public int getClinicId()                       { return clinicId; }
+    public void setClinicId(int id)                { this.clinicId = id; }
 
     // --- Accessors userRole ---
     public StringProperty userRoleProperty()       { return userRole; }

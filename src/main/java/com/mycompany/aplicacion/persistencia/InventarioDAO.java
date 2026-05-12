@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.*;
+import com.mycompany.aplicacion.modelo.UserSession;
 
 /**
  * DAO de Inventario — operaciones contra tb_producto.
@@ -21,16 +22,18 @@ public class InventarioDAO {
                    p.precio AS precio_venta, p.fecha_caducidad
             FROM tb_producto p
             INNER JOIN tb_state s ON s.id = p.id_State AND s.tipo = 'producto'
-            WHERE s.nombre = 'Activo'
+            WHERE s.nombre = 'Activo' AND p.id_clinica = ?
             ORDER BY p.nombre
             """;
 
         try (Connection con = new Conexion().estableceConexion();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                lista.add(mapear(rs));
+             PreparedStatement ps = con.prepareStatement(sql)) {
+             
+            ps.setInt(1, UserSession.getInstance().getClinicId());
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapear(rs));
+                }
             }
         } catch (Exception e) {
             System.err.println("[InventarioDAO] Error al cargar inventario: " + e.getMessage());
@@ -46,24 +49,25 @@ public class InventarioDAO {
 
         String sql = """
             INSERT INTO tb_producto
-                (nombre, categoria, descripcion, codigo, precio, costo_unitario,
+                (id_clinica, nombre, categoria, descripcion, codigo, precio, costo_unitario,
                  existencia, stock_minimo, unidad_medida, fecha_caducidad, fecha, id_State)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE(), ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE(), ?)
             """;
         try (Connection con = new Conexion().estableceConexion();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setString(1, inv.getNombre());
-            ps.setString(2, inv.getCategoria());
-            ps.setString(3, inv.getDescripcion());
-            ps.setString(4, generarCodigo(inv.getNombre()));
-            ps.setDouble(5, inv.getPrecio_venta());
-            ps.setDouble(6, inv.getPrecio_compra());
-            ps.setInt   (7, inv.getStock_actual());
-            ps.setInt   (8, inv.getStock_minimo());
-            ps.setString(9, inv.getUnidad_medida());
-            ps.setString(10, inv.getFecha_caducidad());
-            ps.setInt   (11, idState);
+            ps.setInt(1, UserSession.getInstance().getClinicId());
+            ps.setString(2, inv.getNombre());
+            ps.setString(3, inv.getCategoria());
+            ps.setString(4, inv.getDescripcion());
+            ps.setString(5, generarCodigo(inv.getNombre()));
+            ps.setDouble(6, inv.getPrecio_venta());
+            ps.setDouble(7, inv.getPrecio_compra());
+            ps.setInt   (8, inv.getStock_actual());
+            ps.setInt   (9, inv.getStock_minimo());
+            ps.setString(10, inv.getUnidad_medida());
+            ps.setString(11, inv.getFecha_caducidad());
+            ps.setInt   (12, idState);
             ps.executeUpdate();
 
             ResultSet generados = ps.getGeneratedKeys();
@@ -126,6 +130,39 @@ public class InventarioDAO {
     }
 
     // ─── Helpers ─────────────────────────────────────────────────────────────
+    
+    // ─── Búsqueda Global en otras Clínicas ──────────────────────────────────
+    public static ObservableList<String> buscarDisponibilidadGlobal(String nombreProducto) {
+        ObservableList<String> lista = FXCollections.observableArrayList();
+        String sql = """
+            SELECT c.nombre AS clinica_nombre, p.existencia 
+            FROM tb_producto p
+            INNER JOIN tb_clinicas c ON p.id_clinica = c.id
+            INNER JOIN tb_state s ON s.id = p.id_State AND s.tipo = 'producto'
+            WHERE s.nombre = 'Activo' 
+              AND p.id_clinica != ? 
+              AND p.existencia > 0 
+              AND LOWER(p.nombre) LIKE LOWER(?)
+            """;
+
+        try (Connection con = new Conexion().estableceConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+             
+            ps.setInt(1, UserSession.getInstance().getClinicId());
+            ps.setString(2, "%" + nombreProducto + "%");
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String clinica = rs.getString("clinica_nombre");
+                    int stock = rs.getInt("existencia");
+                    lista.add("Clínica: " + clinica + " | Stock: " + stock);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("[InventarioDAO] Error en búsqueda global: " + e.getMessage());
+        }
+        return lista;
+    }
     private static Inventario mapear(ResultSet rs) throws SQLException {
         return new Inventario(
             rs.getInt("id"),

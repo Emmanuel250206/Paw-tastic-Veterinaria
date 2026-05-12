@@ -155,6 +155,25 @@ public class InventarioController implements Initializable {
                 VBox accionesContenedor = new VBox(5, btnEditar, btnEliminar);
                 accionesContenedor.setAlignment(Pos.CENTER);
                 accionesContenedor.setPadding(new Insets(0, 0, 0, 15));
+                
+                if (inv.getStock_actual() <= 0) {
+                    Button btnGlobal = new Button("Buscar en Otras Sucursales");
+                    btnGlobal.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+                    btnGlobal.setOnAction(e -> {
+                        javafx.collections.ObservableList<String> results = InventarioDAO.buscarDisponibilidadGlobal(inv.getNombre());
+                        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+                        alert.setTitle("Disponibilidad Global");
+                        alert.setHeaderText("Disponibilidad de: " + inv.getNombre());
+                        if (results.isEmpty()) {
+                            alert.setContentText("No hay stock en ninguna otra sucursal.");
+                        } else {
+                            alert.setContentText(String.join("\n", results));
+                        }
+                        alert.showAndWait();
+                    });
+                    accionesContenedor.getChildren().add(btnGlobal);
+                }
+                
                 tarjeta.getChildren().add(accionesContenedor);
             }
 

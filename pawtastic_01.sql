@@ -213,6 +213,7 @@ CREATE TABLE `tb_perdida` (
 
 CREATE TABLE `tb_producto` (
   `id`              int(11)       NOT NULL,
+  `id_clinica`      int(11)       NOT NULL DEFAULT 1,
   `nombre`          varchar(120)  NOT NULL,
   `categoria`       varchar(100)  DEFAULT NULL,
   `descripcion`     varchar(300)  DEFAULT NULL,
@@ -397,7 +398,8 @@ ALTER TABLE `tb_perdida`
 ALTER TABLE `tb_producto`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uk_codigo` (`codigo`),
-  ADD KEY `id_State` (`id_State`);
+  ADD KEY `id_State` (`id_State`),
+  ADD KEY `id_clinica` (`id_clinica`);
 
 ALTER TABLE `tb_propietarios`
   ADD PRIMARY KEY (`id`),
@@ -500,7 +502,8 @@ ALTER TABLE `tb_perdida`
   ADD CONSTRAINT `tb_perdida_ibfk_1` FOREIGN KEY (`id_State`) REFERENCES `tb_state` (`id`);
 
 ALTER TABLE `tb_producto`
-  ADD CONSTRAINT `tb_producto_ibfk_1` FOREIGN KEY (`id_State`) REFERENCES `tb_state` (`id`);
+  ADD CONSTRAINT `tb_producto_ibfk_1` FOREIGN KEY (`id_State`) REFERENCES `tb_state` (`id`),
+  ADD CONSTRAINT `tb_producto_ibfk_2` FOREIGN KEY (`id_clinica`) REFERENCES `tb_clinicas` (`id`);
 
 ALTER TABLE `tb_propietarios`
   ADD CONSTRAINT `tb_propietarios_ibfk_1` FOREIGN KEY (`id_usuario_web`)   REFERENCES `tb_usuario_web`   (`id`),

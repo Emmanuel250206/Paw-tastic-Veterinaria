@@ -209,15 +209,91 @@ public class StaffController implements Initializable {
             Conexion cx = new Conexion();
             Connection conn = cx.estableceConexion();
             try {
-                String sql = "DELETE FROM tb_usuario_web WHERE id = ?";
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ps.setInt(1, s.getId());
-                ps.executeUpdate();
+                String sqlCheck = "SELECT activo FROM tb_usuario_web WHERE id = ?";
+                PreparedStatement psCheck = conn.prepareStatement(sqlCheck);
+                psCheck.setInt(1, s.getId());
+                ResultSet rs = psCheck.executeQuery();
+                if (rs.next() && rs.getInt("activo") == 1) {
+                    //sesion activa —> bloquear
+                    javafx.scene.control.Alert alertActivo = new javafx.scene.control.Alert(
+                    javafx.scene.control.Alert.AlertType.WARNING);
+                    alertActivo.setTitle("Sesión Activa");
+                    alertActivo.setHeaderText("No se puede eliminar este usuario");
+                    alertActivo.setContentText("El usuario \"" + s.getNombre() + " " + s.getApellidos() + 
+                        "\" tiene una sesión activa en este momento.");
+                    alertActivo.showAndWait();
+                    return;
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return;
+            }
+
+            //confirmacion
+            javafx.scene.control.Alert confirmacion = new javafx.scene.control.Alert(
+                javafx.scene.control.Alert.AlertType.CONFIRMATION);
+            confirmacion.setTitle("Confirmar eliminación");
+            confirmacion.setHeaderText("¿Estás seguro?");
+            confirmacion.setContentText("Vas a eliminar a \"" + s.getNombre() + " " + s.getApellidos() + 
+                "\". Esta acción no se puede deshacer.");
+            java.util.Optional<ButtonType> confirmResult = confirmacion.showAndWait();
+            if (confirmResult.isEmpty() || confirmResult.get() != ButtonType.OK) return;
+
+            //pedir clave maestra
+            Dialog<String> dialogClave = new Dialog<>();
+            dialogClave.setTitle("Clave Maestra");
+            dialogClave.setHeaderText("Introduce la clave maestra para continuar");
+            dialogClave.getDialogPane().setStyle("-fx-background-color: #DFF5E1;");
+
+            ButtonType btnConfirmar = new ButtonType("Confirmar", ButtonBar.ButtonData.OK_DONE);
+            dialogClave.getDialogPane().getButtonTypes().addAll(btnConfirmar, ButtonType.CANCEL);
+
+            javafx.scene.control.PasswordField pfClave = new javafx.scene.control.PasswordField();
+            pfClave.setPromptText("Clave maestra");
+            pfClave.setStyle("-fx-background-color: white; -fx-border-color: #3d8d7a; -fx-border-radius: 5; -fx-background-radius: 5;");
+            Label lblErrorClave = new Label("Clave incorrecta");
+            lblErrorClave.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 11px;");
+            lblErrorClave.setVisible(false);
+
+            VBox contenidoClave = new VBox(8, new Label("Clave maestra:"), pfClave, lblErrorClave);
+            contenidoClave.setPadding(new Insets(20));
+            dialogClave.getDialogPane().setContent(contenidoClave);
+
+            javafx.scene.Node btnConfNode = dialogClave.getDialogPane().lookupButton(btnConfirmar);
+            if (btnConfNode != null) btnConfNode.setStyle(
+                "-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;");
+            javafx.scene.Node btnCancelNode = dialogClave.getDialogPane().lookupButton(ButtonType.CANCEL);
+            if (btnCancelNode != null) btnCancelNode.setStyle(
+                "-fx-background-color: #7f8c8d; -fx-text-fill: white; -fx-font-weight: bold;");
+
+            //validar clave antes de cerrar
+            final String CLAVE_MAESTRA = "admin2026";
+            btnConfNode.addEventFilter(javafx.event.ActionEvent.ACTION, ev -> {
+                if (!pfClave.getText().equals(CLAVE_MAESTRA)) {
+                    lblErrorClave.setVisible(true);
+                    ev.consume();
+                }
+            });
+
+            dialogClave.setResultConverter(db -> db == btnConfirmar ? pfClave.getText() : null);
+
+            java.util.Optional<String> claveResult = dialogClave.showAndWait();
+            if (claveResult.isEmpty()) return;
+
+            // PASO 4: Eliminar
+            Conexion cx2 = new Conexion();
+            Connection conn2 = cx2.estableceConexion();
+            try {
+                String sqlDel = "DELETE FROM tb_usuario_web WHERE id = ?";
+                PreparedStatement psDel = conn2.prepareStatement(sqlDel);
+                psDel.setInt(1, s.getId());
+                psDel.executeUpdate();
+                Toast.showToast("Usuario eliminado correctamente.", 3);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-                cargarPersonalEnPantalla(); // Recargar visualmente
-            });
+            cargarPersonalEnPantalla();
+});
 
             VBox accionesContenedor = new VBox(10, btnEditar, btnEliminar);
             accionesContenedor.setAlignment(Pos.CENTER);

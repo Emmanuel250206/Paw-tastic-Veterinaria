@@ -212,8 +212,24 @@ public class PrimaryController {
                         // Mapear ENUM de BD a roles internos de la app
                         if (rolNorm.equals("veterinario") || rolNorm.equals("administrador")) {
                             session.setUserRole("Veterinario");
+                            try {
+                                String sqlActivo = "UPDATE tb_usuario_web SET activo = 1 WHERE id = ?";
+                                PreparedStatement psActivo = con.prepareStatement(sqlActivo);
+                                psActivo.setInt(1, dbId);
+                                psActivo.executeUpdate();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         } else if (rolNorm.equals("recepcionista") || rolNorm.equals("asistente") || rolNorm.equals("staff")) {
                             session.setUserRole("Staff");
+                            try {
+                                String sqlActivo = "UPDATE tb_usuario_web SET activo = 1 WHERE id = ?";
+                                PreparedStatement psActivo = con.prepareStatement(sqlActivo);
+                                psActivo.setInt(1, dbId);
+                                psActivo.executeUpdate();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         } else {
                             session.setUserRole(dbRol.trim());
                         }

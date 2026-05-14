@@ -1,6 +1,7 @@
 package com.mycompany.aplicacion.controllers;
 
 import com.mycompany.aplicacion.App;
+import com.mycompany.aplicacion.persistencia.Conexion;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -14,6 +15,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import com.mycompany.aplicacion.util.ExitDialog;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 
 public class VeterinarioController implements Initializable {
 
@@ -210,6 +213,18 @@ public class VeterinarioController implements Initializable {
 
         ExitDialog.mostrar(owner, () -> {
             try {
+                //marcar usuario como inactivo en BD
+                Conexion cx = new Conexion();
+                Connection conn = cx.estableceConexion();
+            try {
+                String sql = "UPDATE tb_usuario_web SET activo = 0 WHERE id = ?";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setInt(1, com.mycompany.aplicacion.modelo.UserSession.getInstance().getUserId());
+                ps.executeUpdate();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            com.mycompany.aplicacion.modelo.UserSession.clear();
                 App.setRoot("fxml/VeterinariaP1");
 
                 Platform.runLater(() -> {

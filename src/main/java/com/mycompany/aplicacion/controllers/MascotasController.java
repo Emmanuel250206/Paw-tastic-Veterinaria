@@ -11,6 +11,7 @@ import com.mycompany.aplicacion.util.ExitDialog;
 import com.mycompany.aplicacion.util.Toast;
 import java.io.IOException;
 import java.io.InputStream;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Side;
@@ -43,6 +44,7 @@ public class MascotasController {
     @FXML private TextField  txtBuscar;
     @FXML private Button     btnGuardar;
     @FXML private Button     btnCancelar;
+    @FXML private Button     btnGestionRazas;
     @FXML private HBox       containerBotones;
 
     // Perfil header
@@ -171,6 +173,10 @@ public class MascotasController {
         String role = UserSession.getInstance().getUserRole();
         if ("Staff".equals(role)) {
             txtHistorial.setEditable(false);
+            if (btnGestionRazas != null) {
+                btnGestionRazas.setVisible(false);
+                btnGestionRazas.setManaged(false);
+            }
             if (containerBotones != null) {
                 containerBotones.setVisible(false);
                 containerBotones.setManaged(false);
@@ -332,6 +338,21 @@ public class MascotasController {
         menuPerfil.show(hboxPerfil, Side.BOTTOM, hboxPerfil.getWidth() - 185, 4);
     }
 
+    @FXML
+    private void abrirGestionRazas(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GestionRazas.fxml"));
+            javafx.scene.Parent root = loader.load();
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.setTitle("Gestión de Razas");
+            stage.setScene(new javafx.scene.Scene(root));
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            System.err.println("[MascotasController] Error al abrir gestión de razas: " + e.getMessage());
+        }
+    }
+
     // Metodo clave: rellena la ficha de detalle (Punto 1)
     private void mostrarMascota(Mascota m) {
         this.mascotaSeleccionada = m;
@@ -339,6 +360,23 @@ public class MascotasController {
         lblNombre.setText(m.getNombre());
         lblEspecie.setText(m.getEspecie());
         lblRaza.setText(m.getRaza());
+        
+        if (m.getDescEspecie() != null && !m.getDescEspecie().isEmpty()) {
+            Tooltip espTip = new Tooltip("Contexto: " + m.getDescEspecie());
+            espTip.setStyle("-fx-font-size: 13px; -fx-background-color: #3D8D7A;");
+            lblEspecie.setTooltip(espTip);
+        }
+        
+        if (m.getDescRaza() != null && !m.getDescRaza().isEmpty()) {
+            Tooltip razTip = new Tooltip("ALERTA CLÍNICA: " + m.getDescRaza());
+            razTip.setStyle("-fx-font-size: 13px; -fx-background-color: #E74C3C; -fx-font-weight: bold;");
+            lblRaza.setTooltip(razTip);
+            // Si hay alerta, destacar la raza en rojo suave
+            lblRaza.setStyle("-fx-text-fill: #E74C3C; -fx-font-weight: bold;");
+        } else {
+            lblRaza.setStyle("-fx-text-fill: #2C3E50; -fx-font-weight: normal;");
+            lblRaza.setTooltip(null);
+        }
         lblEdad.setText(m.getEdad() + " a\u00f1os");
         lblPropietario.setText(m.getNombrePropietario());
         txtHistorial.setText(m.getHistorialClinico());

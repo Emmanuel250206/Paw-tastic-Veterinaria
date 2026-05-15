@@ -23,10 +23,10 @@ public class UserSession {
     private int clinicId; // ADDED FOR MULTI-TENANT
 
     private UserSession() {
-        // Valores por defecto
-        userName = new SimpleStringProperty("Dr. Emmanuel"); // Nombre real
-        userAlias = new SimpleStringProperty("emmanuel_v"); // Alias/Username
-        userRole = new SimpleStringProperty("Veterinario");
+        // Valores por defecto (se sobreescriben al iniciar sesión)
+        userName = new SimpleStringProperty("Invitado");
+        userAlias = new SimpleStringProperty("");
+        userRole = new SimpleStringProperty("");
         currentAvatarName = new SimpleStringProperty("Ava_huella.png");
         userCedula = new SimpleStringProperty("");
     }

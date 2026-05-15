@@ -400,12 +400,15 @@ public class DashboardController {
         }
         crearTarjetaDinamica(cardInventario, "Inventario", inventario.size(), "En stock", "/images/Icon_Inventario.png", "#FFF3E0", detalleInv);
 
-        // Reportes
+        // Reportes (Datos reales de ventas)
         java.util.List<String> detalleReportes = new java.util.ArrayList<>();
-        detalleReportes.add("• Venta: Croquetas DogChow ($180.0)");
-        detalleReportes.add("• Consulta: Boby ($500.0)");
-        detalleReportes.add("• Vacuna: Luna ($850.0)");
-        crearTarjetaDinamica(cardReportes, "Reportes", 8, "Ventas recientes", "/images/Icon_Reporte.png", "#FFCC80", detalleReportes);
+        var ventas = com.mycompany.aplicacion.persistencia.VentasDAO.obtenerVentasRecientes();
+        int maxVentas = Math.min(3, ventas.size());
+        for (int i = 0; i < maxVentas; i++) {
+            var v = ventas.get(i);
+            detalleReportes.add("• " + v.getConcepto() + ": " + v.getMascota() + " ($" + v.getMonto() + ")");
+        }
+        crearTarjetaDinamica(cardReportes, "Reportes", ventas.size(), "Ventas recientes", "/images/Icon_Reporte.png", "#FFCC80", detalleReportes);
 
         // Staff (Activity List Style)
         populateStaffCard(cardStaff);

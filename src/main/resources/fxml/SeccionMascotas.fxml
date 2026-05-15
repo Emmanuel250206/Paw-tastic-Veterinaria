@@ -42,6 +42,21 @@
                         </Label>
                         <Region HBox.hgrow="ALWAYS" />
 
+                        <Button fx:id="btnGestionRazas" mnemonicParsing="false" onAction="#abrirGestionRazas"
+                                style="-fx-background-color: #3d8d7a; -fx-background-radius: 12; -fx-padding: 8 15; -fx-cursor: hand;"
+                                text="Gestionar Razas" textFill="WHITE">
+                           <graphic>
+                              <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/Icon_Mascotas.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Button>
+
                         <!-- SEARCH PILL -->
                         <HBox styleClass="busqueda-pill" stylesheets="@estilos.css" alignment="CENTER_LEFT" spacing="8">
                            <HBox.margin>

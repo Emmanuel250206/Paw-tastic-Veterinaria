@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 15;" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.GestionRazasController">
+   <padding>
+      <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+   </padding>
+   <children>
+      <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #3d8d7a;" text="Nueva Raza" />
+      
+      <GridPane hgap="15.0" vgap="15.0">
+         <children>
+            <Label text="Especie:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+               <children>
+                  <ComboBox fx:id="cbEspecie" prefWidth="210.0" promptText="Selecciona especie" styleClass="combo-box" />
+                  <Button mnemonicParsing="false" onAction="#agregarEspecie" style="-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-background-radius: 5; -fx-cursor: hand; -fx-font-weight: bold;" text="+" />
+               </children>
+            </HBox>
+            
+            <Label text="Nombre Raza:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <TextField fx:id="txtNombreRaza" prefWidth="250.0" promptText="Ej. Labrador" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+         </children>
+      </GridPane>
+      
+      <VBox spacing="10.0">
+         <children>
+            <Label styleClass="ficha-label-key" text="Descripción de la Especie (Contexto General):" />
+            <TextArea fx:id="txtDescEspecie" editable="false" prefHeight="80.0" prefWidth="400.0" promptText="Información sobre la especie..." styleClass="editor-clinico" wrapText="true" />
+            
+            <Label styleClass="ficha-label-key" text="Descripción de la Raza (Alertas Clínicas):" />
+            <TextArea fx:id="txtDescRaza" prefHeight="80.0" prefWidth="400.0" promptText="Ej. Riesgo de braquicefalia, displasia..." styleClass="editor-clinico" wrapText="true" />
+         </children>
+      </VBox>
+      
+      <HBox alignment="CENTER_RIGHT" spacing="15.0">
+         <children>
+            <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#cerrar" style="-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 8 20; -fx-cursor: hand;" text="Cancelar" />
+            <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#guardar" style="-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 8 25; -fx-cursor: hand; -fx-font-weight: bold;" text="Guardar" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

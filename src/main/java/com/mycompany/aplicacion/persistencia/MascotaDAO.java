@@ -1,15 +1,102 @@
 package com.mycompany.aplicacion.persistencia;
 
+import com.mycompany.aplicacion.modelo.Especie;
 import com.mycompany.aplicacion.modelo.Mascota;
+import com.mycompany.aplicacion.modelo.Raza;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DAO de Mascotas — todas las operaciones contra tb_mascotas + tb_propietarios.
  */
 public class MascotaDAO {
+
+    // ─── Gestión de Razas y Especies ─────────────────────────────────────────
+
+    public static boolean insertarRaza(String nombre, int idEspecie, String descripcion) {
+        // Verificar duplicados
+        String sqlCheck = "SELECT id FROM tb_raza WHERE LOWER(nombre) = ? AND id_especie = ?";
+        Connection con = new Conexion().estableceConexion();
+        if (con == null) return false;
+
+        try (PreparedStatement psCheck = con.prepareStatement(sqlCheck)) {
+            psCheck.setString(1, nombre.toLowerCase().trim());
+            psCheck.setInt(2, idEspecie);
+            if (psCheck.executeQuery().next()) return false;
+
+            String sql = "INSERT INTO tb_raza (nombre, id_especie, descripcion) VALUES (?, ?, ?)";
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, nombre.trim());
+                ps.setInt(2, idEspecie);
+                ps.setString(3, descripcion.trim());
+                return ps.executeUpdate() > 0;
+            }
+        } catch (Exception e) {
+            System.err.println("[MascotaDAO] Error SQL al insertar raza: " + e.getMessage());
+            return false;
+        } finally {
+            try { con.close(); } catch (Exception ignored) {}
+        }
+    }
+
+    public static boolean insertarEspecie(String nombre, String descripcion) {
+        // Verificar duplicados
+        String sqlCheck = "SELECT id FROM tb_especie WHERE LOWER(especie) = ?";
+        Connection con = new Conexion().estableceConexion();
+        if (con == null) return false;
+
+        try (PreparedStatement psCheck = con.prepareStatement(sqlCheck)) {
+            psCheck.setString(1, nombre.toLowerCase().trim());
+            if (psCheck.executeQuery().next()) return false; 
+
+            String sql = "INSERT INTO tb_especie (especie, descripcion) VALUES (?, ?)";
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, nombre.trim());
+                ps.setString(2, descripcion.trim());
+                return ps.executeUpdate() > 0;
+            }
+        } catch (Exception e) {
+            System.err.println("[MascotaDAO] Error SQL al insertar especie: " + e.getMessage());
+            return false;
+        } finally {
+            try { con.close(); } catch (Exception ignored) {}
+        }
+    }
+
+    public static ObservableList<Raza> listarRazasPorEspecie(int idEspecie) {
+        ObservableList<Raza> lista = FXCollections.observableArrayList();
+        String sql = "SELECT id, nombre, id_especie, descripcion FROM tb_raza WHERE id_especie = ? ORDER BY nombre";
+        try (Connection con = new Conexion().estableceConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idEspecie);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                lista.add(new Raza(rs.getInt("id"), rs.getInt("id_especie"), rs.getString("nombre"), rs.getString("descripcion")));
+            }
+        } catch (Exception e) {
+            System.err.println("[MascotaDAO] Error al listar razas: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    public static ObservableList<Especie> listarEspecies() {
+        ObservableList<Especie> lista = FXCollections.observableArrayList();
+        String sql = "SELECT id, especie, descripcion FROM tb_especie ORDER BY especie";
+        try (Connection con = new Conexion().estableceConexion();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                lista.add(new Especie(rs.getInt("id"), rs.getString("especie"), rs.getString("descripcion")));
+            }
+        } catch (Exception e) {
+            System.err.println("[MascotaDAO] Error al listar especies: " + e.getMessage());
+        }
+        return lista;
+    }
 
     // ─── Obtener todas las mascotas activas ──────────────────────────────────
     public static ObservableList<Mascota> getTodas() {
@@ -17,7 +104,9 @@ public class MascotaDAO {
         String sql = """
             SELECT m.id, m.nombre,
                    e.especie,
+                   e.descripcion AS desc_especie,
                    r.nombre   AS raza,
+                   r.descripcion AS desc_raza,
                    m.fecha_nacimiento,
                    m.descripcion,
                    COALESCE(p.nombre, uw.nombre, '') AS nom_prop,
@@ -43,7 +132,6 @@ public class MascotaDAO {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                // Calcular edad a partir de fecha_nacimiento si existe
                 String edadStr = calcularEdad(rs.getString("fecha_nacimiento"));
                 String propietario = formatearNombre(rs.getString("nom_prop"), rs.getString("ape_prop"));
 
@@ -52,14 +140,15 @@ public class MascotaDAO {
                     rs.getString("nombre"),
                     rs.getString("especie") != null ? rs.getString("especie") : "—",
                     rs.getString("raza")    != null ? rs.getString("raza")    : "—",
-                    0,                        // edad como int (legado) — no se usa si hay fecha_nacimiento
+                    0,
                     rs.getString("nfc"),
                     propietario,
                     rs.getString("tel_prop"),
                     rs.getString("dir_prop"),
-                    rs.getString("historial")
+                    rs.getString("historial"),
+                    rs.getString("desc_especie"),
+                    rs.getString("desc_raza")
                 );
-                // Guardar edad formateada en el nombre (reutilizamos el campo int como 0)
                 lista.add(m);
             }
         } catch (Exception e) {
@@ -75,7 +164,12 @@ public class MascotaDAO {
         ObservableList<Mascota> lista = FXCollections.observableArrayList();
         String sql = """
             SELECT m.id, m.nombre,
-                   e.especie, r.nombre AS raza, m.fecha_nacimiento, m.descripcion,
+                   e.especie,
+                   e.descripcion AS desc_especie,
+                   r.nombre   AS raza,
+                   r.descripcion AS desc_raza,
+                   m.fecha_nacimiento,
+                   m.descripcion,
                    COALESCE(p.nombre, uw.nombre, '') AS nom_prop,
                    COALESCE(p.apellidos, uw.apellidos, '') AS ape_prop,
                    COALESCE(p.telefono, um.telefono, '') AS tel_prop,
@@ -107,7 +201,9 @@ public class MascotaDAO {
                     rs.getString("raza")    != null ? rs.getString("raza")    : "—",
                     0, rs.getString("nfc"), propietario,
                     rs.getString("tel_prop"), rs.getString("dir_prop"),
-                    rs.getString("historial")
+                    rs.getString("historial"),
+                    rs.getString("desc_especie"),
+                    rs.getString("desc_raza")
                 ));
             }
         } catch (Exception e) {
@@ -122,7 +218,10 @@ public class MascotaDAO {
 
         String sql = """
             SELECT m.id, m.nombre,
-                   e.especie, r.nombre AS raza,
+                   e.especie,
+                   e.descripcion AS desc_especie,
+                   r.nombre   AS raza,
+                   r.descripcion AS desc_raza,
                    COALESCE(p.nombre, uw.nombre, '') AS nom_prop,
                    COALESCE(p.apellidos, uw.apellidos, '') AS ape_prop,
                    COALESCE(p.telefono, um.telefono, '') AS tel_prop,
@@ -154,7 +253,9 @@ public class MascotaDAO {
                     rs.getString("raza")    != null ? rs.getString("raza")    : "—",
                     0, rs.getString("nfc"), propietario,
                     rs.getString("tel_prop"), rs.getString("dir_prop"),
-                    rs.getString("historial")
+                    rs.getString("historial"),
+                    rs.getString("desc_especie"),
+                    rs.getString("desc_raza")
                 );
             }
         } catch (Exception e) {
@@ -194,6 +295,46 @@ public class MascotaDAO {
             System.err.println("[MascotaDAO] Error al guardar historial: " + e.getMessage());
             return false;
         }
+    }
+
+    /**
+     * Inserta una mascota y su propietario con especie y raza específicas.
+     */
+    public static int insertarCompleto(String nombre, String dueno, String tel, int idEsp, int idRaz) {
+        String sqlProp = "INSERT INTO tb_propietarios (nombre, telefono, estado, created_at, direccion) VALUES (?, ?, '1', NOW(), 'Sin dirección')";
+        String sqlMasc = "INSERT INTO tb_mascotas (id_propietario, nombre, id_especie, id_raza, estado, created_at, descripcion) VALUES (?, ?, ?, ?, '1', NOW(), 'Ingresado por recepción')";
+
+        try (Connection con = new Conexion().estableceConexion()) {
+            con.setAutoCommit(false);
+            int idProp = -1;
+            try (PreparedStatement psP = con.prepareStatement(sqlProp, Statement.RETURN_GENERATED_KEYS)) {
+                psP.setString(1, dueno);
+                psP.setString(2, tel);
+                psP.executeUpdate();
+                ResultSet rsP = psP.getGeneratedKeys();
+                if (rsP.next()) idProp = rsP.getInt(1);
+            }
+
+            if (idProp == -1) { con.rollback(); return -1; }
+
+            try (PreparedStatement psM = con.prepareStatement(sqlMasc, Statement.RETURN_GENERATED_KEYS)) {
+                psM.setInt(1, idProp);
+                psM.setString(2, nombre);
+                psM.setInt(3, idEsp);
+                psM.setInt(4, idRaz);
+                psM.executeUpdate();
+                ResultSet rsM = psM.getGeneratedKeys();
+                if (rsM.next()) {
+                    int idM = rsM.getInt(1);
+                    con.commit();
+                    return idM;
+                }
+            }
+            con.rollback();
+        } catch (Exception e) {
+            System.err.println("[MascotaDAO] Error al insertar completo: " + e.getMessage());
+        }
+        return -1;
     }
 
     /**
@@ -248,11 +389,11 @@ public class MascotaDAO {
         try (Statement st = con.createStatement()) {
             ResultSet rsE = st.executeQuery(checkEsp);
             if (!rsE.next()) {
-                st.executeUpdate("INSERT INTO tb_especie (id, especie) VALUES (1, 'General')");
+                st.executeUpdate("INSERT INTO tb_especie (id, especie, descripcion) VALUES (1, 'General', 'Contexto clínico no especificado')");
             }
             ResultSet rsR = st.executeQuery(checkRaz);
             if (!rsR.next()) {
-                st.executeUpdate("INSERT INTO tb_raza (id, id_especie, nombre) VALUES (1, 1, 'General')");
+                st.executeUpdate("INSERT INTO tb_raza (id, id_especie, nombre, descripcion) VALUES (1, 1, 'General', 'Sin alertas clínicas registradas')");
             }
         }
     }

@@ -179,7 +179,7 @@ Project    : APLICACION Paw-tastic
     -fx-padding: 20;
     -fx-spacing: 10;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 12, 0, 0, 5);
-    
+
     .root {
         -fx-font-family: "Segoe UI";
     }
@@ -210,7 +210,12 @@ Project    : APLICACION Paw-tastic
 }
 
 /* Specific kill for the Lists and Tables */
-.list-view, .list-cell, .table-view, .table-row-cell, .text-field, .button {
+.list-view,
+.list-cell,
+.table-view,
+.table-row-cell,
+.text-field,
+.button {
     -fx-focus-traversable: false !important;
     -fx-focus-color: transparent !important;
     -fx-faint-focus-color: transparent !important;
@@ -220,7 +225,8 @@ Project    : APLICACION Paw-tastic
 
 .table-view {
     -fx-background-radius: 10;
-    -fx-selection-bar: #D5F5E3 !important; /* Soft Green */
+    -fx-selection-bar: #D5F5E3 !important;
+    /* Soft Green */
     -fx-selection-bar-non-focused: #E9F7EF !important;
     -fx-selection-bar-border: transparent !important;
     -fx-focus-color: transparent !important;
@@ -250,8 +256,8 @@ Project    : APLICACION Paw-tastic
  CLASES NUEVAS — Solo contornos, bordes y sombras. Sin paleta modificada.*/
 
 /* ── Módulo Citas: Fila URGENTE en TableView ─────────────────────────────── */
-.fila-urgente, 
-.fila-urgente:selected, 
+.fila-urgente,
+.fila-urgente:selected,
 .fila-urgente:pressed {
     -fx-background-color: #FDEDEC !important;
 }
@@ -438,7 +444,8 @@ Project    : APLICACION Paw-tastic
 }
 
 /* Quitar el fondo azul de selección de la celda misma */
-.list-cell:focused, .list-cell:selected {
+.list-cell:focused,
+.list-cell:selected {
     -fx-background-color: transparent !important;
     -fx-background-insets: 0 !important;
 }

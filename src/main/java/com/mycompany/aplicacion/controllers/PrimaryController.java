@@ -252,6 +252,18 @@ public class PrimaryController {
 
     @FXML
     private void iniciarSesion() throws IOException {
+        /* [DEBUG BYPASS] - Borrar este bloque antes de producción */
+        if (txtNombre.getText().trim().equalsIgnoreCase("staff") && txtContrasenaOculta.getText().equals("staff")) {
+            com.mycompany.aplicacion.modelo.UserSession s = com.mycompany.aplicacion.modelo.UserSession.getInstance();
+            s.setUserId(0); s.setClinicId(1); s.setUserName("Staff Test"); s.setUserAlias("staff"); s.setUserRole("Staff");
+            App.setRolUsuario("Staff");
+            App.getStage().setResizable(true); App.getStage().setMinWidth(1100); App.getStage().setMinHeight(760);
+            App.setRoot("fxml/InterfazStaff");
+            javafx.application.Platform.runLater(() -> App.getStage().setMaximized(true));
+            return;
+        }
+        /* [FIN BYPASS] */
+
         if (!validarCampos()) return;
 
         String nombre = txtNombre.getText().trim();

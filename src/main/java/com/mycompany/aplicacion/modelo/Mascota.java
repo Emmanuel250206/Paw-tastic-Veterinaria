@@ -17,6 +17,10 @@ public class Mascota {
     private String telefonoPropietario;
     private String direccionPropietario;
 
+    // Descripciones clínicas de catálogo
+    private String descEspecie;
+    private String descRaza;
+
     // Expediente clínico (como texto para mostrar)
     private String historialClinico;
 
@@ -34,6 +38,14 @@ public class Mascota {
         this.telefonoPropietario = telefonoPropietario;
         this.direccionPropietario = direccionPropietario;
         this.historialClinico = historialClinico;
+    }
+
+    public Mascota(int id, String nombre, String especie, String raza, int edad,
+            String idCollar, String nombrePropietario, String telefonoPropietario,
+            String direccionPropietario, String historialClinico, String descEsp, String descRaz) {
+        this(id, nombre, especie, raza, edad, idCollar, nombrePropietario, telefonoPropietario, direccionPropietario, historialClinico);
+        this.descEspecie = descEsp;
+        this.descRaza = descRaz;
     }
 
     // Getters
@@ -76,6 +88,9 @@ public class Mascota {
     public String getHistorialClinico() {
         return historialClinico;
     }
+
+    public String getDescEspecie() { return descEspecie; }
+    public String getDescRaza() { return descRaza; }
 
     // Setters
     public void setHistorialClinico(String historialClinico) {

@@ -3,6 +3,8 @@ package com.mycompany.aplicacion.controllers;
 import com.mycompany.aplicacion.App;
 import com.mycompany.aplicacion.modelo.Citas;
 import com.mycompany.aplicacion.modelo.Citas.Prioridad;
+import com.mycompany.aplicacion.modelo.Especie;
+import com.mycompany.aplicacion.modelo.Raza;
 import com.mycompany.aplicacion.persistencia.CitasDAO;
 import com.mycompany.aplicacion.persistencia.MascotaDAO;
 
@@ -261,8 +263,36 @@ public class CitasStaffController implements Initializable {
         ListView<Mascota> lvMascotas = new ListView<>(); lvMascotas.setPrefHeight(100); lvMascotas.setVisible(false); lvMascotas.setManaged(false);
 
         // Mascota Nueva
-        TextField tfRaza = new TextField(); tfRaza.setPromptText("Raza");
-        TextField tfEspecie = new TextField(); tfEspecie.setPromptText("Especie");
+        ComboBox<Raza> cbRaza = new ComboBox<>(); cbRaza.setPromptText("Raza");
+        cbRaza.setDisable(true);
+        ComboBox<Especie> cbEspecie = new ComboBox<>(); cbEspecie.setPromptText("Especie");
+        cbEspecie.setItems(MascotaDAO.listarEspecies());
+        
+        cbEspecie.valueProperty().addListener((obs, oldEsp, newEsp) -> {
+            if (newEsp != null) {
+                cbRaza.setItems(MascotaDAO.listarRazasPorEspecie(newEsp.getId()));
+                cbRaza.setDisable(false);
+            } else {
+                cbRaza.getItems().clear();
+                cbRaza.setDisable(true);
+            }
+        });
+
+        Label lblAlertaClinica = new Label();
+        lblAlertaClinica.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 11px; -fx-font-weight: bold;");
+        lblAlertaClinica.setWrapText(true);
+        lblAlertaClinica.setMaxWidth(250);
+
+        cbRaza.valueProperty().addListener((obs, oldRaza, newRaza) -> {
+            if (newRaza != null && newRaza.getDescripcion() != null && !newRaza.getDescripcion().isEmpty()) {
+                lblAlertaClinica.setText("⚠ Alerta: " + newRaza.getDescripcion());
+                javafx.scene.control.Tooltip.install(cbRaza, new javafx.scene.control.Tooltip(newRaza.getDescripcion()));
+            } else {
+                lblAlertaClinica.setText("");
+                javafx.scene.control.Tooltip.uninstall(cbRaza, null);
+            }
+        });
+
         TextField tfNombreNueva = new TextField(); tfNombreNueva.setPromptText("Nombre de mascota");
         TextField tfEdad = new TextField(); tfEdad.setPromptText("Edad");
         TextField tfDescripcion = new TextField(); tfDescripcion.setPromptText("Descripción");
@@ -338,8 +368,10 @@ public class CitasStaffController implements Initializable {
                 gridDynamic.add(tfTelefono, 1, 2);
             } else {
                 gridDynamic.add(new Label("Nombre:"), 0, 0); gridDynamic.add(tfNombreNueva, 1, 0);
-                gridDynamic.add(new Label("Especie:"), 0, 1); gridDynamic.add(tfEspecie, 1, 1);
-                gridDynamic.add(new Label("Raza:"), 0, 2); gridDynamic.add(tfRaza, 1, 2);
+                gridDynamic.add(new Label("Especie:"), 0, 1); gridDynamic.add(cbEspecie, 1, 1);
+                gridDynamic.add(new Label("Raza:"), 0, 2); 
+                VBox boxRaza = new VBox(2, cbRaza, lblAlertaClinica);
+                gridDynamic.add(boxRaza, 1, 2);
                 gridDynamic.add(new Label("Edad:"), 0, 3); gridDynamic.add(tfEdad, 1, 3);
                 gridDynamic.add(new Label("Descripción:"), 0, 4); gridDynamic.add(tfDescripcion, 1, 4);
                 gridDynamic.add(new Label("Dueño:"), 0, 5); gridDynamic.add(tfDueno, 1, 5);
@@ -372,10 +404,9 @@ public class CitasStaffController implements Initializable {
                 String mascota;
                 if ("Mascota Nueva".equals(cbModo.getValue())) {
                     mascota = tfNombreNueva.getText().trim();
-                    if (!mascota.isEmpty() && !tfDueno.getText().trim().isEmpty()) {
-                        int mId = 0;
-                        int edadInt = 0;
-                        try { edadInt = Integer.parseInt(tfEdad.getText().trim()); } catch (NumberFormatException ignored) {}
+                    if (mascota.isEmpty() || cbEspecie.getValue() == null || cbRaza.getValue() == null) {
+                        mostrarAlerta(Alert.AlertType.ERROR, "Datos incompletos", "Debe ingresar nombre, especie y raza.");
+                        return null;
                     }
                 } else {
                     mascota = tfBuscarNombre.getText().trim();
@@ -410,11 +441,14 @@ public class CitasStaffController implements Initializable {
             int idUser = UserSession.getInstance().getUserId();
 
             if ("Mascota Nueva".equals(cbModo.getValue())) {
-                idMascota = MascotaDAO.insertarBasico(nuevaCita.getNombreMascota(), nuevaCita.getNombrePropietario(), nuevaCita.getTelefonoDueno());
+                // Aquí deberíamos usar una versión de insertarBasico que acepte especie y raza
+                // Por ahora usamos la existente que pone default, o mejor creamos una nueva.
+                int idEsp = cbEspecie.getValue().getId();
+                int idRaz = cbRaza.getValue().getId();
+                idMascota = MascotaDAO.insertarCompleto(nuevaCita.getNombreMascota(), nuevaCita.getNombrePropietario(), nuevaCita.getTelefonoDueno(), idEsp, idRaz);
             } else if (mascotaElegida != null) {
                 idMascota = mascotaElegida.getId();
             } else {
-                // Si escribió el nombre pero no lo seleccionó de la lista, intentamos buscarlo o crearlo
                 idMascota = MascotaDAO.insertarBasico(nuevaCita.getNombreMascota(), nuevaCita.getNombrePropietario(), nuevaCita.getTelefonoDueno());
             }
 

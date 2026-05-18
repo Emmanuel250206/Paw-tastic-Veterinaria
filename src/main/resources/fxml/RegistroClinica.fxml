@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.AmbientLight?>
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
@@ -14,7 +12,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.Color?>
 
 <StackPane fx:id="rootPane" alignment="CENTER" prefHeight="552.0" prefWidth="750.0" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.RegistroClinicaController">
    <children>
@@ -27,7 +24,7 @@
             <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
          </padding>
          <children>
-            <Label style="-fx-font-size: 22px; -fx-font-weight: bold;" text="Registro de Clínica Veterinaria" textFill="#3d8d7a" />
+            <Label style="-fx-font-size: 22px; -fx-font-weight: bold;" text="🌐 Registro de Clínica Veterinaria" textFill="#3d8d7a" />
             
             <GridPane hgap="30.0" vgap="12.0">
               <columnConstraints>
@@ -115,7 +112,7 @@
             
             <HBox alignment="CENTER" spacing="20.0" style="-fx-padding: 10 0 0 0;">
                <children>
-                  <Button mnemonicParsing="false" onAction="#cerrarAccion" prefHeight="40.0" prefWidth="140.0" styleClass="boton-secundario" text="Cancelar" />
+                  <Button mnemonicParsing="false" onAction="#cerrarAccion" prefHeight="40.0" prefWidth="140.0" style="-fx-background-color: red;" styleClass="boton-secundario" text="Cancelar" />
                   <Button fx:id="btnRegistrar" mnemonicParsing="false" onAction="#registrarClinica" prefHeight="40.0" prefWidth="240.0" styleClass="boton-verde" text="Registrar Clínica" />
                </children>
             </HBox>

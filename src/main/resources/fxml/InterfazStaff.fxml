@@ -9,11 +9,11 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane fx:id="stackPrincipal" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.VeterinarioController">
+<StackPane fx:id="stackPrincipal" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.VeterinarioController">
    <children>
       <BorderPane fx:id="bpPrincipal" prefHeight="728.0" prefWidth="1357.0" style="-fx-background-color: #9ED3A9;">
          <left>
@@ -81,9 +81,9 @@
                   </Button>
                   <Button fx:id="bPuntoVenta" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaPOS" styleClass="boton-menu" text="       Punto Venta">
                      <graphic>
-                        <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="45.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/logo_paw.png" />
+                              <Image url="@../images/Icon_POS.png" />
                            </image>
                         </ImageView>
                      </graphic>

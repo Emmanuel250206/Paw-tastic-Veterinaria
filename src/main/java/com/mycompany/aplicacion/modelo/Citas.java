@@ -16,6 +16,18 @@ public class Citas {
     private Prioridad prioridad;
 
     private String telefonoDueno;
+    private String tipoCitaNombre;
+
+    private Double temperatura;
+    private Integer frecuenciaCardiaca;
+    private Integer frecuenciaRespiratoria;
+
+    /** Constructor completo con prioridad explícita y tipo de cita. */
+    public Citas(int id, String fecha, String hora, String nombreMascota, String nombrePropietario, String telefonoDueno,
+            String veterinario, String motivo, String estado, Prioridad prioridad, String tipoCitaNombre) {
+        this(id, fecha, hora, nombreMascota, nombrePropietario, telefonoDueno, veterinario, motivo, estado, prioridad);
+        this.tipoCitaNombre = tipoCitaNombre;
+    }
 
     /** Constructor completo con prioridad explícita. */
     public Citas(int id, String fecha, String hora, String nombreMascota, String nombrePropietario, String telefonoDueno,
@@ -39,6 +51,9 @@ public class Citas {
     }
 
     // ── Getters / Setters ───────────────────────────────────────────────────
+
+    public String getTipoCitaNombre() { return tipoCitaNombre; }
+    public void setTipoCitaNombre(String tipoCitaNombre) { this.tipoCitaNombre = tipoCitaNombre; }
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -73,6 +88,15 @@ public class Citas {
     public boolean esUrgente() {
         return Prioridad.URGENTE.equals(prioridad);
     }
+
+    public Double getTemperatura() { return temperatura; }
+    public void setTemperatura(Double temperatura) { this.temperatura = temperatura; }
+
+    public Integer getFrecuenciaCardiaca() { return frecuenciaCardiaca; }
+    public void setFrecuenciaCardiaca(Integer frecuenciaCardiaca) { this.frecuenciaCardiaca = frecuenciaCardiaca; }
+
+    public Integer getFrecuenciaRespiratoria() { return frecuenciaRespiratoria; }
+    public void setFrecuenciaRespiratoria(Integer frecuenciaRespiratoria) { this.frecuenciaRespiratoria = frecuenciaRespiratoria; }
 
     @Override
     public String toString() {

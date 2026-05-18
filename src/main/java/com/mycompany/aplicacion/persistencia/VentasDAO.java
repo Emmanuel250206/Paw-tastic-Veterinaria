@@ -9,14 +9,14 @@ import java.util.List;
 public class VentasDAO {
 
     public static boolean registrarVenta(double total, int idMascota, String concepto) {
-        String sql = "INSERT INTO tb_venta (id_usuario_web, id_state, total, created_at) VALUES (?, 1, ?, NOW())";
-        // Nota: Si la BD requiere id_usuario_movil o id_citas como NOT NULL, esto podría fallar.
-        // Pero basándonos en el análisis, intentaremos insertar lo básico.
+        String sql = "INSERT INTO tb_venta (id_usuario_web, total, fecha, fecha_reg, id_State, nota, metodo_pago, tipo_atencion) " +
+                     "VALUES (?, ?, NOW(), NOW(), 1, ?, 'E', 'sin_cita')";
         
-        try (Connection con = new Conexion().estableceConexion()) {
-            PreparedStatement ps = con.prepareStatement(sql);
+        try (Connection con = new Conexion().estableceConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, UserSession.getInstance().getUserId());
             ps.setDouble(2, total);
+            ps.setString(3, concepto);
             ps.executeUpdate();
             return true;
         } catch (Exception e) {
@@ -27,18 +27,18 @@ public class VentasDAO {
 
     public static List<VentaDTO> obtenerVentasRecientes() {
         List<VentaDTO> lista = new ArrayList<>();
-        String sql = "SELECT v.total, v.created_at, m.nombre as mascota_nombre " +
+        String sql = "SELECT v.total, v.fecha, m.nombre as mascota_nombre " +
                      "FROM tb_venta v " +
-                     "LEFT JOIN tb_citas c ON v.id_citas = c.id " +
+                     "LEFT JOIN tb_citas c ON v.id_cita = c.id " +
                      "LEFT JOIN tb_mascotas m ON c.id_mascota = m.id " +
-                     "ORDER BY v.created_at DESC LIMIT 50";
+                     "ORDER BY v.fecha DESC LIMIT 50";
 
         try (Connection con = new Conexion().estableceConexion();
              Statement st = con.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
-                String fecha = rs.getTimestamp("created_at").toString();
+                String fecha = rs.getTimestamp("fecha") != null ? rs.getTimestamp("fecha").toString() : "—";
                 String mascota = rs.getString("mascota_nombre");
                 if (mascota == null) mascota = "N/A";
                 double monto = rs.getDouble("total");

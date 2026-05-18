@@ -33,10 +33,15 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.stage.Modality;
+import javafx.scene.Scene;
+import javafx.fxml.FXMLLoader;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -54,7 +59,9 @@ public class CitasStaffController implements Initializable {
     @FXML private TableColumn<Citas, String>    colHora;
     @FXML private TableColumn<Citas, String>    colPaciente;
     @FXML private TableColumn<Citas, String>    colDueno;
+    @FXML private TableColumn<Citas, String>    colTipoCita;
     @FXML private TableColumn<Citas, String>    colMotivo;
+    @FXML private TableColumn<Citas, String>    colEstado;
     @FXML private TableColumn<Citas, Prioridad> colPrioridad;
     @FXML private Label                         lblContadorCitas;
 
@@ -124,7 +131,9 @@ public class CitasStaffController implements Initializable {
 
         colPaciente.setCellValueFactory(new PropertyValueFactory<>("nombreMascota"));
         colDueno.setCellValueFactory(new PropertyValueFactory<>("nombrePropietario"));
+        colTipoCita.setCellValueFactory(new PropertyValueFactory<>("tipoCitaNombre"));
         colMotivo.setCellValueFactory(new PropertyValueFactory<>("motivo"));
+        colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
 
         // Columna Prioridad con badge visual
         colPrioridad.setCellValueFactory(new PropertyValueFactory<>("prioridad"));
@@ -159,10 +168,7 @@ public class CitasStaffController implements Initializable {
             }
         });
 
-        ObservableList<Citas> datos = CitasDAO.getCitasHoy();
-        SortedList<Citas> sorted = new SortedList<>(datos, COMPARADOR_PRIORIDAD);
-        tablaColaCitas.setItems(sorted);
-        lblContadorCitas.setText(datos.size() + " citas");
+        refreshTable();
 
         tablaColaCitas.setRowFactory(tv -> {
             TableRow<Citas> row = new TableRow<>();
@@ -198,6 +204,14 @@ public class CitasStaffController implements Initializable {
         });
     }
 
+    public void refreshTable() {
+        ObservableList<Citas> datos = CitasDAO.listarCitasPorFecha(LocalDate.now());
+        SortedList<Citas> sorted = new SortedList<>(datos, COMPARADOR_PRIORIDAD);
+        tablaColaCitas.setItems(sorted);
+        lblContadorCitas.setText(datos.size() + " citas");
+        tablaColaCitas.refresh();
+    }
+
     private void actualizarHorasDisponibles(DatePicker dpFecha, ComboBox<String> cbHora, String horaActualIgnorada) {
         cbHora.getItems().clear();
         String[] todasLasHoras = {
@@ -214,7 +228,7 @@ public class CitasStaffController implements Initializable {
 
         String fechaStr = fecha.toString();
         java.util.List<String> horasOcupadas = new java.util.ArrayList<>();
-        for (Citas c : CitasDAO.getCitasHoy()) {
+        for (Citas c : CitasDAO.listarCitasPorFecha(fecha)) {
             if (c.getFecha().equals(fechaStr) && c.getPrioridad() != Prioridad.URGENTE) {
                 if (horaActualIgnorada == null || !c.getHora().equals(horaActualIgnorada)) {
                     horasOcupadas.add(c.getHora());
@@ -239,232 +253,27 @@ public class CitasStaffController implements Initializable {
         dialog.getDialogPane().lookup(".header-panel .label").setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
     }
 
-    // Mascota que se elija en el autocompletado
-    private Mascota mascotaElegida = null;
-
     @FXML
     private void agendarCita(ActionEvent event) {
-        Dialog<Citas> dialog = new Dialog<>();
-        dialog.setTitle("Agendar Cita");
-        dialog.setHeaderText("Programar nueva cita o registrar urgencia");
-        aplicarEstiloDialogo(dialog);
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AgendarCitaModal.fxml"));
+            javafx.scene.Parent root = loader.load();
+            AgendarCitaModalController controller = loader.getController();
 
-        ButtonType btnTypeGuardar = new ButtonType("Guardar", javafx.scene.control.ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(btnTypeGuardar, ButtonType.CANCEL);
-        ((Button) dialog.getDialogPane().lookupButton(btnTypeGuardar)).setStyle("-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+            Stage stage = new Stage();
+            stage.setTitle("Agendar Cita");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initOwner(((javafx.scene.Node) event.getSource()).getScene().getWindow());
+            stage.showAndWait();
 
-        // UI Components
-        ComboBox<String> cbModo = new ComboBox<>();
-        cbModo.getItems().addAll("Mascota Registrada", "Mascota Nueva");
-        cbModo.setValue("Mascota Registrada");
-
-        // Mascota Registrada
-        TextField tfBuscarNombre = new TextField(); tfBuscarNombre.setPromptText("Buscar nombre...");
-        ListView<Mascota> lvMascotas = new ListView<>(); lvMascotas.setPrefHeight(100); lvMascotas.setVisible(false); lvMascotas.setManaged(false);
-
-        // Mascota Nueva
-        ComboBox<Raza> cbRaza = new ComboBox<>(); cbRaza.setPromptText("Raza");
-        cbRaza.setDisable(true);
-        ComboBox<Especie> cbEspecie = new ComboBox<>(); cbEspecie.setPromptText("Especie");
-        cbEspecie.setItems(MascotaDAO.listarEspecies());
-        
-        cbEspecie.valueProperty().addListener((obs, oldEsp, newEsp) -> {
-            if (newEsp != null) {
-                cbRaza.setItems(MascotaDAO.listarRazasPorEspecie(newEsp.getId()));
-                cbRaza.setDisable(false);
-            } else {
-                cbRaza.getItems().clear();
-                cbRaza.setDisable(true);
+            if (controller.isSuccess()) {
+                refreshTable();
             }
-        });
-
-        Label lblAlertaClinica = new Label();
-        lblAlertaClinica.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 11px; -fx-font-weight: bold;");
-        lblAlertaClinica.setWrapText(true);
-        lblAlertaClinica.setMaxWidth(250);
-
-        cbRaza.valueProperty().addListener((obs, oldRaza, newRaza) -> {
-            if (newRaza != null && newRaza.getDescripcion() != null && !newRaza.getDescripcion().isEmpty()) {
-                lblAlertaClinica.setText("⚠ Alerta: " + newRaza.getDescripcion());
-                javafx.scene.control.Tooltip.install(cbRaza, new javafx.scene.control.Tooltip(newRaza.getDescripcion()));
-            } else {
-                lblAlertaClinica.setText("");
-                javafx.scene.control.Tooltip.uninstall(cbRaza, null);
-            }
-        });
-
-        TextField tfNombreNueva = new TextField(); tfNombreNueva.setPromptText("Nombre de mascota");
-        TextField tfEdad = new TextField(); tfEdad.setPromptText("Edad");
-        TextField tfDescripcion = new TextField(); tfDescripcion.setPromptText("Descripción");
-
-        // Shared
-        TextField tfDueno = new TextField(); tfDueno.setPromptText("Dueño");
-        TextField tfTelefono = new TextField(); tfTelefono.setPromptText("Teléfono");
-
-        // Cita details
-        ComboBox<String> cbTipo = new ComboBox<>();
-        cbTipo.getItems().addAll("Revisión", "Vacunación", "Estética", "Urgente", "Otro");
-        cbTipo.setValue("Revisión");
-        TextField tfOtroMotivo = new TextField(); tfOtroMotivo.setPromptText("Motivo...");
-        tfOtroMotivo.setVisible(false); tfOtroMotivo.setManaged(false);
-
-        cbTipo.valueProperty().addListener((obs, oldVal, newVal) -> {
-            boolean esOtro = "Otro".equals(newVal);
-            tfOtroMotivo.setVisible(esOtro);
-            tfOtroMotivo.setManaged(esOtro);
-            dialog.getDialogPane().getScene().getWindow().sizeToScene();
-        });
-
-        DatePicker dpFecha = new DatePicker(LocalDate.now());
-        ComboBox<String> cbHora = new ComboBox<>();
-        actualizarHorasDisponibles(dpFecha, cbHora, null);
-        dpFecha.valueProperty().addListener((obs, oldVal, newVal) -> actualizarHorasDisponibles(dpFecha, cbHora, null));
-
-        // Logic for Buscar Mascota
-        tfBuscarNombre.textProperty().addListener((obs, oldV, newV) -> {
-            lvMascotas.getItems().clear();
-            if (newV.isEmpty()) {
-                lvMascotas.setVisible(false);
-                lvMascotas.setManaged(false);
-                tfDueno.setText(""); tfTelefono.setText("");
-                mascotaElegida = null;
-            } else {
-                java.util.List<Mascota> matches = MascotaDAO.getTodas().stream()
-                        .filter(m -> m.getNombre().toLowerCase().contains(newV.toLowerCase()))
-                        .collect(Collectors.toList());
-                lvMascotas.getItems().addAll(matches);
-                boolean show = !matches.isEmpty();
-                lvMascotas.setVisible(show); lvMascotas.setManaged(show);
-            }
-            dialog.getDialogPane().getScene().getWindow().sizeToScene();
-        });
-
-        lvMascotas.setOnMouseClicked(e -> {
-            Mascota m = lvMascotas.getSelectionModel().getSelectedItem();
-            if (m != null) {
-                mascotaElegida = m;
-                tfBuscarNombre.setText(m.getNombre());
-                tfDueno.setText(m.getNombrePropietario());
-                tfTelefono.setText(m.getTelefonoPropietario() != null ? m.getTelefonoPropietario() : "");
-                lvMascotas.setVisible(false);
-                lvMascotas.setManaged(false);
-                dialog.getDialogPane().getScene().getWindow().sizeToScene();
-            }
-        });
-
-        // Dynamic Layout
-        GridPane gridDynamic = new GridPane();
-        gridDynamic.setHgap(10); gridDynamic.setVgap(15);
-
-        Runnable buildDynamic = () -> {
-            gridDynamic.getChildren().clear();
-            if ("Mascota Registrada".equals(cbModo.getValue())) {
-                gridDynamic.add(new Label("Buscar:"), 0, 0);
-                VBox boxBuscar = new VBox(5, tfBuscarNombre, lvMascotas);
-                gridDynamic.add(boxBuscar, 1, 0);
-                gridDynamic.add(new Label("Dueño:"), 0, 1);
-                gridDynamic.add(tfDueno, 1, 1);
-                gridDynamic.add(new Label("Teléfono:"), 0, 2);
-                gridDynamic.add(tfTelefono, 1, 2);
-            } else {
-                gridDynamic.add(new Label("Nombre:"), 0, 0); gridDynamic.add(tfNombreNueva, 1, 0);
-                gridDynamic.add(new Label("Especie:"), 0, 1); gridDynamic.add(cbEspecie, 1, 1);
-                gridDynamic.add(new Label("Raza:"), 0, 2); 
-                VBox boxRaza = new VBox(2, cbRaza, lblAlertaClinica);
-                gridDynamic.add(boxRaza, 1, 2);
-                gridDynamic.add(new Label("Edad:"), 0, 3); gridDynamic.add(tfEdad, 1, 3);
-                gridDynamic.add(new Label("Descripción:"), 0, 4); gridDynamic.add(tfDescripcion, 1, 4);
-                gridDynamic.add(new Label("Dueño:"), 0, 5); gridDynamic.add(tfDueno, 1, 5);
-                gridDynamic.add(new Label("Teléfono:"), 0, 6); gridDynamic.add(tfTelefono, 1, 6);
-            }
-            dialog.getDialogPane().getScene().getWindow().sizeToScene();
-        };
-
-        cbModo.valueProperty().addListener((obs, oldV, newV) -> buildDynamic.run());
-        buildDynamic.run();
-
-        VBox contentBox = new VBox(15);
-        contentBox.setPadding(new Insets(20, 20, 10, 10));
-
-        GridPane staticGrid = new GridPane();
-        staticGrid.setHgap(10); staticGrid.setVgap(15);
-        staticGrid.add(new Label("Tipo de Cita:"), 0, 0);
-        VBox tipoBox = new VBox(5, cbTipo, tfOtroMotivo);
-        staticGrid.add(tipoBox, 1, 0);
-        staticGrid.add(new Label("Fecha:"), 0, 1);
-        staticGrid.add(dpFecha, 1, 1);
-        staticGrid.add(new Label("Hora:"), 0, 2);
-        staticGrid.add(cbHora, 1, 2);
-
-        contentBox.getChildren().addAll(new HBox(10, new Label("Modo:"), cbModo), gridDynamic, staticGrid);
-        dialog.getDialogPane().setContent(contentBox);
-
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == btnTypeGuardar) {
-                String mascota;
-                if ("Mascota Nueva".equals(cbModo.getValue())) {
-                    mascota = tfNombreNueva.getText().trim();
-                    if (mascota.isEmpty() || cbEspecie.getValue() == null || cbRaza.getValue() == null) {
-                        mostrarAlerta(Alert.AlertType.ERROR, "Datos incompletos", "Debe ingresar nombre, especie y raza.");
-                        return null;
-                    }
-                } else {
-                    mascota = tfBuscarNombre.getText().trim();
-                }
-                
-                String dueno = tfDueno.getText().trim();
-                String tel = tfTelefono.getText().trim();
-                String tipo = cbTipo.getValue();
-                if ("Otro".equals(tipo)) {
-                    tipo = tfOtroMotivo.getText().trim();
-                    if (tipo.isEmpty()) tipo = "Otro";
-                }
-                String fechaStr = dpFecha.getValue() != null ? dpFecha.getValue().toString() : "";
-                String horaStr = cbHora.getValue();
-
-                if (mascota.isEmpty() || dueno.isEmpty()) {
-                    mostrarAlerta(Alert.AlertType.ERROR, "Datos incompletos", "Debe ingresar mascota y dueño.");
-                    return null;
-                }
-
-                Prioridad prio = "Urgente".equals(tipo) ? Prioridad.URGENTE : Prioridad.NORMAL;
-
-                int nuevoId = 0;
-                return new Citas(nuevoId, fechaStr, horaStr, mascota, dueno, tel, "Pendiente", tipo, "Programada", prio);
-            }
-            return null;
-        });
-
-        java.util.Optional<Citas> result = dialog.showAndWait();
-        result.ifPresent(nuevaCita -> {
-            int idMascota = -1;
-            int idUser = UserSession.getInstance().getUserId();
-
-            if ("Mascota Nueva".equals(cbModo.getValue())) {
-                // Aquí deberíamos usar una versión de insertarBasico que acepte especie y raza
-                // Por ahora usamos la existente que pone default, o mejor creamos una nueva.
-                int idEsp = cbEspecie.getValue().getId();
-                int idRaz = cbRaza.getValue().getId();
-                idMascota = MascotaDAO.insertarCompleto(nuevaCita.getNombreMascota(), nuevaCita.getNombrePropietario(), nuevaCita.getTelefonoDueno(), idEsp, idRaz);
-            } else if (mascotaElegida != null) {
-                idMascota = mascotaElegida.getId();
-            } else {
-                idMascota = MascotaDAO.insertarBasico(nuevaCita.getNombreMascota(), nuevaCita.getNombrePropietario(), nuevaCita.getTelefonoDueno());
-            }
-
-            if (idMascota != -1) {
-                boolean ok = CitasDAO.insertarBasico(nuevaCita, idMascota, idUser);
-                if (ok) {
-                    tablaColaCitas.getItems().add(nuevaCita);
-                    lblContadorCitas.setText(tablaColaCitas.getItems().size() + " citas");
-                    tablaColaCitas.refresh();
-                } else {
-                    mostrarAlerta(Alert.AlertType.ERROR, "Error BD", "No se pudo guardar la cita en la base de datos.");
-                }
-            } else {
-                mostrarAlerta(Alert.AlertType.ERROR, "Error BD", "No se pudo registrar la mascota en la base de datos.");
-            }
-        });
+        } catch (java.io.IOException e) {
+            System.err.println("[CitasStaffController] Error al abrir el modal de agendar cita: " + e.getMessage());
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo cargar la interfaz de agendar cita.");
+        }
     }
 
     @FXML
@@ -575,6 +384,117 @@ public class CitasStaffController implements Initializable {
 
         dialog.showAndWait().ifPresent(cita -> {
             tablaColaCitas.refresh();
+        });
+    }
+
+    @FXML
+    private void registrarTriage(ActionEvent event) {
+        Citas seleccionada = tablaColaCitas.getSelectionModel().getSelectedItem();
+        if (seleccionada == null) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Ninguna cita seleccionada", "Por favor, seleccione una cita para registrar el triaje.");
+            return;
+        }
+
+        // Si ya está en curso, completada o cancelada:
+        if (!"Pendiente".equalsIgnoreCase(seleccionada.getEstado())) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Estado inválido", "El triaje solo se puede registrar para citas con estado 'Pendiente'.");
+            return;
+        }
+
+        // Abrir un diálogo para ingresar signos vitales
+        Dialog<Citas> dialog = new Dialog<>();
+        dialog.setTitle("Registrar Triaje");
+        dialog.setHeaderText("Signos Vitales para " + seleccionada.getNombreMascota());
+        aplicarEstiloDialogo(dialog);
+
+        ButtonType btnTypeGuardar = new ButtonType("Guardar Triaje", javafx.scene.control.ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnTypeGuardar, ButtonType.CANCEL);
+        
+        Button guardarBtn = (Button) dialog.getDialogPane().lookupButton(btnTypeGuardar);
+        if (guardarBtn != null) {
+            guardarBtn.setStyle("-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+        }
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(15);
+        grid.setPadding(new Insets(20, 20, 10, 10));
+
+        TextField tfTemp = new TextField();
+        tfTemp.setPromptText("Ej. 38.5");
+        tfTemp.setStyle("-fx-background-color: white; -fx-border-color: #3d8d7a; -fx-border-radius: 5; -fx-background-radius: 5;");
+        tfTemp.setTextFormatter(new TextFormatter<>(change -> change.getControlNewText().matches("\\d*\\.?\\d*") ? change : null));
+
+        TextField tfFC = new TextField();
+        tfFC.setPromptText("Ej. 120");
+        tfFC.setStyle("-fx-background-color: white; -fx-border-color: #3d8d7a; -fx-border-radius: 5; -fx-background-radius: 5;");
+        tfFC.setTextFormatter(new TextFormatter<>(change -> change.getControlNewText().matches("\\d*") ? change : null));
+
+        TextField tfFR = new TextField();
+        tfFR.setPromptText("Ej. 30");
+        tfFR.setStyle("-fx-background-color: white; -fx-border-color: #3d8d7a; -fx-border-radius: 5; -fx-background-radius: 5;");
+        tfFR.setTextFormatter(new TextFormatter<>(change -> change.getControlNewText().matches("\\d*") ? change : null));
+
+        grid.add(new Label("Temperatura (°C):"), 0, 0);
+        grid.add(tfTemp, 1, 0);
+        grid.add(new Label("Frecuencia Cardíaca (ppm):"), 0, 1);
+        grid.add(tfFC, 1, 1);
+        grid.add(new Label("Frecuencia Respiratoria (rpm):"), 0, 2);
+        grid.add(tfFR, 1, 2);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == btnTypeGuardar) {
+                double temp = 0.0;
+                int fc = 0;
+                int fr = 0;
+
+                try {
+                    String tempStr = tfTemp.getText().trim();
+                    if (!tempStr.isEmpty()) {
+                        temp = Double.parseDouble(tempStr);
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Error al parsear temperatura: " + e.getMessage());
+                }
+
+                try {
+                    String fcStr = tfFC.getText().trim();
+                    if (!fcStr.isEmpty()) {
+                        fc = Integer.parseInt(fcStr);
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Error al parsear frecuencia cardíaca: " + e.getMessage());
+                }
+
+                try {
+                    String frStr = tfFR.getText().trim();
+                    if (!frStr.isEmpty()) {
+                        fr = Integer.parseInt(frStr);
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Error al parsear frecuencia respiratoria: " + e.getMessage());
+                }
+
+                // Guardar en la base de datos
+                boolean okTriage = CitasDAO.registrarTriage(seleccionada.getId(), temp, fc, fr);
+                boolean okEstado = CitasDAO.cambiarEstadoCita(seleccionada.getId(), 15); // 'En curso' (ID 15)
+
+                if (okTriage && okEstado) {
+                    seleccionada.setTemperatura(temp);
+                    seleccionada.setFrecuenciaCardiaca(fc);
+                    seleccionada.setFrecuenciaRespiratoria(fr);
+                    seleccionada.setEstado("En curso");
+                    return seleccionada;
+                }
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(cita -> {
+            refreshTable();
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Triaje Guardado", "El triaje y el estado 'En curso' se han registrado correctamente.");
         });
     }
 

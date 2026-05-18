@@ -6,16 +6,19 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 15;" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.GestionRazasController">
+<VBox spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-style: green;" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.GestionRazasController">
    <padding>
       <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
    </padding>
    <children>
-      <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #3d8d7a;" text="Nueva Raza" />
+      <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #3d8d7a;" text="🐾 Nueva Raza 🐾" />
       
       <GridPane hgap="15.0" vgap="15.0">
          <children>
@@ -23,13 +26,24 @@
             <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
                <children>
                   <ComboBox fx:id="cbEspecie" prefWidth="210.0" promptText="Selecciona especie" styleClass="combo-box" />
-                  <Button mnemonicParsing="false" onAction="#agregarEspecie" style="-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-background-radius: 5; -fx-cursor: hand; -fx-font-weight: bold;" text="+" />
+                  <Button mnemonicParsing="false" onAction="#agregarEspecie" style="-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-background-radius: 5; -fx-cursor: hand; -fx-font-weight: bold;" text="+">
+                     <font>
+                        <Font size="14.0" />
+                     </font></Button>
                </children>
             </HBox>
             
             <Label text="Nombre Raza:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
             <TextField fx:id="txtNombreRaza" prefWidth="250.0" promptText="Ej. Labrador" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
+         <columnConstraints>
+            <ColumnConstraints />
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints />
+         </rowConstraints>
       </GridPane>
       
       <VBox spacing="10.0">
@@ -44,7 +58,10 @@
       
       <HBox alignment="CENTER_RIGHT" spacing="15.0">
          <children>
-            <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#cerrar" style="-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 8 20; -fx-cursor: hand;" text="Cancelar" />
+            <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#cerrar" style="-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 8 20; -fx-cursor: hand;" text="Cancelar">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Button>
             <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#guardar" style="-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 8 25; -fx-cursor: hand; -fx-font-weight: bold;" text="Guardar" />
          </children>
       </HBox>

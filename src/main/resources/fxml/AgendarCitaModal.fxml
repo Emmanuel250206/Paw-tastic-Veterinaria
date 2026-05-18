@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="540.0" prefWidth="850.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-color: #3D8D7A; -fx-border-width: 1.5; -fx-border-radius: 15;" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.AgendarCitaModalController">
+   <padding>
+      <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+   </padding>
+   <children>
+      <!-- Cabecera -->
+      <VBox spacing="4.0">
+         <children>
+            <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #3D8D7A; -fx-font-family: 'Segoe UI';" text="Agendar Nueva Cita" />
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Registre un nuevo paciente o programe la cita de una mascota existente." />
+         </children>
+      </VBox>
+
+      <!-- Panel de Contenido de Dos Columnas -->
+      <HBox spacing="35.0" VBox.vgrow="ALWAYS">
+         <children>
+            <!-- Columna Izquierda: Identidad (Propietario y Mascota) -->
+            <VBox spacing="12.0" HBox.hgrow="ALWAYS" prefWidth="380.0">
+               <children>
+                  <!-- Selector de Modo -->
+                  <VBox spacing="4.0">
+                     <children>
+                        <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="MODO DE REGISTRO" />
+                        <ComboBox fx:id="cbModo" maxWidth="1.7976931348623157E308" prefHeight="35.0" style="-fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 5; -fx-border-width: 1;" />
+                     </children>
+                  </VBox>
+
+                  <!-- Sección Propietario -->
+                  <Label style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #3D8D7A; -fx-font-family: 'Segoe UI';" text="Información del Propietario" />
+                  
+                  <HBox spacing="10.0">
+                     <children>
+                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label style="-fx-font-size: 11px; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Nombre(s)*" />
+                              <TextField fx:id="tfDuenoNombre" prefHeight="35.0" styleClass="text-field" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label style="-fx-font-size: 11px; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Apellidos*" />
+                              <TextField fx:id="tfDuenoApellidos" prefHeight="35.0" styleClass="text-field" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+
+                  <HBox spacing="10.0">
+                     <children>
+                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label style="-fx-font-size: 11px; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Teléfono*" />
+                              <TextField fx:id="tfDuenoTelefono" prefHeight="35.0" styleClass="text-field" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label style="-fx-font-size: 11px; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Dirección" />
+                              <TextField fx:id="tfDuenoDireccion" prefHeight="35.0" styleClass="text-field" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+
+                  <!-- Sección Mascota -->
+                  <Label style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #3D8D7A; -fx-font-family: 'Segoe UI';" text="Información del Paciente" />
+                  
+                  <VBox spacing="4.0">
+                     <children>
+                        <Label fx:id="lblMascotaNombreLabel" style="-fx-font-size: 11px; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Nombre de la Mascota*" />
+                        <TextField fx:id="tfMascotaNombre" prefHeight="35.0" styleClass="text-field" />
+                        <!-- ListView flotante/encajado para autocompletado en modo Mascota Registrada -->
+                        <ListView fx:id="lvMascotas" maxHeight="100.0" prefHeight="100.0" visible="false" managed="false" style="-fx-background-radius: 5; -fx-border-color: #3D8D7A; -fx-border-radius: 5;" />
+                     </children>
+                  </VBox>
+
+                  <VBox spacing="4.0" fx:id="boxFechaNac">
+                     <children>
+                        <Label style="-fx-font-size: 11px; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Fecha de Nacimiento" />
+                        <DatePicker fx:id="dpMascotaFechaNac" maxWidth="1.7976931348623157E308" prefHeight="35.0" style="-fx-background-color: white; -fx-border-color: #3D8D7A; -fx-border-width: 0 0 2 0;" />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+
+            <!-- Columna Derecha: Clínica & Agenda -->
+            <VBox spacing="12.0" HBox.hgrow="ALWAYS" prefWidth="380.0">
+               <children>
+                  <Label style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #3D8D7A; -fx-font-family: 'Segoe UI';" text="Detalles Clínicos" />
+                  
+                  <HBox spacing="10.0">
+                     <children>
+                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label style="-fx-font-size: 11px; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Especie*" />
+                              <ComboBox fx:id="cbEspecie" maxWidth="1.7976931348623157E308" prefHeight="35.0" style="-fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 5; -fx-border-width: 1;" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label style="-fx-font-size: 11px; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Raza*" />
+                              <ComboBox fx:id="cbRaza" maxWidth="1.7976931348623157E308" prefHeight="35.0" style="-fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 5; -fx-border-width: 1;" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <Label fx:id="lblAlertaClinica" wrapText="true" style="-fx-text-fill: #e74c3c; -fx-font-size: 11px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI';" />
+
+                  <VBox spacing="4.0">
+                     <children>
+                        <Label style="-fx-font-size: 11px; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Tipo de Cita*" />
+                        <ComboBox fx:id="cbTipoCita" maxWidth="1.7976931348623157E308" prefHeight="35.0" style="-fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 5; -fx-border-width: 1;" />
+                     </children>
+                  </VBox>
+
+                  <Label style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #3D8D7A; -fx-font-family: 'Segoe UI';" text="Programación" />
+
+                  <HBox spacing="10.0">
+                     <children>
+                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label style="-fx-font-size: 11px; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Fecha*" />
+                              <DatePicker fx:id="dpFechaCita" maxWidth="1.7976931348623157E308" prefHeight="35.0" style="-fx-background-color: white; -fx-border-color: #3D8D7A; -fx-border-width: 0 0 2 0;" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label style="-fx-font-size: 11px; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Hora*" />
+                              <ComboBox fx:id="cbHoraCita" maxWidth="1.7976931348623157E308" prefHeight="35.0" style="-fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 5; -fx-border-width: 1;" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+
+                  <VBox spacing="4.0">
+                     <children>
+                        <Label style="-fx-font-size: 11px; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Motivo o Síntomas*" />
+                        <TextField fx:id="tfMotivo" prefHeight="35.0" styleClass="text-field" />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+
+      <!-- Botones de Acción -->
+      <HBox alignment="CENTER_RIGHT" spacing="15.0">
+         <children>
+            <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#manejarCancelar" prefHeight="35.0" styleClass="boton-transparente" text="Cancelar" />
+            <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#manejarGuardar" prefHeight="35.0" styleClass="boton-verde" text="Guardar Cita" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

@@ -186,6 +186,8 @@ public class CitasController implements Initializable {
         String globalTextStyle = "-fx-text-fill: black !important; -fx-font-weight: 600; -fx-font-smoothing-type: gray;";
         String urgentRowStyle = "-fx-background-color: #FDEDEC !important; -fx-border-color: transparent transparent #F5B7B1 transparent; -fx-border-width: 0 0 1 0;";
         String urgentRowSelectedStyle = "-fx-background-color: #F1948A !important; -fx-border-color: #CB4335 !important; -fx-border-width: 1 !important;";
+        String inCursoRowStyle = "-fx-background-color: #E8F8F5 !important; -fx-border-color: transparent transparent #A3E4D7 transparent; -fx-border-width: 0 0 1 0;";
+        String inCursoRowSelectedStyle = "-fx-background-color: #76D7C4 !important; -fx-border-color: #117864 !important; -fx-border-width: 1 !important;";
 
         // Columna Hora: Forzar texto negro GLOBAL
         colHora.setCellValueFactory(new PropertyValueFactory<>("hora"));
@@ -256,25 +258,35 @@ public class CitasController implements Initializable {
         tablaColaCitas.setItems(sorted);
         lblContadorCitas.setText(datos.size() + " citas");
 
-        // Filas URGENTE: Forzado de Estilos "Hard-Coded" con Selección Contrastada
+        // Filas URGENTE o EN CURSO: Forzado de Estilos con Selección Contrastada
         tablaColaCitas.setRowFactory(tv -> {
             TableRow<Citas> row = new TableRow<Citas>() {
                 @Override
                 protected void updateItem(Citas item, boolean empty) {
                     super.updateItem(item, empty);
-                    if (!empty && item != null && item.esUrgente()) {
-                        setStyle(isSelected() ? urgentRowSelectedStyle : urgentRowStyle);
+                    if (!empty && item != null) {
+                        if (item.esUrgente()) {
+                            setStyle(isSelected() ? urgentRowSelectedStyle : urgentRowStyle);
+                        } else if ("En curso".equalsIgnoreCase(item.getEstado())) {
+                            setStyle(isSelected() ? inCursoRowSelectedStyle : inCursoRowStyle);
+                        } else {
+                            setStyle("");
+                        }
                     } else {
                         setStyle("");
                     }
                 }
             };
 
-            // Selection Lock: Cambiar tono de rosa y borde al seleccionar
+            // Selection Lock: Cambiar tono al seleccionar
             row.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
                 Citas item = row.getItem();
-                if (item != null && item.esUrgente()) {
-                    row.setStyle(isNowSelected ? urgentRowSelectedStyle : urgentRowStyle);
+                if (item != null) {
+                    if (item.esUrgente()) {
+                        row.setStyle(isNowSelected ? urgentRowSelectedStyle : urgentRowStyle);
+                    } else if ("En curso".equalsIgnoreCase(item.getEstado())) {
+                        row.setStyle(isNowSelected ? inCursoRowSelectedStyle : inCursoRowStyle);
+                    }
                 }
             });
 
@@ -301,6 +313,26 @@ public class CitasController implements Initializable {
         lblHoraCita.setText(cita.getHora());
         lblEstadoCita.setText(cita.getEstado());
         txtReporteCita.clear();
+
+        // Cargar Signos Vitales del Triaje
+        if (cita.getTemperatura() != null && cita.getTemperatura() > 0) {
+            txtTemp.setText(String.valueOf(cita.getTemperatura()));
+        } else {
+            txtTemp.clear();
+        }
+
+        if (cita.getFrecuenciaCardiaca() != null && cita.getFrecuenciaCardiaca() > 0) {
+            txtFreqCard.setText(String.valueOf(cita.getFrecuenciaCardiaca()));
+        } else {
+            txtFreqCard.clear();
+        }
+
+        if (cita.getFrecuenciaRespiratoria() != null && cita.getFrecuenciaRespiratoria() > 0) {
+            txtFreqResp.setText(String.valueOf(cita.getFrecuenciaRespiratoria()));
+        } else {
+            txtFreqResp.clear();
+        }
+
         actualizarBotonEstado();
     }
 
@@ -329,8 +361,8 @@ public class CitasController implements Initializable {
         }
 
         if (estado.equalsIgnoreCase("En Consulta")) {
-            citaSeleccionada.setEstado("Finalizada");
-            CitasDAO.cambiarEstado(citaSeleccionada.getId(), "F");
+            citaSeleccionada.setEstado("Completada");
+            CitasDAO.cambiarEstadoCita(citaSeleccionada.getId(), 16); // 'Completada' (ID 16)
             guardarReporteAutomatico();
             cargarCitaEnPantalla(citaSeleccionada);
             mostrarAlerta(Alert.AlertType.INFORMATION,
@@ -338,7 +370,7 @@ public class CitasController implements Initializable {
                 "La consulta terminó. El reporte fue guardado automáticamente.");
         } else {
             citaSeleccionada.setEstado("En Consulta");
-            CitasDAO.cambiarEstado(citaSeleccionada.getId(), "E");
+            CitasDAO.cambiarEstadoCita(citaSeleccionada.getId(), 15); // Sigue 'En curso' (ID 15)
             cargarCitaEnPantalla(citaSeleccionada);
         }
 
@@ -385,7 +417,7 @@ public class CitasController implements Initializable {
         String motivo = resultado.get();
 
         citaSeleccionada.setEstado("Cancelada");
-        CitasDAO.cambiarEstado(citaSeleccionada.getId(), "C");
+        CitasDAO.cambiarEstadoCita(citaSeleccionada.getId(), 18); // 'Cancelada' (ID 18)
 
         // Registrar en el historial
         ReporteLocal registro = new ReporteLocal(
@@ -596,23 +628,30 @@ public class CitasController implements Initializable {
         boolean terminada  = estaTerminada(estado);
 
         boolean esCancelada  = estado.equalsIgnoreCase("Cancelada");
+        boolean esPendiente  = estado.equalsIgnoreCase("Pendiente");
         boolean bloqueado    = terminada || esCancelada;
 
         txtReporteCita.setDisable(!enConsulta);
         txtReporteCita.setPromptText(enConsulta
             ? "Escribe las notas médicas de la consulta..."
-            : "El editor se activa al iniciar la consulta.");
+            : (esPendiente 
+                ? "La cita está 'Pendiente' de triaje por el Staff."
+                : "El editor se activa al iniciar la consulta."));
 
-        setSignosVitalesDisable(!enConsulta);
+        // Signos vitales: siempre deshabilitados (se leen del triaje)
+        setSignosVitalesDisable(true);
         if (bloqueado) clearSignosVitales();
 
-        bAccionCita.setDisable(esStaff || bloqueado);
-        // Cancelar: habilitado si la cita no está finalizada/cancelada y no es Staff
+        // Iniciar Consulta se deshabilita si es Staff, si está bloqueado, o si está Pendiente de triaje
+        bAccionCita.setDisable(esStaff || bloqueado || esPendiente);
+        
+        // Cancelar se deshabilita si es Staff o si la cita está terminada/cancelada
         btnCancelarCita.setDisable(esStaff || bloqueado);
 
         if (esStaff)         estilizarBoton(bAccionCita, "Solo Veterinario",   "#95a5a6");
         else if (esCancelada)estilizarBoton(bAccionCita, "Cita Cancelada",     "#bdc3c7");
         else if (terminada)  estilizarBoton(bAccionCita, "Consulta Terminada", "#bdc3c7");
+        else if (esPendiente)estilizarBoton(bAccionCita, "Iniciar Consulta",   "#95a5a6");
         else if (enConsulta) estilizarBoton(bAccionCita, "Finalizar Consulta", "#e74c3c");
         else                 estilizarBoton(bAccionCita, "Iniciar Consulta",   "#3d8d7a");
     }

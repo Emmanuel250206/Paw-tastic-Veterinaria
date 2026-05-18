@@ -77,17 +77,20 @@
                         <Region HBox.hgrow="ALWAYS" />
                         <Button mnemonicParsing="false" onAction="#agendarCita" style="-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 8 20 8 20; -fx-cursor: hand;" text="Agendar Cita" />
                         <Button mnemonicParsing="false" onAction="#editarCita" style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 8 20 8 20; -fx-cursor: hand;" text="Editar Cita" />
+                        <Button fx:id="btnTriage" mnemonicParsing="false" onAction="#registrarTriage" style="-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 8 20 8 20; -fx-cursor: hand;" text="Registrar Triaje" />
                      </children>
                   </HBox>
 
                   <!-- TableView de citas -->
                   <TableView fx:id="tablaColaCitas" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-radius: 10;" VBox.vgrow="ALWAYS">
                      <columns>
-                        <TableColumn fx:id="colHora" prefWidth="120.0" text="Hora" />
-                        <TableColumn fx:id="colPaciente" prefWidth="250.0" text="Paciente" />
-                        <TableColumn fx:id="colDueno" prefWidth="250.0" text="Dueño" />
-                        <TableColumn fx:id="colMotivo" prefWidth="250.0" text="Motivo" />
-                        <TableColumn fx:id="colPrioridad" prefWidth="150.0" text="Prioridad" />
+                        <TableColumn fx:id="colHora" prefWidth="140.0" text="Fecha y Hora" />
+                        <TableColumn fx:id="colPaciente" prefWidth="180.0" text="Paciente" />
+                        <TableColumn fx:id="colDueno" prefWidth="180.0" text="Dueño" />
+                        <TableColumn fx:id="colTipoCita" prefWidth="150.0" text="Tipo de Cita" />
+                        <TableColumn fx:id="colMotivo" prefWidth="200.0" text="Motivo" />
+                        <TableColumn fx:id="colEstado" prefWidth="120.0" text="Estado" />
+                        <TableColumn fx:id="colPrioridad" prefWidth="110.0" text="Prioridad" />
                      </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

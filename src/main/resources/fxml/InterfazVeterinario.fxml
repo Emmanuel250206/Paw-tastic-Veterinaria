@@ -83,9 +83,9 @@
                   </Button>
                   <Button fx:id="bPuntoVenta" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#mostrarVistaPOS" styleClass="boton-menu" text="       Punto Venta">
                      <graphic>
-                        <ImageView fitHeight="45.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="43.0" fitWidth="51.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/Icon_PuntoVenta.png" />
+                              <Image url="@../images/Icon_POS.png" />
                            </image>
                         </ImageView>
                      </graphic>

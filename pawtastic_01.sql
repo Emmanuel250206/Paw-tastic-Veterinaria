@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-05-2026 a las 07:51:47
+-- Tiempo de generación: 21-05-2026 a las 18:26:52
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -63,11 +63,11 @@ CREATE TABLE `tb_citas` (
   `id_mascota` int(11) NOT NULL,
   `id_usuario_web` int(11) DEFAULT NULL,
   `id_usuario_movil` int(11) DEFAULT NULL,
+  `tipo` varchar(100) NOT NULL,
   `motivo` varchar(100) DEFAULT NULL,
+  `estado` char(1) NOT NULL,
   `fecha` datetime DEFAULT NULL,
-  `fecha_reg` datetime NOT NULL,
-  `id_tipo_cita` int(11) NOT NULL,
-  `id_State` int(11) NOT NULL
+  `fecha_reg` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -91,22 +91,8 @@ CREATE TABLE `tb_clinicas` (
 --
 
 INSERT INTO `tb_clinicas` (`id`, `nombre`, `rfc`, `direccion`, `telefono`, `estado`, `created_at`) VALUES
-(1, 'mincho', '1234567890', 'cardel', '2961108090', '1', '2026-05-08 16:03:37');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `tb_collar`
---
-
-CREATE TABLE `tb_collar` (
-  `id` int(11) NOT NULL,
-  `id_mascota` int(11) NOT NULL,
-  `codigo_nfc` varchar(50) NOT NULL,
-  `nombre` varchar(50) NOT NULL,
-  `estado` char(1) NOT NULL DEFAULT '1',
-  `created_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+(1, 'mincho', '1234567890', 'cardel', '2961108090', '1', '2026-05-08 16:03:37'),
+(2, 'vetpro', '123456789', 'flores magon norte#66', '2961497729', '1', '2026-05-13 20:52:14');
 
 -- --------------------------------------------------------
 
@@ -118,8 +104,7 @@ CREATE TABLE `tb_detalle_entrada` (
   `id` int(11) NOT NULL,
   `id_entrada` int(11) NOT NULL,
   `costo_unitario` decimal(10,2) NOT NULL,
-  `id_producto` int(11) NOT NULL,
-  `cantidad` int(11) NOT NULL
+  `id_producto` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -150,8 +135,7 @@ CREATE TABLE `tb_diagnosticos` (
   `id_cita` int(11) NOT NULL,
   `descripcion` varchar(300) NOT NULL,
   `tratamiento` varchar(500) DEFAULT NULL,
-  `fecha_registro` datetime NOT NULL,
-  `id_venta` int(11) DEFAULT NULL
+  `fecha_registro` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -246,7 +230,6 @@ CREATE TABLE `tb_perdida` (
 
 CREATE TABLE `tb_producto` (
   `id` int(11) NOT NULL,
-  `id_clinica` int(11) NOT NULL DEFAULT 1,
   `nombre` varchar(120) NOT NULL,
   `categoria` varchar(100) DEFAULT NULL,
   `descripcion` varchar(300) DEFAULT NULL,
@@ -338,7 +321,7 @@ CREATE TABLE `tb_tipo_cita` (
   `id` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
   `descripcion` varchar(200) DEFAULT NULL,
-  `estado` char(1) NOT NULL DEFAULT '1'
+  `id_State` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -375,15 +358,18 @@ CREATE TABLE `tb_usuario_web` (
   `telefono` varchar(10) NOT NULL,
   `email` varchar(100) NOT NULL,
   `contrasenia` varchar(255) NOT NULL,
-  `created_at` datetime NOT NULL
+  `created_at` datetime DEFAULT current_timestamp(),
+  `activo` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tb_usuario_web`
 --
 
-INSERT INTO `tb_usuario_web` (`id`, `id_clinica`, `usuario`, `nombre`, `apellidos`, `tipo_rol`, `especialidad`, `cedula`, `telefono`, `email`, `contrasenia`, `created_at`) VALUES
-(1, 1, 'JUCA', 'juan carlos', 'aguilar camacho', 'veterinario', 'general', NULL, '2961497729', 'juarlos.0630@gmail.com', '12345', '2026-05-08 16:22:36');
+INSERT INTO `tb_usuario_web` (`id`, `id_clinica`, `usuario`, `nombre`, `apellidos`, `tipo_rol`, `especialidad`, `cedula`, `telefono`, `email`, `contrasenia`, `created_at`, `activo`) VALUES
+(1, 1, 'JUCA', 'juan carlos', 'aguilar camacho', 'veterinario', 'general', NULL, '2961497729', 'juarlos.0630@gmail.com', '12345', '2026-05-08 16:22:36', 0),
+(3, 2, 'jucar', 'juan carlos', 'aguilar ramirez', 'administrador', NULL, NULL, '2961108090', 'elsitioparrillada@gmail.com', '1234', '2026-05-13 20:52:14', 0),
+(5, 1, 'valag', 'valeria', 'aguilar', 'veterinario', 'cirugias', '21754183818', '2961108090', 'vetval@gmail.com', '1234', '2026-05-13 21:16:47', 0);
 
 -- --------------------------------------------------------
 
@@ -393,16 +379,14 @@ INSERT INTO `tb_usuario_web` (`id`, `id_clinica`, `usuario`, `nombre`, `apellido
 
 CREATE TABLE `tb_venta` (
   `id` int(11) NOT NULL,
-  `id_cita` int(11) DEFAULT NULL,
+  `id_cita` int(11) NOT NULL,
   `id_usuario_web` int(11) DEFAULT NULL,
   `id_usuario_movil` int(11) DEFAULT NULL,
   `metodo_pago` char(1) NOT NULL,
   `total` decimal(10,2) NOT NULL,
   `fecha` datetime NOT NULL,
   `fecha_reg` datetime NOT NULL,
-  `id_State` int(11) NOT NULL,
-  `nota` varchar(300) DEFAULT NULL,
-  `tipo_atencion` enum('con_cita','sin_cita') NOT NULL
+  `id_State` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -431,23 +415,13 @@ ALTER TABLE `tb_citas`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_mascota` (`id_mascota`),
   ADD KEY `id_usuario_web` (`id_usuario_web`),
-  ADD KEY `id_usuario_movil` (`id_usuario_movil`),
-  ADD KEY `fk_tipo_cita` (`id_tipo_cita`),
-  ADD KEY `fk_estado_cita` (`id_State`);
+  ADD KEY `id_usuario_movil` (`id_usuario_movil`);
 
 --
 -- Indices de la tabla `tb_clinicas`
 --
 ALTER TABLE `tb_clinicas`
   ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `tb_collar`
---
-ALTER TABLE `tb_collar`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uk_codigo_nfc` (`codigo_nfc`),
-  ADD KEY `id_mascota` (`id_mascota`);
 
 --
 -- Indices de la tabla `tb_detalle_entrada`
@@ -472,8 +446,7 @@ ALTER TABLE `tb_detalle_venta`
 ALTER TABLE `tb_diagnosticos`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_expediente` (`id_expediente`),
-  ADD KEY `id_cita` (`id_cita`),
-  ADD KEY `fk_diag_venta` (`id_venta`);
+  ADD KEY `id_cita` (`id_cita`);
 
 --
 -- Indices de la tabla `tb_diagnostico_medicamento`
@@ -525,8 +498,7 @@ ALTER TABLE `tb_perdida`
 ALTER TABLE `tb_producto`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `uk_codigo` (`codigo`),
-  ADD KEY `id_State` (`id_State`),
-  ADD KEY `id_clinica` (`id_clinica`);
+  ADD KEY `id_State` (`id_State`);
 
 --
 -- Indices de la tabla `tb_propietarios`
@@ -553,7 +525,8 @@ ALTER TABLE `tb_state`
 -- Indices de la tabla `tb_tipo_cita`
 --
 ALTER TABLE `tb_tipo_cita`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_State` (`id_State`);
 
 --
 -- Indices de la tabla `tb_usuario_movil`
@@ -583,12 +556,6 @@ ALTER TABLE `tb_venta`
 --
 
 --
--- AUTO_INCREMENT de la tabla `tb_alerta_stock`
---
-ALTER TABLE `tb_alerta_stock`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `tb_cierre_caja`
 --
 ALTER TABLE `tb_cierre_caja`
@@ -604,13 +571,7 @@ ALTER TABLE `tb_citas`
 -- AUTO_INCREMENT de la tabla `tb_clinicas`
 --
 ALTER TABLE `tb_clinicas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT de la tabla `tb_collar`
---
-ALTER TABLE `tb_collar`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `tb_detalle_entrada`
@@ -706,7 +667,7 @@ ALTER TABLE `tb_usuario_movil`
 -- AUTO_INCREMENT de la tabla `tb_usuario_web`
 --
 ALTER TABLE `tb_usuario_web`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `tb_venta`
@@ -719,12 +680,6 @@ ALTER TABLE `tb_venta`
 --
 
 --
--- Filtros para la tabla `tb_alerta_stock`
---
-ALTER TABLE `tb_alerta_stock`
-  ADD CONSTRAINT `tb_alerta_stock_ibfk_1` FOREIGN KEY (`id_producto`) REFERENCES `tb_producto` (`id`);
-
---
 -- Filtros para la tabla `tb_cierre_caja`
 --
 ALTER TABLE `tb_cierre_caja`
@@ -735,17 +690,9 @@ ALTER TABLE `tb_cierre_caja`
 -- Filtros para la tabla `tb_citas`
 --
 ALTER TABLE `tb_citas`
-  ADD CONSTRAINT `fk_estado_cita` FOREIGN KEY (`id_State`) REFERENCES `tb_state` (`id`),
-  ADD CONSTRAINT `fk_tipo_cita` FOREIGN KEY (`id_tipo_cita`) REFERENCES `tb_tipo_cita` (`id`),
   ADD CONSTRAINT `tb_citas_ibfk_1` FOREIGN KEY (`id_mascota`) REFERENCES `tb_mascotas` (`id`),
   ADD CONSTRAINT `tb_citas_ibfk_2` FOREIGN KEY (`id_usuario_web`) REFERENCES `tb_usuario_web` (`id`),
   ADD CONSTRAINT `tb_citas_ibfk_3` FOREIGN KEY (`id_usuario_movil`) REFERENCES `tb_usuario_movil` (`id`);
-
---
--- Filtros para la tabla `tb_collar`
---
-ALTER TABLE `tb_collar`
-  ADD CONSTRAINT `tb_collar_ibfk_1` FOREIGN KEY (`id_mascota`) REFERENCES `tb_mascotas` (`id`);
 
 --
 -- Filtros para la tabla `tb_detalle_entrada`
@@ -766,7 +713,6 @@ ALTER TABLE `tb_detalle_venta`
 -- Filtros para la tabla `tb_diagnosticos`
 --
 ALTER TABLE `tb_diagnosticos`
-  ADD CONSTRAINT `fk_diag_venta` FOREIGN KEY (`id_venta`) REFERENCES `tb_venta` (`id`),
   ADD CONSTRAINT `tb_diagnosticos_ibfk_1` FOREIGN KEY (`id_expediente`) REFERENCES `tb_expediente` (`id`),
   ADD CONSTRAINT `tb_diagnosticos_ibfk_2` FOREIGN KEY (`id_cita`) REFERENCES `tb_citas` (`id`);
 
@@ -793,8 +739,6 @@ ALTER TABLE `tb_expediente`
 -- Filtros para la tabla `tb_mascotas`
 --
 ALTER TABLE `tb_mascotas`
-  ADD CONSTRAINT `fk_mascota_especie` FOREIGN KEY (`id_especie`) REFERENCES `tb_especie` (`id`),
-  ADD CONSTRAINT `fk_mascota_raza` FOREIGN KEY (`id_raza`) REFERENCES `tb_raza` (`id`),
   ADD CONSTRAINT `tb_mascotas_ibfk_1` FOREIGN KEY (`id_propietario`) REFERENCES `tb_propietarios` (`id`),
   ADD CONSTRAINT `tb_mascotas_ibfk_2` FOREIGN KEY (`id_especie`) REFERENCES `tb_especie` (`id`),
   ADD CONSTRAINT `tb_mascotas_ibfk_3` FOREIGN KEY (`id_raza`) REFERENCES `tb_raza` (`id`);
@@ -809,15 +753,7 @@ ALTER TABLE `tb_perdida`
 -- Filtros para la tabla `tb_producto`
 --
 ALTER TABLE `tb_producto`
-  ADD CONSTRAINT `tb_producto_ibfk_1` FOREIGN KEY (`id_State`) REFERENCES `tb_state` (`id`),
-  ADD CONSTRAINT `tb_producto_ibfk_2` FOREIGN KEY (`id_clinica`) REFERENCES `tb_clinicas` (`id`);
-
---
--- Filtros para la tabla `tb_propietarios`
---
-ALTER TABLE `tb_propietarios`
-  ADD CONSTRAINT `tb_propietarios_ibfk_1` FOREIGN KEY (`id_usuario_web`) REFERENCES `tb_usuario_web` (`id`),
-  ADD CONSTRAINT `tb_propietarios_ibfk_2` FOREIGN KEY (`id_usuario_movil`) REFERENCES `tb_usuario_movil` (`id`);
+  ADD CONSTRAINT `tb_producto_ibfk_1` FOREIGN KEY (`id_State`) REFERENCES `tb_state` (`id`);
 
 --
 -- Filtros para la tabla `tb_raza`
@@ -826,19 +762,10 @@ ALTER TABLE `tb_raza`
   ADD CONSTRAINT `tb_raza_ibfk_1` FOREIGN KEY (`id_especie`) REFERENCES `tb_especie` (`id`);
 
 --
--- Filtros para la tabla `tb_usuario_web`
+-- Filtros para la tabla `tb_tipo_cita`
 --
-ALTER TABLE `tb_usuario_web`
-  ADD CONSTRAINT `tb_usuario_web_ibfk_1` FOREIGN KEY (`id_clinica`) REFERENCES `tb_clinicas` (`id`);
-
---
--- Filtros para la tabla `tb_venta`
---
-ALTER TABLE `tb_venta`
-  ADD CONSTRAINT `tb_venta_ibfk_1` FOREIGN KEY (`id_cita`) REFERENCES `tb_citas` (`id`),
-  ADD CONSTRAINT `tb_venta_ibfk_2` FOREIGN KEY (`id_usuario_web`) REFERENCES `tb_usuario_web` (`id`),
-  ADD CONSTRAINT `tb_venta_ibfk_3` FOREIGN KEY (`id_usuario_movil`) REFERENCES `tb_usuario_movil` (`id`),
-  ADD CONSTRAINT `tb_venta_ibfk_4` FOREIGN KEY (`id_State`) REFERENCES `tb_state` (`id`);
+ALTER TABLE `tb_tipo_cita`
+  ADD CONSTRAINT `tb_tipo_cita_ibfk_1` FOREIGN KEY (`id_State`) REFERENCES `tb_state` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

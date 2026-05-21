@@ -281,7 +281,7 @@ public class PrimaryController {
             javafx.application.Platform.runLater(() -> {
                 Stage s = App.getStage();
                 if (s != null) {
-                    s.setMaximized(true);
+                    s.setFullScreen(true);
                 }
             });
         } else {

@@ -67,37 +67,37 @@
                               </VBox>
                               <!-- Flecha indicadora de menú -->
                               <Label prefHeight="16.0" prefWidth="20.0" style="-fx-text-fill: #95a5a6; -fx-font-size: 11px;" text="▾" />
-                           </children>
-                        </HBox>
-                     </children>
-                  </HBox>
-                   <VBox alignment="TOP_CENTER" spacing="20.0" VBox.vgrow="ALWAYS">
+                                                </children>
+                                             </HBox>
+                                          </children>
+                                       </HBox>
+                                        <VBox alignment="TOP_CENTER" spacing="20.0" VBox.vgrow="ALWAYS">
                       <children>
                          <StackPane prefHeight="200.0">
                             <VBox fx:id="cardCitas" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css">
                             </VBox>
                             <Region fx:id="triggerCitas" onMouseClicked="#irACitas" style="-fx-cursor: hand;" />
-                         </StackPane>
+                        </StackPane>
                          <StackPane prefHeight="200.0">
                             <VBox fx:id="cardMascotas" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css">
                             </VBox>
                             <Region fx:id="triggerMascotas" onMouseClicked="#irAMascotas" style="-fx-cursor: hand;" />
-                         </StackPane>
+                        </StackPane>
                          <StackPane prefHeight="200.0">
                             <VBox fx:id="cardInventario" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css">
                             </VBox>
                             <Region fx:id="triggerInventario" onMouseClicked="#irAInventario" style="-fx-cursor: hand;" />
-                         </StackPane>
+                        </StackPane>
                          <StackPane prefHeight="200.0">
                             <VBox fx:id="cardReportes" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css">
                             </VBox>
                             <Region fx:id="triggerReportes" onMouseClicked="#irAReportes" style="-fx-cursor: hand;" />
-                         </StackPane>
+                        </StackPane>
                          <StackPane prefHeight="200.0">
                             <VBox fx:id="cardStaff" prefHeight="200.0" prefWidth="100.0" styleClass="barra-lateral" stylesheets="@estilos.css">
                             </VBox>
                             <Region fx:id="triggerStaff" onMouseClicked="#irAStaff" style="-fx-cursor: hand;" />
-                         </StackPane>
+                        </StackPane>
                       </children>
                    </VBox>
                </children>

@@ -34,7 +34,11 @@ public class App extends Application {
 
         // El Login no debe estirarse
         stage.setResizable(false);
+        stage.setFullScreen(false);
         stage.sizeToScene();
+        stage.setWidth(836);
+        stage.setHeight(496);
+        stage.centerOnScreen();
         stage.show();
     }
 

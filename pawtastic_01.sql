@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-05-2026 a las 18:26:52
+-- Tiempo de generación: 21-05-2026 a las 20:38:58
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -39,6 +39,20 @@ CREATE TABLE `tb_alerta_stock` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `tb_bitacora`
+--
+
+CREATE TABLE `tb_bitacora` (
+  `id` int(11) NOT NULL,
+  `fecha_hora` datetime NOT NULL DEFAULT current_timestamp(),
+  `id_usuario_web` int(11) NOT NULL,
+  `modulo` varchar(50) NOT NULL,
+  `detalle` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `tb_cierre_caja`
 --
 
@@ -63,11 +77,11 @@ CREATE TABLE `tb_citas` (
   `id_mascota` int(11) NOT NULL,
   `id_usuario_web` int(11) DEFAULT NULL,
   `id_usuario_movil` int(11) DEFAULT NULL,
-  `tipo` varchar(100) NOT NULL,
   `motivo` varchar(100) DEFAULT NULL,
   `estado` char(1) NOT NULL,
   `fecha` datetime DEFAULT NULL,
-  `fecha_reg` datetime NOT NULL
+  `fecha_reg` datetime NOT NULL,
+  `id_tipo_cita` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -401,6 +415,13 @@ ALTER TABLE `tb_alerta_stock`
   ADD KEY `id_producto` (`id_producto`);
 
 --
+-- Indices de la tabla `tb_bitacora`
+--
+ALTER TABLE `tb_bitacora`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_usuario_web` (`id_usuario_web`);
+
+--
 -- Indices de la tabla `tb_cierre_caja`
 --
 ALTER TABLE `tb_cierre_caja`
@@ -415,7 +436,8 @@ ALTER TABLE `tb_citas`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_mascota` (`id_mascota`),
   ADD KEY `id_usuario_web` (`id_usuario_web`),
-  ADD KEY `id_usuario_movil` (`id_usuario_movil`);
+  ADD KEY `id_usuario_movil` (`id_usuario_movil`),
+  ADD KEY `fk_tipo` (`id_tipo_cita`);
 
 --
 -- Indices de la tabla `tb_clinicas`
@@ -556,6 +578,12 @@ ALTER TABLE `tb_venta`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `tb_bitacora`
+--
+ALTER TABLE `tb_bitacora`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `tb_cierre_caja`
 --
 ALTER TABLE `tb_cierre_caja`
@@ -680,6 +708,12 @@ ALTER TABLE `tb_venta`
 --
 
 --
+-- Filtros para la tabla `tb_bitacora`
+--
+ALTER TABLE `tb_bitacora`
+  ADD CONSTRAINT `tb_bitacora_ibfk_1` FOREIGN KEY (`id_usuario_web`) REFERENCES `tb_usuario_web` (`id`);
+
+--
 -- Filtros para la tabla `tb_cierre_caja`
 --
 ALTER TABLE `tb_cierre_caja`
@@ -690,6 +724,7 @@ ALTER TABLE `tb_cierre_caja`
 -- Filtros para la tabla `tb_citas`
 --
 ALTER TABLE `tb_citas`
+  ADD CONSTRAINT `fk_tipo` FOREIGN KEY (`id_tipo_cita`) REFERENCES `tb_tipo_cita` (`id`),
   ADD CONSTRAINT `tb_citas_ibfk_1` FOREIGN KEY (`id_mascota`) REFERENCES `tb_mascotas` (`id`),
   ADD CONSTRAINT `tb_citas_ibfk_2` FOREIGN KEY (`id_usuario_web`) REFERENCES `tb_usuario_web` (`id`),
   ADD CONSTRAINT `tb_citas_ibfk_3` FOREIGN KEY (`id_usuario_movil`) REFERENCES `tb_usuario_movil` (`id`);

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-05-2026 a las 20:38:58
+-- Tiempo de generación: 21-05-2026 a las 20:49:25
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -84,6 +84,15 @@ CREATE TABLE `tb_citas` (
   `id_tipo_cita` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `tb_citas`
+--
+
+INSERT INTO `tb_citas` (`id`, `id_mascota`, `id_usuario_web`, `id_usuario_movil`, `motivo`, `estado`, `fecha`, `fecha_reg`, `id_tipo_cita`) VALUES
+(1, 1, 1, NULL, 'Vacuna anual', '1', '2026-06-10 10:00:00', '2026-05-21 12:31:32', 1),
+(2, 3, 2, NULL, 'Problemas digestivos', '1', '2026-06-11 12:00:00', '2026-05-21 12:31:32', 2),
+(3, 4, 1, 1, 'Control preventivo', '1', '2026-06-12 09:00:00', '2026-05-21 12:31:32', 3);
+
 -- --------------------------------------------------------
 
 --
@@ -137,6 +146,19 @@ CREATE TABLE `tb_detalle_venta` (
   `cantidad` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `tb_detalle_venta`
+--
+
+INSERT INTO `tb_detalle_venta` (`id`, `id_perdida`, `id_venta`, `precio_unitario`, `subtotal`, `id_producto`, `cantidad`) VALUES
+(1, NULL, 1, 850.00, 850.00, 1, 1),
+(2, NULL, 2, 180.00, 360.00, 2, 2),
+(3, NULL, 2, 90.00, 90.00, 7, 1),
+(4, NULL, 3, 120.00, 240.00, 3, 2),
+(5, NULL, 4, 250.00, 500.00, 4, 2),
+(6, NULL, 4, 95.00, 190.00, 5, 2),
+(7, NULL, 5, 650.00, 650.00, 6, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -151,6 +173,17 @@ CREATE TABLE `tb_diagnosticos` (
   `tratamiento` varchar(500) DEFAULT NULL,
   `fecha_registro` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tb_diagnosticos`
+--
+
+INSERT INTO `tb_diagnosticos` (`id`, `id_expediente`, `id_cita`, `descripcion`, `tratamiento`, `fecha_registro`) VALUES
+(1, 1, 1, 'Mascota en buen estado general.', 'Continuar esquema de vacunación y alimentación balanceada.', '2026-06-10 11:00:00'),
+(2, 2, 2, 'Inflamación leve en encías.', 'Limpieza dental y antibiótico por 5 días.', '2026-06-11 13:00:00'),
+(3, 3, 2, 'Gastritis leve por cambio de alimento.', 'Dieta blanda y medicamento estomacal.', '2026-06-11 13:30:00'),
+(4, 4, 3, 'Conejo con buen estado físico.', 'Aplicación de desparasitante preventivo.', '2026-06-12 10:00:00'),
+(5, 5, 1, 'Sobrepeso moderado.', 'Reducir porciones y aumentar actividad física.', '2026-06-13 09:20:00');
 
 -- --------------------------------------------------------
 
@@ -192,6 +225,15 @@ CREATE TABLE `tb_especie` (
   `descripcion` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `tb_especie`
+--
+
+INSERT INTO `tb_especie` (`id`, `especie`, `descripcion`) VALUES
+(1, 'Perro', 'Caninos domésticos'),
+(2, 'Gato', 'Felinos domésticos'),
+(3, 'Conejo', 'Conejos domésticos');
+
 -- --------------------------------------------------------
 
 --
@@ -204,6 +246,17 @@ CREATE TABLE `tb_expediente` (
   `historial` text NOT NULL,
   `fecha_apertura` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tb_expediente`
+--
+
+INSERT INTO `tb_expediente` (`id`, `id_mascota`, `historial`, `fecha_apertura`) VALUES
+(1, 1, 'Vacunación completa y desparasitación al día.', '2026-01-15 00:00:00'),
+(2, 2, 'Historial de alergias leves y revisión dental.', '2026-02-10 00:00:00'),
+(3, 3, 'Problemas digestivos tratados con medicamento.', '2026-03-05 00:00:00'),
+(4, 4, 'Conejo sano, revisión general periódica.', '2026-04-20 00:00:00'),
+(5, 1, 'Control de peso y alimentación especializada.', '2026-05-12 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -222,6 +275,16 @@ CREATE TABLE `tb_mascotas` (
   `created_at` datetime NOT NULL,
   `descripcion` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tb_mascotas`
+--
+
+INSERT INTO `tb_mascotas` (`id`, `id_propietario`, `nombre`, `id_especie`, `id_raza`, `fecha_nacimiento`, `estado`, `created_at`, `descripcion`) VALUES
+(1, 1, 'Max', 1, 1, '2022-05-10', '1', '2026-05-21 11:57:21', 'Perro muy juguetón'),
+(2, 1, 'Rocky', 1, 2, '2021-03-15', '1', '2026-05-21 11:57:21', 'Perro guardián'),
+(3, 2, 'Michi', 2, 3, '2023-01-20', '1', '2026-05-21 11:57:21', 'Gato tranquilo'),
+(4, 3, 'Nube', 3, 5, '2024-02-12', '1', '2026-05-21 11:57:21', 'Conejo blanco');
 
 -- --------------------------------------------------------
 
@@ -258,6 +321,20 @@ CREATE TABLE `tb_producto` (
   `id_State` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `tb_producto`
+--
+
+INSERT INTO `tb_producto` (`id`, `nombre`, `categoria`, `descripcion`, `codigo`, `precio`, `costo_unitario`, `existencia`, `stock_minimo`, `unidad_medida`, `fecha_caducidad`, `fecha`, `id_State`) VALUES
+(1, 'Croquetas Premium', 'Alimento', 'Alimento para perro adulto', 'PROD001', 850.00, 650.00, 20, 5, 'Bolsa', '2027-01-15', '2026-05-21', 4),
+(2, 'Arena para Gato', 'Higiene', 'Arena absorbente para gatos', 'PROD002', 180.00, 120.00, 35, 10, 'Bolsa', '2028-03-20', '2026-05-21', 4),
+(3, 'Shampoo Antipulgas', 'Higiene', 'Shampoo para perros y gatos', 'PROD003', 120.00, 75.00, 15, 5, 'Botella', '2026-11-10', '2026-05-21', 4),
+(4, 'Vitaminas Caninas', 'Medicamento', 'Vitaminas para fortalecer defensas', 'PROD004', 250.00, 180.00, 10, 3, 'Frasco', '2027-07-05', '2026-05-21', 4),
+(5, 'Juguete Mordedera', 'Accesorio', 'Juguete resistente para perros', 'PROD005', 95.00, 50.00, 40, 8, 'Pieza', NULL, '2026-05-21', 4),
+(6, 'Transportadora', 'Accesorio', 'Caja transportadora para mascotas', 'PROD006', 650.00, 500.00, 8, 2, 'Pieza', NULL, '2026-05-21', 4),
+(7, 'Desparasitante', 'Medicamento', 'Tratamiento antiparasitario', 'PROD007', 140.00, 90.00, 25, 5, 'Caja', '2026-12-01', '2026-05-21', 4),
+(8, 'Collar Antipulgas', 'Accesorio', 'Collar para control de pulgas', 'PROD008', 210.00, 150.00, 18, 4, 'Pieza', '2027-05-18', '2026-05-21', 4);
+
 -- --------------------------------------------------------
 
 --
@@ -276,6 +353,15 @@ CREATE TABLE `tb_propietarios` (
   `created_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `tb_propietarios`
+--
+
+INSERT INTO `tb_propietarios` (`id`, `id_usuario_web`, `id_usuario_movil`, `nombre`, `apellidos`, `telefono`, `direccion`, `estado`, `created_at`) VALUES
+(1, 1, NULL, 'Carlos', 'Martínez', '2281112233', 'Xalapa, Veracruz', '1', '2026-05-21 11:56:03'),
+(2, 2, NULL, 'Fernanda', 'López', '2284445566', 'Coatepec, Veracruz', '1', '2026-05-21 11:56:03'),
+(3, NULL, 1, 'Miguel', 'Santos', '2289998877', 'Banderilla, Veracruz', '1', '2026-05-21 11:56:03');
+
 -- --------------------------------------------------------
 
 --
@@ -288,6 +374,17 @@ CREATE TABLE `tb_raza` (
   `descripcion` varchar(200) NOT NULL,
   `id_especie` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tb_raza`
+--
+
+INSERT INTO `tb_raza` (`id`, `nombre`, `descripcion`, `id_especie`) VALUES
+(1, 'Labrador', 'Perro grande y amigable', 1),
+(2, 'Pastor Alemán', 'Perro guardián', 1),
+(3, 'Siamés', 'Gato de ojos azules', 2),
+(4, 'Persa', 'Gato de pelo largo', 2),
+(5, 'Mini Lop', 'Conejo doméstico pequeño', 3);
 
 -- --------------------------------------------------------
 
@@ -338,6 +435,15 @@ CREATE TABLE `tb_tipo_cita` (
   `id_State` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `tb_tipo_cita`
+--
+
+INSERT INTO `tb_tipo_cita` (`id`, `nombre`, `descripcion`, `id_State`) VALUES
+(1, 'Vacunación', 'Aplicación de vacunas', 13),
+(2, 'Consulta', 'Consulta médica general', 13),
+(3, 'Desparasitación', 'Control antiparasitario', 13);
+
 -- --------------------------------------------------------
 
 --
@@ -353,6 +459,13 @@ CREATE TABLE `tb_usuario_movil` (
   `contrasenia` varchar(255) NOT NULL,
   `created_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tb_usuario_movil`
+--
+
+INSERT INTO `tb_usuario_movil` (`id`, `nombre`, `apellidos`, `telefono`, `email`, `contrasenia`, `created_at`) VALUES
+(1, 'Luis ', 'torres', '2961497362', 'luis@gmail.com', '123456', '2026-05-21 12:25:52');
 
 -- --------------------------------------------------------
 
@@ -382,8 +495,8 @@ CREATE TABLE `tb_usuario_web` (
 
 INSERT INTO `tb_usuario_web` (`id`, `id_clinica`, `usuario`, `nombre`, `apellidos`, `tipo_rol`, `especialidad`, `cedula`, `telefono`, `email`, `contrasenia`, `created_at`, `activo`) VALUES
 (1, 1, 'JUCA', 'juan carlos', 'aguilar camacho', 'veterinario', 'general', NULL, '2961497729', 'juarlos.0630@gmail.com', '12345', '2026-05-08 16:22:36', 0),
-(3, 2, 'jucar', 'juan carlos', 'aguilar ramirez', 'administrador', NULL, NULL, '2961108090', 'elsitioparrillada@gmail.com', '1234', '2026-05-13 20:52:14', 0),
-(5, 1, 'valag', 'valeria', 'aguilar', 'veterinario', 'cirugias', '21754183818', '2961108090', 'vetval@gmail.com', '1234', '2026-05-13 21:16:47', 0);
+(2, 2, 'jucar', 'juan carlos', 'aguilar ramirez', 'administrador', NULL, NULL, '2961108090', 'elsitioparrillada@gmail.com', '1234', '2026-05-13 20:52:14', 0),
+(3, 1, 'valag', 'valeria', 'aguilar', 'veterinario', 'cirugias', '21754183818', '2961108090', 'vetval@gmail.com', '1234', '2026-05-13 21:16:47', 0);
 
 -- --------------------------------------------------------
 
@@ -402,6 +515,17 @@ CREATE TABLE `tb_venta` (
   `fecha_reg` datetime NOT NULL,
   `id_State` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tb_venta`
+--
+
+INSERT INTO `tb_venta` (`id`, `id_cita`, `id_usuario_web`, `id_usuario_movil`, `metodo_pago`, `total`, `fecha`, `fecha_reg`, `id_State`) VALUES
+(1, 1, 1, NULL, 'E', 850.00, '2026-06-10 10:30:00', '2026-05-21 12:36:38', 1),
+(2, 2, 2, NULL, 'T', 450.00, '2026-06-11 12:30:00', '2026-05-21 12:36:38', 2),
+(3, 3, 1, NULL, 'T', 320.00, '2026-06-12 09:30:00', '2026-05-21 12:36:38', 1),
+(4, 1, 3, 1, 'E', 1200.00, '2026-06-13 15:00:00', '2026-05-21 12:36:38', 1),
+(5, 2, 1, NULL, 'T', 600.00, '2026-06-14 17:10:00', '2026-05-21 12:36:38', 3);
 
 --
 -- Índices para tablas volcadas
@@ -593,7 +717,7 @@ ALTER TABLE `tb_cierre_caja`
 -- AUTO_INCREMENT de la tabla `tb_citas`
 --
 ALTER TABLE `tb_citas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `tb_clinicas`
@@ -611,13 +735,13 @@ ALTER TABLE `tb_detalle_entrada`
 -- AUTO_INCREMENT de la tabla `tb_detalle_venta`
 --
 ALTER TABLE `tb_detalle_venta`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `tb_diagnosticos`
 --
 ALTER TABLE `tb_diagnosticos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `tb_diagnostico_medicamento`
@@ -635,19 +759,19 @@ ALTER TABLE `tb_entrada`
 -- AUTO_INCREMENT de la tabla `tb_especie`
 --
 ALTER TABLE `tb_especie`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `tb_expediente`
 --
 ALTER TABLE `tb_expediente`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `tb_mascotas`
 --
 ALTER TABLE `tb_mascotas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `tb_perdida`
@@ -659,19 +783,19 @@ ALTER TABLE `tb_perdida`
 -- AUTO_INCREMENT de la tabla `tb_producto`
 --
 ALTER TABLE `tb_producto`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `tb_propietarios`
 --
 ALTER TABLE `tb_propietarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `tb_raza`
 --
 ALTER TABLE `tb_raza`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `tb_state`
@@ -683,13 +807,13 @@ ALTER TABLE `tb_state`
 -- AUTO_INCREMENT de la tabla `tb_tipo_cita`
 --
 ALTER TABLE `tb_tipo_cita`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `tb_usuario_movil`
 --
 ALTER TABLE `tb_usuario_movil`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `tb_usuario_web`
@@ -701,7 +825,7 @@ ALTER TABLE `tb_usuario_web`
 -- AUTO_INCREMENT de la tabla `tb_venta`
 --
 ALTER TABLE `tb_venta`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Restricciones para tablas volcadas

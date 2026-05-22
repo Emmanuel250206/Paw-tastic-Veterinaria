@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-05-2026 a las 20:38:58
+-- Tiempo de generación: 22-05-2026 a las 02:42:26
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -708,6 +708,12 @@ ALTER TABLE `tb_venta`
 --
 
 --
+-- Filtros para la tabla `tb_alerta_stock`
+--
+ALTER TABLE `tb_alerta_stock`
+  ADD CONSTRAINT `tb_alerta_stock_ibfk_1` FOREIGN KEY (`id_producto`) REFERENCES `tb_producto` (`id`);
+
+--
 -- Filtros para la tabla `tb_bitacora`
 --
 ALTER TABLE `tb_bitacora`
@@ -791,6 +797,13 @@ ALTER TABLE `tb_producto`
   ADD CONSTRAINT `tb_producto_ibfk_1` FOREIGN KEY (`id_State`) REFERENCES `tb_state` (`id`);
 
 --
+-- Filtros para la tabla `tb_propietarios`
+--
+ALTER TABLE `tb_propietarios`
+  ADD CONSTRAINT `tb_propietarios_ibfk_1` FOREIGN KEY (`id_usuario_web`) REFERENCES `tb_usuario_web` (`id`),
+  ADD CONSTRAINT `tb_propietarios_ibfk_2` FOREIGN KEY (`id_usuario_movil`) REFERENCES `tb_usuario_movil` (`id`);
+
+--
 -- Filtros para la tabla `tb_raza`
 --
 ALTER TABLE `tb_raza`
@@ -801,6 +814,21 @@ ALTER TABLE `tb_raza`
 --
 ALTER TABLE `tb_tipo_cita`
   ADD CONSTRAINT `tb_tipo_cita_ibfk_1` FOREIGN KEY (`id_State`) REFERENCES `tb_state` (`id`);
+
+--
+-- Filtros para la tabla `tb_usuario_web`
+--
+ALTER TABLE `tb_usuario_web`
+  ADD CONSTRAINT `tb_usuario_web_ibfk_1` FOREIGN KEY (`id_clinica`) REFERENCES `tb_clinicas` (`id`);
+
+--
+-- Filtros para la tabla `tb_venta`
+--
+ALTER TABLE `tb_venta`
+  ADD CONSTRAINT `tb_venta_ibfk_1` FOREIGN KEY (`id_cita`) REFERENCES `tb_citas` (`id`),
+  ADD CONSTRAINT `tb_venta_ibfk_2` FOREIGN KEY (`id_usuario_web`) REFERENCES `tb_usuario_web` (`id`),
+  ADD CONSTRAINT `tb_venta_ibfk_3` FOREIGN KEY (`id_usuario_movil`) REFERENCES `tb_usuario_movil` (`id`),
+  ADD CONSTRAINT `tb_venta_ibfk_4` FOREIGN KEY (`id_State`) REFERENCES `tb_state` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

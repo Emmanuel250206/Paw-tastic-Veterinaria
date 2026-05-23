@@ -39,16 +39,6 @@ public class CitasDAO {
             ORDER BY c.fecha ASC
             """;
 
-        try (Connection con = new Conexion().estableceConexion();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                lista.add(mapear(rs));
-            }
-        } catch (Exception e) {
-            System.err.println("[CitasDAO] Error al cargar citas: " + e.getMessage());
-        }
         return lista;
     }
 

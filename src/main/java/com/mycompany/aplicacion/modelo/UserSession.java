@@ -29,6 +29,9 @@ public class UserSession {
         userRole = new SimpleStringProperty("");
         currentAvatarName = new SimpleStringProperty("Ava_huella.png");
         userCedula = new SimpleStringProperty("");
+        userEmail = new SimpleStringProperty("");
+        userTelefono = new SimpleStringProperty("");
+        userEspecialidad = new SimpleStringProperty("");
     }
 
     /** Devuelve la única instancia de UserSession (thread-safe básico). */
@@ -57,6 +60,15 @@ public class UserSession {
 
     /** Cédula profesional del veterinario (vacío para otros roles). */
     private final StringProperty userCedula;
+
+    /** Correo electrónico del usuario. */
+    private final StringProperty userEmail;
+
+    /** Teléfono del usuario. */
+    private final StringProperty userTelefono;
+
+    /** Especialidad del veterinario (vacío para otros roles). */
+    private final StringProperty userEspecialidad;
 
     /** Flag que indica si el usuario ya cambió su alias de login */
     private boolean usernameChanged;
@@ -101,6 +113,21 @@ public class UserSession {
     public StringProperty userCedulaProperty()        { return userCedula; }
     public String getUserCedula()                     { return userCedula.get(); }
     public void   setUserCedula(String cedula)        { userCedula.set(cedula != null ? cedula : ""); }
+
+    // --- Accessors userEmail ---
+    public StringProperty userEmailProperty()         { return userEmail; }
+    public String getUserEmail()                      { return userEmail.get(); }
+    public void   setUserEmail(String email)          { userEmail.set(email != null ? email : ""); }
+
+    // --- Accessors userTelefono ---
+    public StringProperty userTelefonoProperty()      { return userTelefono; }
+    public String getUserTelefono()                   { return userTelefono.get(); }
+    public void   setUserTelefono(String tel)         { userTelefono.set(tel != null ? tel : ""); }
+
+    // --- Accessors userEspecialidad ---
+    public StringProperty userEspecialidadProperty()  { return userEspecialidad; }
+    public String getUserEspecialidad()               { return userEspecialidad.get(); }
+    public void   setUserEspecialidad(String esp)     { userEspecialidad.set(esp != null ? esp : ""); }
 
     // --- Accessors usernameChanged ---
     public boolean isUsernameChanged() { return usernameChanged; }

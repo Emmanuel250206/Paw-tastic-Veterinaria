@@ -76,6 +76,12 @@ public class ConfigurarPerfilController {
     private TextField txtHorario;
     @FXML
     private Label lblCedula;
+    @FXML
+    private TextField txtEmail;
+    @FXML
+    private TextField txtTelefono;
+    @FXML
+    private TextField txtEspecialidad;
 
     // Avatar seleccionado actualmente en la galería
     private String avatarSeleccionado;
@@ -161,18 +167,23 @@ public class ConfigurarPerfilController {
                 lblCedula.setManaged(false);
             }
         } else {
-            // Veterinarios: cargar la cédula real desde la BD y mostrarla bloqueada
+            // Veterinarios: cédula y especialidad editables
             cargarCedulaDesdeBD();
             String cedula = session.getUserCedula();
-            txtCedula.setText(cedula != null ? cedula : ""); // texto real, nunca placeholder
+            txtCedula.setText(cedula != null ? cedula : "");
             txtCedula.setVisible(true);
             txtCedula.setManaged(true);
-            bloquearCampo(txtCedula); // disable + opacity DESPUÉS de setText
+            // Cedula NO se bloquea — el veterinario puede registrarla si no la tiene
             if (lblCedula != null) {
                 lblCedula.setVisible(true);
                 lblCedula.setManaged(true);
             }
         }
+
+        // Cargar email, teléfono y especialidad desde la sesión
+        if (txtEmail != null)       txtEmail.setText(session.getUserEmail());
+        if (txtTelefono != null)    txtTelefono.setText(session.getUserTelefono());
+        if (txtEspecialidad != null) txtEspecialidad.setText(session.getUserEspecialidad());
 
         // Construir galería de avatares
         construirGaleria();
@@ -358,30 +369,32 @@ public class ConfigurarPerfilController {
     }
 
     /**
-     * Persiste únicamente los datos que el usuario puede modificar: nombre y
-     * apellidos.
-     * El campo 'usuario' (username de login) queda excluido del UPDATE para
-     * garantizar
-     * que el login nunca se rompa por un cambio de nombre.
+     * Persiste nombre, apellidos, cédula, especialidad, email y teléfono
+     * via StaffDAO.actualizarPerfil(). El alias (username de login) NO cambia.
      */
     private void actualizarBaseDatos(String nombre, String apellidos) {
         UserSession session = UserSession.getInstance();
-        Conexion conexion = new Conexion();
-        try (java.sql.Connection con = conexion.estableceConexion()) {
-            if (con != null) {
-                // Solo nombre y apellidos — usuario, rol, horario y cédula son inmutables
-                String sql = "UPDATE tb_usuario_web SET nombre = ?, apellidos = ? WHERE id = ?";
+        String cedula      = txtCedula     != null ? txtCedula.getText().trim()      : session.getUserCedula();
+        String especialidad = txtEspecialidad != null ? txtEspecialidad.getText().trim() : session.getUserEspecialidad();
+        String email       = txtEmail      != null ? txtEmail.getText().trim()       : session.getUserEmail();
+        String telefono    = txtTelefono   != null ? txtTelefono.getText().trim()    : session.getUserTelefono();
 
-                try (java.sql.PreparedStatement ps = con.prepareStatement(sql)) {
-                    ps.setString(1, nombre);
-                    ps.setString(2, apellidos);
-                    ps.setInt(3, session.getUserId());
-                    ps.executeUpdate();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Actualizar sesión
+        session.setUserCedula(cedula);
+        session.setUserEspecialidad(especialidad);
+        session.setUserEmail(email);
+        session.setUserTelefono(telefono);
+
+        // Persistir en BD
+        com.mycompany.aplicacion.persistencia.StaffDAO.actualizarPerfil(
+            session.getUserId(),
+            nombre + (apellidos.isBlank() ? "" : " " + apellidos),
+            session.getUserAlias(),
+            especialidad,
+            cedula,
+            telefono,
+            email
+        );
     }
 
     @FXML

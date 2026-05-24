@@ -1,6 +1,6 @@
 module com.mycompany.aplicacion {
     requires java.sql;
-    requires mysql.connector.j;
+    // requires transitive com.mysql.cj;
     requires transitive javafx.controls;
     requires javafx.fxml;
     requires java.base;

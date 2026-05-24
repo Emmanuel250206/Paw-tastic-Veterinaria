@@ -195,6 +195,10 @@ public class PrimaryController {
                     String dbApellidos = rs.getString("apellidos");
                     String dbRol = rs.getString("tipo_rol");
                     String dbUsuario = rs.getString("usuario");
+                    String dbEspecialidad = rs.getString("especialidad");
+                    String dbCedula = rs.getString("cedula");
+                    String dbTelefono = rs.getString("telefono");
+                    String dbEmail = rs.getString("email");
                     
                     String nombreCompleto = (dbNombre != null ? dbNombre : "") + " " + (dbApellidos != null ? dbApellidos : "");
                     nombreCompleto = nombreCompleto.trim();
@@ -202,9 +206,13 @@ public class PrimaryController {
                     // Llenar la sesión activa (el 'backpack')
                     com.mycompany.aplicacion.modelo.UserSession session = com.mycompany.aplicacion.modelo.UserSession.getInstance();
                     session.setUserId(dbId);
-                    session.setClinicId(dbClinicId); // GUARDAR CLÍNICA
+                    session.setClinicId(dbClinicId);
                     session.setUserName(nombreCompleto.isEmpty() ? "Usuario sin Nombre" : nombreCompleto);
                     session.setUserAlias(dbUsuario != null ? dbUsuario : "Sin Alias");
+                    session.setUserCedula(dbCedula);
+                    session.setUserEmail(dbEmail);
+                    session.setUserTelefono(dbTelefono);
+                    session.setUserEspecialidad(dbEspecialidad);
                     session.setUsernameChanged(false);
                     
                     if (dbRol != null) {

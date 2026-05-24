@@ -23,12 +23,7 @@ import javafx.scene.control.CustomMenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.geometry.Side;
 import com.mycompany.aplicacion.modelo.UserSession;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.List;
-import com.mycompany.aplicacion.persistencia.Conexion;
 import com.mycompany.aplicacion.util.Toast;
 
 public class StaffController implements Initializable {
@@ -104,7 +99,6 @@ public class StaffController implements Initializable {
     }
 
     private void cargarPersonalEnPantalla() {
-        // Validación de seguridad por si el VBox no está enlazado correctamente
         if (vboxContenedor == null) return;
 
         vboxContenedor.getChildren().clear();
@@ -118,44 +112,14 @@ public class StaffController implements Initializable {
         btnAgregar.setCursor(javafx.scene.Cursor.HAND);
         btnAgregar.setOnAction(e -> mostrarDialogoAgregar());
 
-        // HBox para alinear el botón de agregar a la derecha
         HBox headerContainer = new HBox(btnAgregar);
         headerContainer.setAlignment(Pos.CENTER_RIGHT);
         headerContainer.setPadding(new Insets(0, 0, 10, 0));
         vboxContenedor.getChildren().add(headerContainer);
-    // conexion BD: cargar lista
-    List<Staff> listaStaff = new ArrayList<>();
-    Conexion conexion = new Conexion();
-    Connection con = conexion.estableceConexion();
-    
-    if (con != null) {
-        try {
-            String sql = "SELECT id,id_clinica, nombre, apellidos, tipo_rol, especialidad, telefono, email, cedula, contrasenia, usuario " +
-                 "FROM tb_usuario_web WHERE LOWER(tipo_rol) IN ('staff', 'veterinario', 'recepcionista') AND id_clinica = ?";
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.setInt(1, UserSession.getInstance().getClinicId());
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                listaStaff.add(new Staff(
-                    rs.getInt("id"),
-                    rs.getString("nombre"),
-                    rs.getString("apellidos"),
-                    rs.getString("tipo_rol"),
-                    rs.getString("especialidad"),
-                    rs.getString("telefono"),
-                    rs.getString("email"),
-                    rs.getString("contrasenia"),
-                    rs.getString("cedula"),
-                    rs.getString("usuario")
-                ));
-            }
-        } catch (Exception e) {
-            // Error loading staff
-        }
-        } else {
-            // DB connection failure
-        }
-    
+
+        // Cargar staff desde BD usando StaffDAO (filtrado por clínica activa)
+        List<Staff> listaStaff = com.mycompany.aplicacion.persistencia.StaffDAO.listarPorClinica();
+
         for (Staff s : listaStaff) {
             // Contenedor principal de la tarjeta
             HBox tarjeta = new HBox(15);
@@ -200,100 +164,24 @@ public class StaffController implements Initializable {
             btnEditar.setCursor(javafx.scene.Cursor.HAND);
             btnEditar.setOnAction(e -> mostrarDialogoEditar(s));
 
-            // Botón de Eliminar
-            Button btnEliminar = new Button("Eliminar");
+            // Botón de Desactivar
+            Button btnEliminar = new Button("Desactivar");
             btnEliminar.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;");
             btnEliminar.setCursor(javafx.scene.Cursor.HAND);
             btnEliminar.setOnAction(e -> {
-            // conexio DB: eliminar
-            Conexion cx = new Conexion();
-            Connection conn = cx.estableceConexion();
-            try {
-                String sqlCheck = "SELECT activo FROM tb_usuario_web WHERE id = ?";
-                PreparedStatement psCheck = conn.prepareStatement(sqlCheck);
-                psCheck.setInt(1, s.getId());
-                ResultSet rs = psCheck.executeQuery();
-                if (rs.next() && rs.getInt("activo") == 1) {
-                    //sesion activa —> bloquear
-                    javafx.scene.control.Alert alertActivo = new javafx.scene.control.Alert(
-                    javafx.scene.control.Alert.AlertType.WARNING);
-                    alertActivo.setTitle("Sesión Activa");
-                    alertActivo.setHeaderText("No se puede eliminar este usuario");
-                    alertActivo.setContentText("El usuario \"" + s.getNombre() + " " + s.getApellidos() + 
-                        "\" tiene una sesión activa en este momento.");
-                    alertActivo.showAndWait();
-                    return;
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                return;
-            }
+                javafx.scene.control.Alert confirmacion = new javafx.scene.control.Alert(
+                    javafx.scene.control.Alert.AlertType.CONFIRMATION);
+                confirmacion.setTitle("Confirmar desactivación");
+                confirmacion.setHeaderText("¿Desactivar usuario?");
+                confirmacion.setContentText("El usuario \"" + s.getNombre() + " " + s.getApellidos() +
+                    "\" perderá acceso al sistema. Puedes reactivarlo más adelante.");
+                java.util.Optional<ButtonType> result = confirmacion.showAndWait();
+                if (result.isEmpty() || result.get() != ButtonType.OK) return;
 
-            //confirmacion
-            javafx.scene.control.Alert confirmacion = new javafx.scene.control.Alert(
-                javafx.scene.control.Alert.AlertType.CONFIRMATION);
-            confirmacion.setTitle("Confirmar eliminación");
-            confirmacion.setHeaderText("¿Estás seguro?");
-            confirmacion.setContentText("Vas a eliminar a \"" + s.getNombre() + " " + s.getApellidos() + 
-                "\". Esta acción no se puede deshacer.");
-            java.util.Optional<ButtonType> confirmResult = confirmacion.showAndWait();
-            if (confirmResult.isEmpty() || confirmResult.get() != ButtonType.OK) return;
-
-            //pedir clave maestra
-            Dialog<String> dialogClave = new Dialog<>();
-            dialogClave.setTitle("Clave Maestra");
-            dialogClave.setHeaderText("Introduce la clave maestra para continuar");
-            dialogClave.getDialogPane().setStyle("-fx-background-color: #DFF5E1;");
-
-            ButtonType btnConfirmar = new ButtonType("Confirmar", ButtonBar.ButtonData.OK_DONE);
-            dialogClave.getDialogPane().getButtonTypes().addAll(btnConfirmar, ButtonType.CANCEL);
-
-            javafx.scene.control.PasswordField pfClave = new javafx.scene.control.PasswordField();
-            pfClave.setPromptText("Clave maestra");
-            pfClave.setStyle("-fx-background-color: white; -fx-border-color: #3d8d7a; -fx-border-radius: 5; -fx-background-radius: 5;");
-            Label lblErrorClave = new Label("Clave incorrecta");
-            lblErrorClave.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 11px;");
-            lblErrorClave.setVisible(false);
-
-            VBox contenidoClave = new VBox(8, new Label("Clave maestra:"), pfClave, lblErrorClave);
-            contenidoClave.setPadding(new Insets(20));
-            dialogClave.getDialogPane().setContent(contenidoClave);
-
-            javafx.scene.Node btnConfNode = dialogClave.getDialogPane().lookupButton(btnConfirmar);
-            if (btnConfNode != null) btnConfNode.setStyle(
-                "-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;");
-            javafx.scene.Node btnCancelNode = dialogClave.getDialogPane().lookupButton(ButtonType.CANCEL);
-            if (btnCancelNode != null) btnCancelNode.setStyle(
-                "-fx-background-color: #7f8c8d; -fx-text-fill: white; -fx-font-weight: bold;");
-
-            //validar clave antes de cerrar
-            final String CLAVE_MAESTRA = "admin2026";
-            btnConfNode.addEventFilter(javafx.event.ActionEvent.ACTION, ev -> {
-                if (!pfClave.getText().equals(CLAVE_MAESTRA)) {
-                    lblErrorClave.setVisible(true);
-                    ev.consume();
-                }
+                boolean ok = com.mycompany.aplicacion.persistencia.StaffDAO.desactivar(s.getId());
+                Toast.showToast(ok ? "Usuario desactivado correctamente." : "No se pudo desactivar el usuario.", 3);
+                cargarPersonalEnPantalla();
             });
-
-            dialogClave.setResultConverter(db -> db == btnConfirmar ? pfClave.getText() : null);
-
-            java.util.Optional<String> claveResult = dialogClave.showAndWait();
-            if (claveResult.isEmpty()) return;
-
-            // PASO 4: Eliminar
-            Conexion cx2 = new Conexion();
-            Connection conn2 = cx2.estableceConexion();
-            try {
-                String sqlDel = "DELETE FROM tb_usuario_web WHERE id = ?";
-                PreparedStatement psDel = conn2.prepareStatement(sqlDel);
-                psDel.setInt(1, s.getId());
-                psDel.executeUpdate();
-                Toast.showToast("Usuario eliminado correctamente.", 3);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            cargarPersonalEnPantalla();
-});
 
             VBox accionesContenedor = new VBox(10, btnEditar, btnEliminar);
             accionesContenedor.setAlignment(Pos.CENTER);
@@ -533,51 +421,32 @@ public class StaffController implements Initializable {
 
         java.util.Optional<Staff> result = dialog.showAndWait();
         result.ifPresent(nuevoStaff -> {
-        //conexion DB: nuevo staff
-        Conexion cx = new Conexion();
-        Connection conn = cx.estableceConexion();
-        try {
-            String sql = "INSERT INTO tb_usuario_web (id_clinica, nombre, apellidos, tipo_rol, especialidad, telefono, email, contrasenia, cedula, usuario) VALUES (?,?,?,?,?,?,?,?,?,?)";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, UserSession.getInstance().getClinicId());
-            ps.setString(2, nuevoStaff.getNombre());
-            ps.setString(3, nuevoStaff.getApellidos());
-            ps.setString(4, nuevoStaff.getRol());
-            ps.setString(5, nuevoStaff.getEspecialidad());
-            ps.setString(6, nuevoStaff.getTelefono());
-            ps.setString(7, tfEmail.getText());
-            ps.setString(8, tfContrasena.getText());
-            
-            // Lógica Nulls / Vacíos para la cédula si no es veterinario
             boolean isVet = nuevoStaff.getRol().trim().equalsIgnoreCase("Veterinario");
             String cedulaValue = isVet && tfCedula.getText() != null ? tfCedula.getText().trim() : "";
-            ps.setString(9, cedulaValue);
-            
-            // Usar el usuario ingresado
-            String genUsuario = nuevoStaff.getUsuario();
-            ps.setString(10, genUsuario);
 
-            ps.executeUpdate();
-            
-            final String lambdaN = nuevoStaff.getNombre() != null ? nuevoStaff.getNombre() : "";
-            final String lambdaA = nuevoStaff.getApellidos() != null ? nuevoStaff.getApellidos() : "";
-            final String lambdaGenUser = genUsuario;
-            
-            // Mostrar Toast moderno con el nombre de usuario
-            String toastMsg = "¡Registro Exitoso! 🐾\nEl nuevo miembro del staff (" + lambdaN + " " + lambdaA + ") ha sido creado.\nUsuario asignado: " + lambdaGenUser;
-            Toast.showToast(toastMsg, 5);
-        } catch (Exception ex) {
-            String errorMsg = "Fallo en la comunicación con la base de datos.";
-            // Error handling
-            
-            // Mostrar Alert al usuario
-            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
-            alert.setTitle("Error de Base de Datos");
-            alert.setHeaderText("Fallo en la creación del Staff");
-            alert.setContentText(errorMsg);
-            alert.showAndWait();
-        }
-            cargarPersonalEnPantalla(); // Recargar visualmente
+            boolean ok = com.mycompany.aplicacion.persistencia.StaffDAO.insertar(
+                nuevoStaff.getUsuario(),
+                nuevoStaff.getNombre(),
+                nuevoStaff.getApellidos(),
+                nuevoStaff.getRol(),
+                nuevoStaff.getEspecialidad(),
+                cedulaValue,
+                nuevoStaff.getTelefono(),
+                tfEmail.getText(),
+                tfContrasena.getText()
+            );
+
+            if (ok) {
+                Toast.showToast("¡Registro Exitoso! 🐾\nEl nuevo miembro del staff ha sido creado.", 5);
+            } else {
+                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                    javafx.scene.control.Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("No se pudo crear el staff");
+                alert.setContentText("El usuario puede ya existir o hubo un error de BD.");
+                alert.showAndWait();
+            }
+            cargarPersonalEnPantalla();
         });
     }
 
@@ -727,49 +596,24 @@ public class StaffController implements Initializable {
 
         java.util.Optional<Staff> result = dialog.showAndWait();
         result.ifPresent(staffEditado -> {
-            Conexion cx = new Conexion();
-            Connection conn = cx.estableceConexion();
-            try {
-                String pwd = tfContrasena.getText().trim();
-                String sql;
-                PreparedStatement ps;
-                boolean isVet = staffEditado.getRol().trim().equalsIgnoreCase("Veterinario");
-                String cedulaVal = isVet && staffEditado.getCedula() != null ? staffEditado.getCedula().trim() : "";
-
-                if (!pwd.isEmpty()) {
-                    sql = "UPDATE tb_usuario_web SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, contrasenia=?, cedula=?, usuario=? WHERE id=?";
-                    ps = conn.prepareStatement(sql);
-                    ps.setString(1, staffEditado.getNombre());
-                    ps.setString(2, staffEditado.getApellidos());
-                    ps.setString(3, staffEditado.getRol());
-                    ps.setString(4, staffEditado.getEspecialidad());
-                    ps.setString(5, staffEditado.getTelefono());
-                    ps.setString(6, staffEditado.getEmail());
-                    ps.setString(7, pwd);
-                    ps.setString(8, cedulaVal);
-                    ps.setString(9, staffEditado.getUsuario());
-                    ps.setInt(10, staffEditado.getId());
-                } else {
-                    sql = "UPDATE tb_usuario_web SET nombre=?, apellidos=?, tipo_rol=?, especialidad=?, telefono=?, email=?, cedula=?, usuario=? WHERE id=?";
-                    ps = conn.prepareStatement(sql);
-                    ps.setString(1, staffEditado.getNombre());
-                    ps.setString(2, staffEditado.getApellidos());
-                    ps.setString(3, staffEditado.getRol());
-                    ps.setString(4, staffEditado.getEspecialidad());
-                    ps.setString(5, staffEditado.getTelefono());
-                    ps.setString(6, staffEditado.getEmail());
-                    ps.setString(7, cedulaVal);
-                    ps.setString(8, staffEditado.getUsuario());
-                    ps.setInt(9, staffEditado.getId());
-                }
-                ps.executeUpdate();
-            } catch (Exception ex) {
-                String errorMsg = "No se pudieron guardar los cambios.";
-                // Error handling
-                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
-                alert.setTitle("Error de Base de Datos");
-                alert.setHeaderText("Fallo en la actualización del Staff");
-                alert.setContentText(errorMsg);
+            boolean ok = com.mycompany.aplicacion.persistencia.StaffDAO.actualizar(
+                staffEditado.getId(),
+                staffEditado.getNombre(),
+                staffEditado.getApellidos(),
+                staffEditado.getRol(),
+                staffEditado.getEspecialidad(),
+                staffEditado.getCedula(),
+                staffEditado.getTelefono(),
+                staffEditado.getEmail()
+            );
+            if (ok) {
+                Toast.showToast("Datos del staff actualizados correctamente.", 3);
+            } else {
+                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                    javafx.scene.control.Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("No se pudieron guardar los cambios");
+                alert.setContentText("Revisa la conexión con la base de datos.");
                 alert.showAndWait();
             }
             cargarPersonalEnPantalla();

@@ -21,6 +21,7 @@ public class UserSession {
 
     private int userId;
     private int clinicId; // ADDED FOR MULTI-TENANT
+    private String nombreClinica;
 
     private UserSession() {
         // Valores por defecto (se sobreescriben al iniciar sesión)
@@ -85,6 +86,34 @@ public class UserSession {
     // --- Accessors clinicId ---
     public int getClinicId()                       { return clinicId; }
     public void setClinicId(int id)                { this.clinicId = id; }
+
+    // --- Accessors nombreClinica ---
+    public String getNombreClinica() {
+        return nombreClinica;
+    }
+    public void setNombreClinica(String nombreClinica) {
+        this.nombreClinica = nombreClinica;
+    }
+
+    // --- Aliases for Relational Login template ---
+    public void setNombre(String nombre) {
+        setUserName(nombre);
+    }
+    public String getNombre() {
+        return getUserName();
+    }
+    public void setRol(String rol) {
+        setUserRole(rol);
+    }
+    public String getRol() {
+        return getUserRole();
+    }
+    public void setIdClinica(int idClinica) {
+        setClinicId(idClinica);
+    }
+    public int getIdClinica() {
+        return getClinicId();
+    }
 
     // --- Accessors userRole ---
     public StringProperty userRoleProperty()       { return userRole; }

@@ -195,6 +195,47 @@ public class StaffDAO {
         }
     }
 
+    // ─── Relational Login ────────────────────────────────────────────────────
+    public static boolean login(String usuario, String contrasenia) {
+        String sql = "SELECT u.*, c.nombre AS clinica_nombre " +
+                     "FROM tb_usuario_web u " +
+                     "INNER JOIN tb_clinicas c ON u.id_clinica = c.id " +
+                     "WHERE u.usuario = ? AND u.contrasenia = ?";
+                     
+        try (Connection con = new Conexion().estableceConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, usuario);
+            ps.setString(2, contrasenia);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    UserSession sesion = UserSession.getInstance();
+                    sesion.setNombre(rs.getString("nombre"));
+                    sesion.setRol(rs.getString("tipo_rol"));
+                    sesion.setIdClinica(rs.getInt("id_clinica"));
+                    
+                    // Extraer los datos adicionales necesarios para evitar scope vacíos
+                    sesion.setUserId(rs.getInt("id"));
+                    sesion.setUserAlias(rs.getString("usuario"));
+                    sesion.setUserCedula(rs.getString("cedula"));
+                    sesion.setUserEmail(rs.getString("email"));
+                    sesion.setUserTelefono(rs.getString("telefono"));
+                    sesion.setUserEspecialidad(rs.getString("especialidad"));
+                    sesion.setUsernameChanged(false);
+
+                    // Extract the alias 'clinica_nombre' from the INNER JOIN
+                    sesion.setNombreClinica(rs.getString("clinica_nombre"));
+                    
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error en el login: " + e.getMessage());
+        }
+        return false;
+    }
+
     private static Staff mapear(ResultSet rs) throws SQLException {
         return new Staff(
             rs.getInt("id"),

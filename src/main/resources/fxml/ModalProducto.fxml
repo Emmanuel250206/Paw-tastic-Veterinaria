@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="520.0" prefWidth="850.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-color: #3D8D7A; -fx-border-width: 1.5; -fx-border-radius: 15;" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.InventarioController">
+   <padding>
+      <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+   </padding>
+   <children>
+      <!-- Cabecera -->
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
+         <children>
+            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #3D8D7A; -fx-font-family: 'Segoe UI';" text="Registro de Inventario" />
+                  <Label style="-fx-font-size: 13px; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Ingrese la información del producto. Los campos con (*) son requeridos." />
+               </children>
+            </VBox>
+            <Label fx:id="lblSucursalInventario" text="Sucursal: ..." style="-fx-text-fill: #6B7A72; -fx-font-size: 13px; -fx-font-family: 'Segoe UI';" />
+         </children>
+      </HBox>
+
+      <!-- Panel de Entrada Principal en GridPane Simétrico -->
+      <GridPane hgap="30.0" vgap="15.0" VBox.vgrow="ALWAYS">
+         <columnConstraints>
+            <ColumnConstraints percentWidth="50.0" />
+            <ColumnConstraints percentWidth="50.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <!-- Columna Izquierda (Datos de Identificación) -->
+            <!-- Código -->
+            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Código de Barras / SKU*" />
+                  <TextField fx:id="txtCodigo" prefHeight="35.0" styleClass="text-field" promptText="Ingrese el código del producto" />
+               </children>
+            </VBox>
+            <!-- Nombre -->
+            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Nombre del Producto*" />
+                  <TextField fx:id="txtNombre" prefHeight="35.0" styleClass="text-field" promptText="Nombre del producto o medicamento" />
+               </children>
+            </VBox>
+            <!-- Categoría -->
+            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Categoría*" />
+                  <ComboBox fx:id="comboCategoria" maxWidth="1.7976931348623157E308" prefHeight="35.0" style="-fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 5; -fx-border-width: 1;" />
+               </children>
+            </VBox>
+            <!-- Unidad de Medida -->
+            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Unidad de Medida*" />
+                  <ComboBox fx:id="comboUnidad" maxWidth="1.7976931348623157E308" prefHeight="35.0" style="-fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 5; -fx-border-width: 1;" />
+               </children>
+            </VBox>
+
+            <!-- Columna Derecha (Control de Stock y Costos) -->
+            <!-- Costo Unitario -->
+            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Costo Unitario*" />
+                  <TextField fx:id="txtCosto" prefHeight="35.0" styleClass="text-field" promptText="0.00" />
+               </children>
+            </VBox>
+            <!-- Precio de Venta -->
+            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Precio de Venta*" />
+                  <TextField fx:id="txtPrecio" prefHeight="35.0" styleClass="text-field" promptText="0.00" />
+               </children>
+            </VBox>
+            <!-- Existencia Actual -->
+            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Existencia Actual*" />
+                  <TextField fx:id="txtExistencia" prefHeight="35.0" styleClass="text-field" promptText="0" />
+               </children>
+            </VBox>
+            <!-- Stock Mínimo -->
+            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Stock Mínimo*" />
+                  <TextField fx:id="txtStockMinimo" prefHeight="35.0" styleClass="text-field" promptText="0" />
+               </children>
+            </VBox>
+         </children>
+      </GridPane>
+
+      <!-- Panel Inferior -->
+      <HBox spacing="30.0">
+         <children>
+            <!-- Fecha de Caducidad -->
+            <VBox spacing="4.0" prefWidth="250.0">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Fecha de Caducidad" />
+                  <DatePicker fx:id="dpCaducidad" maxWidth="1.7976931348623157E308" prefHeight="35.0" style="-fx-background-color: white; -fx-border-color: #3D8D7A; -fx-border-width: 0 0 2 0;" />
+               </children>
+            </VBox>
+            <!-- Descripción -->
+            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Descripción / Notas" />
+                  <TextArea fx:id="txtDescripcion" prefHeight="55.0" promptText="Agregue una descripción o nota sobre el producto..." wrapText="true" styleClass="text-field" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+
+      <!-- Botones de Acción -->
+      <HBox alignment="CENTER_RIGHT" spacing="15.0">
+         <children>
+            <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#handleCancelar" prefHeight="35.0" styleClass="boton-transparente" text="Cancelar" />
+            <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#handleGuardarProducto" prefHeight="35.0" styleClass="boton-verde" text="Guardar Producto" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

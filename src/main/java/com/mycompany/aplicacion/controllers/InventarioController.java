@@ -1,68 +1,153 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.aplicacion.controllers;
 
-/**
- *
- * @author emmanuel
- */
+import com.mycompany.aplicacion.App;
 import com.mycompany.aplicacion.modelo.Inventario;
 import com.mycompany.aplicacion.persistencia.InventarioDAO;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.ButtonType;
-import javafx.scene.image.ImageView;
 import com.mycompany.aplicacion.modelo.UserSession;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.GridPane;
+import com.mycompany.aplicacion.util.Toast;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
-import javafx.geometry.Insets;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.CustomMenuItem;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class InventarioController implements Initializable {
-    
-    @FXML
-    private VBox vboxInventarioContainer;
-    @FXML
-    private HBox btnControlInventario;
-    @FXML
-    private ImageView imgPerfilInventario;
-    @FXML
-    private Label lblNombreInventario;
-    @FXML
-    private Label lblRolInventario;
-    @FXML
-    private HBox hboxPerfil;
+
+    // --- ELEMENTOS DE VISTA PRINCIPAL (SeccionInventario) ---
+    @FXML private TableView<Inventario> tablaInventario;
+    @FXML private TableColumn<Inventario, Integer> colCodigo;
+    @FXML private TableColumn<Inventario, String> colNombre;
+    @FXML private TableColumn<Inventario, String> colCategoria;
+    @FXML private TableColumn<Inventario, Integer> colStock;
+    @FXML private TableColumn<Inventario, Integer> colStockMinimo;
+    @FXML private TableColumn<Inventario, String> colUnidad;
+    @FXML private TableColumn<Inventario, Double> colCosto;
+    @FXML private TableColumn<Inventario, Double> colPrecio;
+    @FXML private TableColumn<Inventario, String> colCaducidad;
+
+    @FXML private HBox btnControlInventario;
+    @FXML private ImageView imgPerfilInventario;
+    @FXML private Label lblNombreInventario;
+    @FXML private Label lblRolInventario;
+    @FXML private HBox hboxPerfil;
     private ContextMenu menuPerfil;
-    
+
+    // --- ELEMENTOS DE VISTA REGISTRO (ModalProducto) ---
+    @FXML private Label lblSucursalInventario;
+    @FXML private TextField txtCodigo;
+    @FXML private TextField txtNombre;
+    @FXML private ComboBox<String> comboCategoria;
+    @FXML private ComboBox<String> comboUnidad;
+    @FXML private TextField txtCosto;
+    @FXML private TextField txtPrecio;
+    @FXML private TextField txtExistencia;
+    @FXML private TextField txtStockMinimo;
+    @FXML private DatePicker dpCaducidad;
+    @FXML private TextArea txtDescripcion;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // --- Perfil de usuario en el header ---
-        UserSession.loadProfileImage(imgPerfilInventario);
-        lblNombreInventario.setText(UserSession.getInstance().getUserName());
-        lblRolInventario.setText(UserSession.getInstance().getUserRole());
-        construirMenuPerfil();
+        // --- 1. Inicialización de la vista principal (Tabla de Inventario) ---
+        if (imgPerfilInventario != null) {
+            UserSession.loadProfileImage(imgPerfilInventario);
+        }
+        if (lblNombreInventario != null) {
+            lblNombreInventario.setText(UserSession.getInstance().getUserName());
+        }
+        if (lblRolInventario != null) {
+            lblRolInventario.setText(UserSession.getInstance().getUserRole());
+        }
+        if (hboxPerfil != null) {
+            construirMenuPerfil();
+        }
 
-        cargarInventarioEnPantalla();
+        if (tablaInventario != null) {
+            colCodigo.setCellValueFactory(new PropertyValueFactory<>("id"));
+            colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+            colCategoria.setCellValueFactory(new PropertyValueFactory<>("categoria"));
+            colStock.setCellValueFactory(new PropertyValueFactory<>("stock_actual"));
+            colStockMinimo.setCellValueFactory(new PropertyValueFactory<>("stock_minimo"));
+            colUnidad.setCellValueFactory(new PropertyValueFactory<>("unidad_medida"));
+            colCosto.setCellValueFactory(new PropertyValueFactory<>("precio_compra"));
+            colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio_venta"));
+            colCaducidad.setCellValueFactory(new PropertyValueFactory<>("fecha_caducidad"));
+            
+            actualizarTablaInventario();
+        }
 
-        if ("Staff".equalsIgnoreCase(com.mycompany.aplicacion.App.getRolUsuario())) {
+        if ("Staff".equalsIgnoreCase(App.getRolUsuario())) {
             if (btnControlInventario != null) {
                 btnControlInventario.setVisible(false);
                 btnControlInventario.setManaged(false);
             }
+        }
+
+        // --- 2. Inicialización de la vista modal (Formulario de Registro) ---
+        UserSession sesion = UserSession.getInstance();
+        if (lblSucursalInventario != null) {
+            if (sesion != null && sesion.getNombreClinica() != null) {
+                lblSucursalInventario.setText("Sucursal: " + sesion.getNombreClinica());
+            } else {
+                lblSucursalInventario.setText("Sucursal: No identificada");
+            }
+        }
+
+        if (comboCategoria != null) {
+            comboCategoria.getItems().addAll("Medicamento", "Alimento", "Higiene", "Accesorios", "Material de Curación");
+        }
+        if (comboUnidad != null) {
+            comboUnidad.getItems().addAll("Pieza", "Caja", "Frasco", "Bolsa", "Ampolleta", "Tableta");
+            comboUnidad.setValue("Pieza");
+        }
+
+        // Sanitización en tiempo real de entradas de texto
+        if (txtExistencia != null) {
+            txtExistencia.textProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null && !newVal.matches("\\d*")) {
+                    txtExistencia.setText(newVal.replaceAll("[^\\d]", ""));
+                }
+            });
+        }
+        if (txtStockMinimo != null) {
+            txtStockMinimo.textProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null && !newVal.matches("\\d*")) {
+                    txtStockMinimo.setText(newVal.replaceAll("[^\\d]", ""));
+                }
+            });
+        }
+        if (txtPrecio != null) {
+            txtPrecio.textProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null && !newVal.matches("\\d*(\\.\\d*)?")) {
+                    txtPrecio.setText(oldVal != null ? oldVal : "");
+                }
+            });
+        }
+        if (txtCosto != null) {
+            txtCosto.textProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null && !newVal.matches("\\d*(\\.\\d*)?")) {
+                    txtCosto.setText(oldVal != null ? oldVal : "");
+                }
+            });
         }
     }
 
@@ -87,11 +172,14 @@ public class InventarioController implements Initializable {
         lbl.setStyle(base);
         lbl.setOnMouseEntered(e -> lbl.setStyle(hover));
         lbl.setOnMouseExited(e  -> lbl.setStyle(base));
-        lbl.setOnMouseClicked(e -> { menuPerfil.hide(); ConfigurarPerfilController.abrir(hboxPerfil, () -> {
-            UserSession.loadProfileImage(imgPerfilInventario);
-            lblNombreInventario.setText(UserSession.getInstance().getUserName());
-            lblRolInventario.setText(UserSession.getInstance().getUserRole());
-        }); });
+        lbl.setOnMouseClicked(e -> { 
+            menuPerfil.hide(); 
+            ConfigurarPerfilController.abrir(hboxPerfil, () -> {
+                UserSession.loadProfileImage(imgPerfilInventario);
+                lblNombreInventario.setText(UserSession.getInstance().getUserName());
+                lblRolInventario.setText(UserSession.getInstance().getUserRole());
+            }); 
+        });
         CustomMenuItem item = new CustomMenuItem(lbl, true);
         item.setMnemonicParsing(false);
         menuPerfil.getItems().add(item);
@@ -103,201 +191,147 @@ public class InventarioController implements Initializable {
         if (menuPerfil.isShowing()) { menuPerfil.hide(); return; }
         menuPerfil.show(hboxPerfil, Side.BOTTOM, hboxPerfil.getWidth() - 185, 4);
     }
-    
-    private void cargarInventarioEnPantalla() {
-        if (vboxInventarioContainer == null) return;
-        vboxInventarioContainer.getChildren().clear();
 
-        boolean esStaff = "Staff".equalsIgnoreCase(com.mycompany.aplicacion.App.getRolUsuario());
+    private void actualizarTablaInventario() {
+        if (tablaInventario != null) {
+            tablaInventario.setItems(InventarioDAO.getTodos());
+        }
+    }
 
-        for (Inventario inv : InventarioDAO.getTodos()) {
-            HBox tarjeta = new HBox(15);
-            tarjeta.setPadding(new Insets(15, 20, 15, 20));
-            tarjeta.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
-            tarjeta.setAlignment(Pos.CENTER_LEFT);
+    // --- ACCIONES DE LA VISTA PRINCIPAL ---
+    @FXML
+    private void abrirModalAgregarProducto(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ModalProducto.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL); // Blocks background interaction
+            stage.setTitle("Registrar Nuevo Producto");
+            stage.showAndWait();
 
-            VBox infoProducto = new VBox(5);
-            
-            Label lblNombre = new Label("Producto: " + inv.getNombre());
-            lblNombre.setStyle("-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2c3e50;");
-            
-            Label lblCategoria = new Label("Categoría: " + inv.getCategoria());
-            lblCategoria.setStyle("-fx-font-size: 14px; -fx-text-fill: #34495e;");
-            
-            Label lblStock = new Label("Stock: " + inv.getStock_actual() + " unidades");
-
-            infoProducto.getChildren().addAll(lblNombre, lblCategoria, lblStock);
-
-            VBox infoPrecio = new VBox(5);
-            infoPrecio.setAlignment(Pos.CENTER_RIGHT);
-            Label lblPrecio = new Label("$" + String.format("%.2f", inv.getPrecio_venta()));
-            lblPrecio.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;");
-            infoPrecio.getChildren().add(lblPrecio);
-
-            // Espaciador
-            javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
-            HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
-
-            tarjeta.getChildren().addAll(infoProducto, spacer, infoPrecio);
-
-            if (!esStaff) {
-                Button btnEditar = new Button("Editar");
-                btnEditar.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
-                btnEditar.setOnAction(e -> mostrarDialogoEditar(inv));
-
-                Button btnEliminar = new Button("Eliminar");
-                btnEliminar.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
-                btnEliminar.setOnAction(e -> {
-                    boolean ok = InventarioDAO.desactivar(inv.getId());
-                    if (ok) cargarInventarioEnPantalla();
-                });
-                
-                VBox accionesContenedor = new VBox(5, btnEditar, btnEliminar);
-                accionesContenedor.setAlignment(Pos.CENTER);
-                accionesContenedor.setPadding(new Insets(0, 0, 0, 15));
-                
-                if (inv.getStock_actual() <= 0) {
-                    Button btnGlobal = new Button("Buscar en Otras Sucursales");
-                    btnGlobal.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
-                    btnGlobal.setOnAction(e -> {
-                        javafx.collections.ObservableList<String> results = InventarioDAO.buscarDisponibilidadGlobal(inv.getNombre());
-                        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
-                        alert.setTitle("Disponibilidad Global");
-                        alert.setHeaderText("Disponibilidad de: " + inv.getNombre());
-                        if (results.isEmpty()) {
-                            alert.setContentText("No hay stock en ninguna otra sucursal.");
-                        } else {
-                            alert.setContentText(String.join("\n", results));
-                        }
-                        alert.showAndWait();
-                    });
-                    accionesContenedor.getChildren().add(btnGlobal);
-                }
-                
-                tarjeta.getChildren().add(accionesContenedor);
-            }
-
-            vboxInventarioContainer.getChildren().add(tarjeta);
+            // Refresh the main TableView automatically after modal closes
+            actualizarTablaInventario(); 
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     @FXML
-    private void mostrarDialogoAgregar() {
-        Dialog<Inventario> dialog = new Dialog<>();
-        dialog.setTitle("Agregar Nuevo Producto");
-        
-        dialog.getDialogPane().setStyle("-fx-background-color: #DFF5E1; -fx-font-family: 'System';");
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(15);
-        grid.setPadding(new Insets(20, 20, 20, 20));
-
-        String styleLabel = "-fx-font-weight: bold; -fx-text-fill: #3d8d7a; -fx-font-size: 14px;";
-        String styleTextField = "-fx-background-radius: 5; -fx-border-radius: 5; -fx-border-color: #bdc3c7; -fx-padding: 5;";
-
-        TextField tfNombre = new TextField(); tfNombre.setPromptText("Nombre del Producto"); tfNombre.setStyle(styleTextField);
-        TextField tfCategoria = new TextField(); tfCategoria.setPromptText("Categoría"); tfCategoria.setStyle(styleTextField);
-        TextField tfDescripcion = new TextField(); tfDescripcion.setPromptText("Descripción"); tfDescripcion.setStyle(styleTextField);
-        TextField tfStockActual = new TextField(); tfStockActual.setPromptText("Stock Actual"); tfStockActual.setStyle(styleTextField);
-        TextField tfStockMinimo = new TextField(); tfStockMinimo.setPromptText("Stock Mínimo"); tfStockMinimo.setStyle(styleTextField);
-        TextField tfUnidadMedida = new TextField(); tfUnidadMedida.setPromptText("Unidad de Medida"); tfUnidadMedida.setStyle(styleTextField);
-        TextField tfPrecioCompra = new TextField(); tfPrecioCompra.setPromptText("Precio Compra"); tfPrecioCompra.setStyle(styleTextField);
-        TextField tfPrecioVenta = new TextField(); tfPrecioVenta.setPromptText("Precio Venta"); tfPrecioVenta.setStyle(styleTextField);
-        TextField tfFechaCaducidad = new TextField(); tfFechaCaducidad.setPromptText("Fecha Caducidad (YYYY-MM-DD)"); tfFechaCaducidad.setStyle(styleTextField);
-        TextField tfProveedorId = new TextField(); tfProveedorId.setPromptText("ID Proveedor"); tfProveedorId.setStyle(styleTextField);
-
-        Label lbl1 = new Label("Producto:"); lbl1.setStyle(styleLabel);
-        Label lbl2 = new Label("Categoría:"); lbl2.setStyle(styleLabel);
-        Label lbl3 = new Label("Descripción:"); lbl3.setStyle(styleLabel);
-        Label lbl4 = new Label("Stock Actual:"); lbl4.setStyle(styleLabel);
-        Label lbl5 = new Label("Stock Mínimo:"); lbl5.setStyle(styleLabel);
-        Label lbl6 = new Label("Unidad Medida:"); lbl6.setStyle(styleLabel);
-        Label lbl7 = new Label("Precio Compra:"); lbl7.setStyle(styleLabel);
-        Label lbl8 = new Label("Precio Venta:"); lbl8.setStyle(styleLabel);
-        Label lbl9 = new Label("Fecha Caducidad:"); lbl9.setStyle(styleLabel);
-        Label lbl10 = new Label("ID Proveedor:"); lbl10.setStyle(styleLabel);
-
-        grid.add(lbl1, 0, 0); grid.add(tfNombre, 1, 0);
-        grid.add(lbl2, 0, 1); grid.add(tfCategoria, 1, 1);
-        grid.add(lbl3, 0, 2); grid.add(tfDescripcion, 1, 2);
-        grid.add(lbl4, 0, 3); grid.add(tfStockActual, 1, 3);
-        grid.add(lbl5, 0, 4); grid.add(tfStockMinimo, 1, 4);
-        grid.add(lbl6, 0, 5); grid.add(tfUnidadMedida, 1, 5);
-        grid.add(lbl7, 0, 6); grid.add(tfPrecioCompra, 1, 6);
-        grid.add(lbl8, 0, 7); grid.add(tfPrecioVenta, 1, 7);
-        grid.add(lbl9, 0, 8); grid.add(tfFechaCaducidad, 1, 8);
-        grid.add(lbl10, 0, 9); grid.add(tfProveedorId, 1, 9);
-
-        Label lblError = new Label();
-        lblError.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 12px; -fx-font-weight: bold;");
-        grid.add(lblError, 0, 10, 2, 1);
-
-        dialog.getDialogPane().setContent(grid);
-
-        ButtonType btnTypeGuardar = new ButtonType("Guardar Producto", javafx.scene.control.ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(btnTypeGuardar, ButtonType.CANCEL);
-
-        javafx.scene.Node btnGuardarNode = dialog.getDialogPane().lookupButton(btnTypeGuardar);
-        if (btnGuardarNode != null && btnGuardarNode instanceof javafx.scene.control.Button) {
-            javafx.scene.control.Button btnGuardar = (javafx.scene.control.Button) btnGuardarNode;
-            btnGuardar.setStyle("-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
-            
-            btnGuardar.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
-                if (tfNombre.getText().trim().isEmpty() || tfCategoria.getText().trim().isEmpty() ||
-                    tfDescripcion.getText().trim().isEmpty() || tfStockActual.getText().trim().isEmpty() ||
-                    tfStockMinimo.getText().trim().isEmpty() || tfUnidadMedida.getText().trim().isEmpty() ||
-                    tfPrecioCompra.getText().trim().isEmpty() || tfPrecioVenta.getText().trim().isEmpty() ||
-                    tfFechaCaducidad.getText().trim().isEmpty() || tfProveedorId.getText().trim().isEmpty()) {
-                    lblError.setText("⚠ Error: Por favor, rellena todos los campos.");
-                    event.consume();
-                } else {
-                    try {
-                        Integer.parseInt(tfStockActual.getText().trim());
-                        Integer.parseInt(tfStockMinimo.getText().trim());
-                        Double.parseDouble(tfPrecioCompra.getText().trim());
-                        Double.parseDouble(tfPrecioVenta.getText().trim());
-                        Integer.parseInt(tfProveedorId.getText().trim());
-                    } catch (NumberFormatException e) {
-                        lblError.setText("⚠ Error: Stocks, Precios e ID Proveedor deben ser números.");
-                        event.consume();
-                    }
-                }
-            });
+    private void editarProductoSeleccionado(ActionEvent event) {
+        Inventario seleccionado = tablaInventario.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            Toast.show(App.getStage(), "Por favor, seleccione un producto para editar.", 2);
+            return;
         }
-        
-        javafx.scene.Node btnCancelarNode = dialog.getDialogPane().lookupButton(ButtonType.CANCEL);
-        if (btnCancelarNode != null) {
-            btnCancelarNode.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
-        }
+        mostrarDialogoEditar(seleccionado);
+    }
 
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == btnTypeGuardar) {
-                int stockAct = Integer.parseInt(tfStockActual.getText().trim());
-                int stockMin = Integer.parseInt(tfStockMinimo.getText().trim());
-                double pCompra = Double.parseDouble(tfPrecioCompra.getText().trim());
-                double pVenta = Double.parseDouble(tfPrecioVenta.getText().trim());
-                int provId = Integer.parseInt(tfProveedorId.getText().trim());
-                int newId = 0;
-                return new Inventario(newId, tfNombre.getText().trim(), tfCategoria.getText().trim(), 
-                                      tfDescripcion.getText().trim(), stockAct, stockMin, 
-                                      tfUnidadMedida.getText().trim(), pCompra, pVenta, 
-                                      tfFechaCaducidad.getText().trim(), provId);
+    @FXML
+    private void eliminarProductoSeleccionado(ActionEvent event) {
+        Inventario seleccionado = tablaInventario.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            Toast.show(App.getStage(), "Por favor, seleccione un producto para desactivar.", 2);
+            return;
+        }
+        boolean ok = InventarioDAO.desactivar(seleccionado.getId());
+        if (ok) {
+            Toast.show(App.getStage(), "¡Producto desactivado exitosamente!", 2);
+            actualizarTablaInventario();
+        } else {
+            Toast.show(App.getStage(), "Error: No se pudo desactivar el producto.", 2);
+        }
+    }
+
+    @FXML
+    private void buscarProductoGlobal(ActionEvent event) {
+        Inventario seleccionado = tablaInventario.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            Toast.show(App.getStage(), "Por favor, seleccione un producto para buscar en otras sucursales.", 2);
+            return;
+        }
+        javafx.collections.ObservableList<String> results = InventarioDAO.buscarDisponibilidadGlobal(seleccionado.getNombre());
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Disponibilidad Global");
+        alert.setHeaderText("Disponibilidad de: " + seleccionado.getNombre());
+        if (results.isEmpty()) {
+            alert.setContentText("No hay stock en ninguna otra sucursal.");
+        } else {
+            alert.setContentText(String.join("\n", results));
+        }
+        alert.showAndWait();
+    }
+
+    // --- ACCIONES DEL FORMULARIO DE REGISTRO EN EL MODAL ---
+    @FXML
+    private void handleGuardarProducto() {
+        if (txtCodigo.getText().isEmpty() || txtNombre.getText().isEmpty() || 
+            comboCategoria.getValue() == null || txtPrecio.getText().isEmpty() || txtCosto.getText().isEmpty()) {
+            Toast.show(App.getStage(), "Por favor, llene todos los campos obligatorios (*)", 2);
+            return;
+        }
+        try {
+            String codigo = txtCodigo.getText().trim();
+            String nombre = txtNombre.getText().trim();
+            String categoria = comboCategoria.getValue();
+            String unidad = comboUnidad.getValue() != null ? comboUnidad.getValue() : "Pieza";
+            String descripcion = txtDescripcion.getText().trim();
+
+            double costo = Double.parseDouble(txtCosto.getText());
+            double precio = Double.parseDouble(txtPrecio.getText());
+            int existencia = Integer.parseInt(txtExistencia.getText());
+            int stockMinimo = txtStockMinimo.getText().isEmpty() ? 0 : Integer.parseInt(txtStockMinimo.getText());
+            LocalDate fechaCaducidad = dpCaducidad.getValue();
+
+            int idClinicaActual = UserSession.getInstance().getIdClinica();
+
+            InventarioDAO dao = new InventarioDAO();
+            boolean exito = dao.guardarProducto(codigo, idClinicaActual, nombre, descripcion, precio, costo, 
+                                                existencia, stockMinimo, categoria, unidad, fechaCaducidad);
+
+            if (exito) {
+                Toast.show(App.getStage(), "¡Producto registrado exitosamente!", 2);
+                limpiarCamposFormulario();
+                cerrarModal();
+            } else {
+                Toast.show(App.getStage(), "Error: El código de barras ya existe o hubo un fallo en la BD.", 2);
             }
-            return null;
-        });
+        } catch (NumberFormatException e) {
+            Toast.show(App.getStage(), "Verifique que los precios y existencias tengan formatos válidos.", 2);
+        }
+    }
 
-        java.util.Optional<Inventario> result = dialog.showAndWait();
-        result.ifPresent(nuevo -> {
-            boolean ok = InventarioDAO.insertar(nuevo);
-            if (ok) cargarInventarioEnPantalla();
-        });
+    @FXML
+    private void handleCancelar(ActionEvent event) {
+        cerrarModal();
+    }
+
+    private void limpiarCamposFormulario() {
+        if (txtCodigo != null) txtCodigo.clear();
+        if (txtNombre != null) txtNombre.clear();
+        if (comboCategoria != null) comboCategoria.setValue(null);
+        if (comboUnidad != null) comboUnidad.setValue("Pieza");
+        if (txtCosto != null) txtCosto.clear();
+        if (txtPrecio != null) txtPrecio.clear();
+        if (txtExistencia != null) txtExistencia.clear();
+        if (txtStockMinimo != null) txtStockMinimo.clear();
+        if (dpCaducidad != null) dpCaducidad.setValue(null);
+        if (txtDescripcion != null) txtDescripcion.clear();
+    }
+
+    private void cerrarModal() {
+        Stage stage = null;
+        if (txtCodigo != null && txtCodigo.getScene() != null) {
+            stage = (Stage) txtCodigo.getScene().getWindow();
+        }
+        if (stage != null) {
+            stage.close();
+        }
     }
 
     private void mostrarDialogoEditar(Inventario inv) {
         Dialog<Boolean> dialog = new Dialog<>();
         dialog.setTitle("Editar Producto");
-        
         dialog.getDialogPane().setStyle("-fx-background-color: #DFF5E1; -fx-font-family: 'System';");
 
         GridPane grid = new GridPane();
@@ -317,7 +351,6 @@ public class InventarioController implements Initializable {
         TextField tfPrecioCompra = new TextField(String.valueOf(inv.getPrecio_compra())); tfPrecioCompra.setStyle(styleTextField);
         TextField tfPrecioVenta = new TextField(String.valueOf(inv.getPrecio_venta())); tfPrecioVenta.setStyle(styleTextField);
         TextField tfFechaCaducidad = new TextField(inv.getFecha_caducidad()); tfFechaCaducidad.setStyle(styleTextField);
-        TextField tfProveedorId = new TextField(String.valueOf(inv.getProveedor_id())); tfProveedorId.setStyle(styleTextField);
 
         Label lbl1 = new Label("Producto:"); lbl1.setStyle(styleLabel);
         Label lbl2 = new Label("Categoría:"); lbl2.setStyle(styleLabel);
@@ -328,7 +361,6 @@ public class InventarioController implements Initializable {
         Label lbl7 = new Label("Precio Compra:"); lbl7.setStyle(styleLabel);
         Label lbl8 = new Label("Precio Venta:"); lbl8.setStyle(styleLabel);
         Label lbl9 = new Label("Fecha Caducidad:"); lbl9.setStyle(styleLabel);
-        Label lbl10 = new Label("ID Proveedor:"); lbl10.setStyle(styleLabel);
 
         grid.add(lbl1, 0, 0); grid.add(tfNombre, 1, 0);
         grid.add(lbl2, 0, 1); grid.add(tfCategoria, 1, 1);
@@ -339,40 +371,37 @@ public class InventarioController implements Initializable {
         grid.add(lbl7, 0, 6); grid.add(tfPrecioCompra, 1, 6);
         grid.add(lbl8, 0, 7); grid.add(tfPrecioVenta, 1, 7);
         grid.add(lbl9, 0, 8); grid.add(tfFechaCaducidad, 1, 8);
-        grid.add(lbl10, 0, 9); grid.add(tfProveedorId, 1, 9);
 
         Label lblError = new Label();
         lblError.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 12px; -fx-font-weight: bold;");
-        grid.add(lblError, 0, 10, 2, 1);
+        grid.add(lblError, 0, 9, 2, 1);
 
         dialog.getDialogPane().setContent(grid);
 
-        ButtonType btnTypeGuardar = new ButtonType("Guardar Cambios", javafx.scene.control.ButtonBar.ButtonData.OK_DONE);
+        ButtonType btnTypeGuardar = new ButtonType("Guardar Cambios", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(btnTypeGuardar, ButtonType.CANCEL);
 
         javafx.scene.Node btnGuardarNode = dialog.getDialogPane().lookupButton(btnTypeGuardar);
-        if (btnGuardarNode != null && btnGuardarNode instanceof javafx.scene.control.Button) {
-            javafx.scene.control.Button btnGuardar = (javafx.scene.control.Button) btnGuardarNode;
-            btnGuardar.setStyle("-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+        if (btnGuardarNode != null && btnGuardarNode instanceof Button) {
+            Button btnG = (Button) btnGuardarNode;
+            btnG.setStyle("-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
             
-            btnGuardar.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+            btnG.addEventFilter(ActionEvent.ACTION, ev -> {
                 if (tfNombre.getText().trim().isEmpty() || tfCategoria.getText().trim().isEmpty() ||
                     tfDescripcion.getText().trim().isEmpty() || tfStockActual.getText().trim().isEmpty() ||
                     tfStockMinimo.getText().trim().isEmpty() || tfUnidadMedida.getText().trim().isEmpty() ||
-                    tfPrecioCompra.getText().trim().isEmpty() || tfPrecioVenta.getText().trim().isEmpty() ||
-                    tfFechaCaducidad.getText().trim().isEmpty() || tfProveedorId.getText().trim().isEmpty()) {
+                    tfPrecioCompra.getText().trim().isEmpty() || tfPrecioVenta.getText().trim().isEmpty()) {
                     lblError.setText("⚠ Error: Por favor, rellena todos los campos.");
-                    event.consume();
+                    ev.consume();
                 } else {
                     try {
                         Integer.parseInt(tfStockActual.getText().trim());
                         Integer.parseInt(tfStockMinimo.getText().trim());
                         Double.parseDouble(tfPrecioCompra.getText().trim());
                         Double.parseDouble(tfPrecioVenta.getText().trim());
-                        Integer.parseInt(tfProveedorId.getText().trim());
                     } catch (NumberFormatException e) {
-                        lblError.setText("⚠ Error: Stocks, Precios e ID Proveedor deben ser números.");
-                        event.consume();
+                        lblError.setText("⚠ Error: Stocks y Precios deben ser números.");
+                        ev.consume();
                     }
                 }
             });
@@ -394,7 +423,6 @@ public class InventarioController implements Initializable {
                 inv.setPrecio_compra(Double.parseDouble(tfPrecioCompra.getText().trim()));
                 inv.setPrecio_venta(Double.parseDouble(tfPrecioVenta.getText().trim()));
                 inv.setFecha_caducidad(tfFechaCaducidad.getText().trim());
-                inv.setProveedor_id(Integer.parseInt(tfProveedorId.getText().trim()));
                 return true;
             }
             return false;
@@ -403,7 +431,7 @@ public class InventarioController implements Initializable {
         dialog.showAndWait().ifPresent(actualizado -> {
             if (actualizado) {
                 InventarioDAO.actualizar(inv);
-                cargarInventarioEnPantalla();
+                actualizarTablaInventario();
             }
         });
     }

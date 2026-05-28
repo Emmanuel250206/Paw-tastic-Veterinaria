@@ -20,6 +20,12 @@ import java.sql.PreparedStatement;
 
 public class VeterinarioController implements Initializable {
 
+    private static VeterinarioController instanciaActiva;
+
+    public static VeterinarioController getInstanciaActiva() {
+        return instanciaActiva;
+    }
+
     @FXML
     private BorderPane bpPrincipal;
 
@@ -53,6 +59,7 @@ public class VeterinarioController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        instanciaActiva = this;
         // 1. Candado de tamaño para proteger el menú lateral
         Platform.runLater(() -> {
             Stage stage = (Stage) bpPrincipal.getScene().getWindow();
@@ -263,6 +270,10 @@ public class VeterinarioController implements Initializable {
 
     public Button getbReportes() {
         return bReportes;
+    }
+
+    public Button getbDashboard() {
+        return bDashboard;
     }
 
 }

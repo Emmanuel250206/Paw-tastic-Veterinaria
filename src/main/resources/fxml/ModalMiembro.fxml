@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<VBox prefHeight="480.0" prefWidth="800.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-color: #3D8D7A; -fx-border-width: 1.5; -fx-border-radius: 15;" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.ModalMiembroController">
+   <padding>
+      <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+   </padding>
+   <children>
+      <!-- Cabecera -->
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
+         <children>
+            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #3D8D7A; -fx-font-family: 'Segoe UI';" text="Registrar Nuevo Miembro de Staff" />
+                  <Label style="-fx-font-size: 13px; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Complete los datos del personal. Los campos con (*) son obligatorios." />
+               </children>
+            </VBox>
+            <VBox spacing="4.0" alignment="TOP_RIGHT">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="ROL DEL MIEMBRO" />
+                  <ComboBox fx:id="comboRol" prefHeight="35.0" prefWidth="180.0" style="-fx-background-color: white; -fx-border-color: #cccccc; -fx-border-radius: 5; -fx-border-width: 1;" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+
+      <!-- Campos Comunes -->
+      <GridPane hgap="20.0" vgap="15.0" VBox.vgrow="ALWAYS">
+         <columnConstraints>
+            <ColumnConstraints percentWidth="33.3" />
+            <ColumnConstraints percentWidth="33.3" />
+            <ColumnConstraints percentWidth="33.3" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="60.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="60.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <!-- Fila 0 -->
+            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Nombre(s)*" />
+                  <TextField fx:id="txtNombre" prefHeight="35.0" styleClass="text-field" promptText="Nombre" />
+               </children>
+            </VBox>
+            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Apellidos*" />
+                  <TextField fx:id="txtApellidos" prefHeight="35.0" styleClass="text-field" promptText="Apellidos" />
+               </children>
+            </VBox>
+            <VBox spacing="4.0" GridPane.columnIndex="2" GridPane.rowIndex="0">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Usuario (Login)*" />
+                  <TextField fx:id="txtUsuario" prefHeight="35.0" styleClass="text-field" promptText="Usuario" />
+               </children>
+            </VBox>
+            
+            <!-- Fila 1 -->
+            <VBox spacing="4.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Correo Electrónico*" />
+                  <TextField fx:id="txtEmail" prefHeight="35.0" styleClass="text-field" promptText="correo@ejemplo.com" />
+               </children>
+            </VBox>
+            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Teléfono*" />
+                  <TextField fx:id="txtTelefono" prefHeight="35.0" styleClass="text-field" promptText="Ej. 5512345678" />
+               </children>
+            </VBox>
+            <VBox spacing="4.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Contraseña*" />
+                  <PasswordField fx:id="txtContrasenia" prefHeight="35.0" styleClass="password-field" promptText="Contraseña" />
+               </children>
+            </VBox>
+         </children>
+      </GridPane>
+
+      <!-- Campos Veterinario Especiales (se muestran/ocultan dinámicamente) -->
+      <HBox fx:id="contenedorEspecialidad" spacing="20.0" VBox.vgrow="NEVER">
+         <children>
+            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Cédula Profesional*" />
+                  <TextField fx:id="txtCedula" prefHeight="35.0" styleClass="text-field" promptText="Ej. 12345678" />
+               </children>
+            </VBox>
+            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7F8C8D; -fx-font-family: 'Segoe UI';" text="Especialidad*" />
+                  <TextField fx:id="txtEspecialidad" prefHeight="35.0" styleClass="text-field" promptText="Ej. Cirugía, Cardiología" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+
+      <!-- Botones de Acción -->
+      <HBox alignment="CENTER_RIGHT" spacing="15.0">
+         <children>
+            <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#manejarCancelar" prefHeight="35.0" styleClass="boton-transparente" text="Cancelar" />
+            <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#manejarGuardar" prefHeight="35.0" styleClass="boton-verde" text="Guardar" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

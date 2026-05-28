@@ -158,4 +158,12 @@ public class Toast {
             fadeIn.play();
         });
     }
+
+    public static void show(Stage stage, String message) {
+        showToast(message);
+    }
+
+    public static void show(Stage stage, String message, int durationInSeconds) {
+        showToast(message, durationInSeconds);
+    }
 }

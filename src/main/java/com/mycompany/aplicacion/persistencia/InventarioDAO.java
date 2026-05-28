@@ -343,4 +343,42 @@ public class InventarioDAO {
         }
         return lista;
     }
+
+    public boolean guardarProducto(String codigo, int idClinicaActual, String nombre, String descripcion,
+                                   double precio, double costo, int existencia, int stockMinimo,
+                                   String categoria, String unidad, java.time.LocalDate fechaCaducidad) {
+        String sql = """
+            INSERT INTO tb_producto
+                (id_clinica, codigo, nombre, descripcion, precio, costo_unitario,
+                 existencia, stock_minimo, categoria, unidad_medida, fecha_caducidad, fecha, id_State)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 4)
+            """;
+        try (Connection con = new Conexion().estableceConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setInt(1, idClinicaActual);
+            ps.setString(2, codigo);
+            ps.setString(3, nombre);
+            ps.setString(4, descripcion != null ? descripcion.trim() : "");
+            ps.setDouble(5, precio);
+            ps.setDouble(6, costo);
+            ps.setInt(7, existencia);
+            ps.setInt(8, stockMinimo);
+            ps.setString(9, categoria);
+            ps.setString(10, unidad);
+            
+            if (fechaCaducidad != null) {
+                ps.setDate(11, Date.valueOf(fechaCaducidad));
+            } else {
+                ps.setNull(11, Types.DATE);
+            }
+            
+            ps.setDate(12, Date.valueOf(java.time.LocalDate.now()));
+            
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            System.err.println("[InventarioDAO] Error en guardarProducto: " + e.getMessage());
+            return false;
+        }
+    }
 }

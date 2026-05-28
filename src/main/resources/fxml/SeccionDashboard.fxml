@@ -60,10 +60,11 @@
                               </ImageView>
                               <!-- Nombre y rol del usuario -->
                               <VBox alignment="CENTER_LEFT" spacing="2.0">
-                                 <children>
-                                    <Label fx:id="lblNombreHeader" style="-fx-font-family: System; -fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2c3e50;" text="Cargando..." />
-                                    <Label fx:id="lblRolHeader" style="-fx-font-family: System; -fx-font-size: 12px; -fx-text-fill: #7f8c8d;" text="" />
-                                 </children>
+                                  <children>
+                                     <Label fx:id="lblNombreHeader" style="-fx-font-family: System; -fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2c3e50;" text="Cargando..." />
+                                     <Label fx:id="lblRolHeader" style="-fx-font-family: System; -fx-font-size: 12px; -fx-text-fill: #7f8c8d;" text="" />
+                                     <Label fx:id="lblSucursal" text="Sucursal: Cargando..." style="-fx-text-fill: #6B7A72; -fx-font-size: 13px; -fx-font-family: 'Arial';" />
+                                  </children>
                               </VBox>
                               <!-- Flecha indicadora de menú -->
                               <Label prefHeight="16.0" prefWidth="20.0" style="-fx-text-fill: #95a5a6; -fx-font-size: 11px;" text="▾" />

@@ -48,6 +48,9 @@ public class DashboardController {
     private Label lblRolHeader;
 
     @FXML
+    private Label lblSucursal;
+
+    @FXML
     private HBox hboxPerfil;
 
     @FXML
@@ -62,6 +65,17 @@ public class DashboardController {
         UserSession.loadProfileImage(imgPerfilHeader);
         lblNombreHeader.setText(UserSession.getInstance().getUserName());
         lblRolHeader.setText(UserSession.getInstance().getUserRole());
+
+        // Retrieve the active memory session
+        UserSession sesion = UserSession.getInstance();
+        if (lblSucursal != null) {
+            if (sesion != null && sesion.getNombreClinica() != null) {
+                // Render the real clinic name fetched from the SQL JOIN query
+                lblSucursal.setText("Sucursal: " + sesion.getNombreClinica());
+            } else {
+                lblSucursal.setText("Sucursal: No identificada");
+            }
+        }
 
         generarSaludoDinamico();
 

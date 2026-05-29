@@ -407,6 +407,79 @@ public class MascotaDAO {
         }
     }
 
+    /**
+     * Actualiza los atributos corregidos de una mascota y su propietario.
+     */
+    public static boolean actualizarMascota(int idMascota, String nombre, int idEspecie, int idRaza, String fechaNac, String propietario) {
+        String sqlSelectProp = "SELECT id_propietario FROM tb_mascotas WHERE id = ?";
+        String sqlMasc = """
+            UPDATE tb_mascotas SET
+                nombre = ?, id_especie = ?, id_raza = ?,
+                fecha_nacimiento = ?
+            WHERE id = ?
+            """;
+        String sqlProp = """
+            UPDATE tb_propietarios SET
+                nombre = ?, apellidos = ?
+            WHERE id = ?
+            """;
+        try (Connection con = new Conexion().estableceConexion()) {
+            con.setAutoCommit(false);
+            int idProp = -1;
+            try (PreparedStatement psSel = con.prepareStatement(sqlSelectProp)) {
+                psSel.setInt(1, idMascota);
+                try (ResultSet rs = psSel.executeQuery()) {
+                    if (rs.next()) {
+                        idProp = rs.getInt("id_propietario");
+                    }
+                }
+            }
+
+            if (idProp == -1) {
+                con.rollback();
+                return false;
+            }
+
+            // Update tb_mascotas
+            try (PreparedStatement psM = con.prepareStatement(sqlMasc)) {
+                psM.setString(1, nombre.trim());
+                psM.setInt(2, idEspecie);
+                psM.setInt(3, idRaza);
+                if (fechaNac != null && !fechaNac.trim().isEmpty()) {
+                    psM.setDate(4, java.sql.Date.valueOf(fechaNac));
+                } else {
+                    psM.setNull(4, Types.DATE);
+                }
+                psM.setInt(5, idMascota);
+                psM.executeUpdate();
+            }
+
+            // Parse owner name & apellidos
+            String full = propietario != null ? propietario.trim() : "";
+            String pNombre = full;
+            String pApellidos = "";
+            int spaceIdx = full.indexOf(" ");
+            if (spaceIdx > 0) {
+                pNombre = full.substring(0, spaceIdx).trim();
+                pApellidos = full.substring(spaceIdx + 1).trim();
+            }
+
+            // Update tb_propietarios
+            try (PreparedStatement psP = con.prepareStatement(sqlProp)) {
+                psP.setString(1, pNombre);
+                psP.setString(2, pApellidos);
+                psP.setInt(3, idProp);
+                psP.executeUpdate();
+            }
+
+            con.commit();
+            return true;
+        } catch (Exception e) {
+            System.err.println("[MascotaDAO] Error al actualizar mascota completo: " + e.getMessage());
+            return false;
+        }
+    }
+
     private static void verificarDefaults(Connection con) throws SQLException {
         String checkEsp = "SELECT id FROM tb_especie WHERE id = 1";
         String checkRaz = "SELECT id FROM tb_raza WHERE id = 1";

@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
@@ -129,7 +130,7 @@
                               <!-- Nombre + Badge de estado en la misma fila -->
                               <HBox alignment="CENTER_LEFT" spacing="10.0">
                                  <children>
-                                     <Label fx:id="lblNombre" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1A4D42;" styleClass="ficha-label-value" stylesheets="@estilos.css" text="-" />
+                                    <TextField fx:id="txtNombreMascota" prefWidth="250.0" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1A4D42; -fx-background-color: white; -fx-border-color: #3D8D7A; -fx-border-radius: 5; -fx-padding: 3 5 3 5;" text="-" />
                                     <Region HBox.hgrow="ALWAYS" />
                                  </children>
                               </HBox>
@@ -150,19 +151,23 @@
                                   <RowConstraints minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
                                   <RowConstraints minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
                                     <Label styleClass="ficha-label-key" stylesheets="@estilos.css" text="Especie:" />
-                                    <Label fx:id="lblEspecie" styleClass="ficha-label-value" stylesheets="@estilos.css" text="-" GridPane.columnIndex="1" />
+                                    <ComboBox fx:id="comboEspecie" prefWidth="230.0" style="-fx-background-color: white; -fx-border-color: #3D8D7A; -fx-border-radius: 5;" GridPane.columnIndex="1" />
 
                                     <Label styleClass="ficha-label-key" stylesheets="@estilos.css" text="Raza:" GridPane.rowIndex="1" />
-                                    <Label fx:id="lblRaza" styleClass="ficha-label-value" stylesheets="@estilos.css" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <ComboBox fx:id="comboRaza" prefWidth="230.0" style="-fx-background-color: white; -fx-border-color: #3D8D7A; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
                                     <Label styleClass="ficha-label-key" stylesheets="@estilos.css" text="Edad:" GridPane.rowIndex="2" />
-                                    <Label fx:id="lblEdad" styleClass="ficha-label-value" stylesheets="@estilos.css" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <TextField fx:id="txtEdad" style="-fx-background-color: white; -fx-border-color: #3D8D7A; -fx-border-radius: 5; -fx-padding: 3 5 3 5;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
                                     <Label styleClass="ficha-label-key" stylesheets="@estilos.css" text="Propietario:" GridPane.rowIndex="3" />
-                                    <Label fx:id="lblPropietario" styleClass="ficha-label-value" stylesheets="@estilos.css" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <TextField fx:id="txtPropietario" style="-fx-background-color: white; -fx-border-color: #3D8D7A; -fx-border-radius: 5; -fx-padding: 3 5 3 5;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                                    <Label styleClass="ficha-label-key" stylesheets="@estilos.css" text="ID Mascota:" GridPane.rowIndex="4" />
+                                    <TextField fx:id="txtIdMascota" disable="true" editable="false" style="-fx-background-color: #F0F0F0; -fx-border-color: #CCCCCC; -fx-border-radius: 5; -fx-padding: 3 5 3 5;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                  </children>
                               </GridPane>
 
@@ -174,13 +179,14 @@
 
                               <TextArea fx:id="txtHistorial" editable="false" prefHeight="150.0" prefWidth="200.0" styleClass="historial-area" stylesheets="@estilos.css" wrapText="true" VBox.vgrow="ALWAYS" />
                               <HBox fx:id="containerBotones" spacing="15.0">
-                                 <children>
-                                    <Button fx:id="btnGuardar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: #27AE60; -fx-text-fill: white; -fx-font-family: 'Segoe UI Bold'; -fx-font-size: 15px; -fx-background-radius: 15; -fx-pref-height: 40; -fx-cursor: hand;" text="Guardar cambios" HBox.hgrow="ALWAYS" />
-                                    <Button fx:id="btnCancelar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-font-family: 'Segoe UI Semibold'; -fx-font-size: 14px; -fx-background-radius: 15; -fx-pref-height: 40; -fx-cursor: hand;" text="Cancelar" HBox.hgrow="ALWAYS" />
-                                 </children>
-                                 <VBox.margin>
-                                    <Insets top="20.0" />
-                                 </VBox.margin>
+                                  <children>
+                                     <Button fx:id="btnModificarMascota" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleModificarClick" style="-fx-background-color: #3498DB; -fx-text-fill: white; -fx-font-family: 'Segoe UI Semibold'; -fx-font-size: 14px; -fx-background-radius: 15; -fx-pref-height: 40; -fx-cursor: hand;" text="Modificar Información" HBox.hgrow="ALWAYS" />
+                                     <Button fx:id="btnGuardar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: #27AE60; -fx-text-fill: white; -fx-font-family: 'Segoe UI Bold'; -fx-font-size: 15px; -fx-background-radius: 15; -fx-pref-height: 40; -fx-cursor: hand;" text="Guardar cambios" HBox.hgrow="ALWAYS" />
+                                     <Button fx:id="btnCancelar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-font-family: 'Segoe UI Semibold'; -fx-font-size: 14px; -fx-background-radius: 15; -fx-pref-height: 40; -fx-cursor: hand;" text="Cancelar" HBox.hgrow="ALWAYS" />
+                                  </children>
+                                  <VBox.margin>
+                                     <Insets top="20.0" />
+                                  </VBox.margin>
                               </HBox>
 
                            </children>

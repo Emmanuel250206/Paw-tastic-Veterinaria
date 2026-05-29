@@ -133,6 +133,14 @@ public class UserSession {
         userAlias.set(alias);
     }
 
+    public String getUsuario() {
+        return getUserAlias();
+    }
+
+    public void setUsuario(String usuario) {
+        setUserAlias(usuario);
+    }
+
     // --- Accessors currentAvatarName ---
     public StringProperty currentAvatarNameProperty() { return currentAvatarName; }
     public String getCurrentAvatarName()              { return currentAvatarName.get(); }

@@ -120,6 +120,7 @@ public class VeterinarioController implements Initializable {
      * y carga el FXML en el centro del BorderPane.
      */
     public void navegar(Button botonPulsado, String nombreFXML) {
+        System.out.println("[VeterinarioController] navegar() called for FXML: " + nombreFXML + ", button is: " + (botonPulsado != null ? botonPulsado.getText() : "null"));
         // 1. Lista de todos los botones para resetear estilos
         Button[] botonesMenu = { bDashboard, bMascotas, bCitas, bInventario, bPuntoVenta, bStaff, bReportes };
 
@@ -144,6 +145,7 @@ public class VeterinarioController implements Initializable {
             URL url = getClass().getResource(ruta);
 
             if (url == null) {
+                System.err.println("⚠️ ERROR: No se encontró el recurso FXML en la ruta: " + ruta);
                 return;
             }
 
@@ -151,6 +153,7 @@ public class VeterinarioController implements Initializable {
             Node vista = loader.load();
 
             if (bpPrincipal == null) {
+                System.err.println("⚠️ ERROR: bpPrincipal es nulo.");
                 return;
             }
 
@@ -164,8 +167,10 @@ public class VeterinarioController implements Initializable {
             }
 
             bpPrincipal.setCenter(vista);
+            System.out.println("[VeterinarioController] navegar() success: loaded center view for " + nombreFXML);
 
-        } catch (IOException e) {
+        } catch (Throwable e) {
+            System.err.println("⚠️ ERROR CRÍTICO al cargar la vista " + nombreFXML + ":");
             e.printStackTrace();
         }
     }
@@ -179,11 +184,13 @@ public class VeterinarioController implements Initializable {
 
     @FXML
     public void mostrarVistaMascotas(ActionEvent event) {
+        System.out.println("[VeterinarioController] mostrarVistaMascotas() triggered");
         navegar(bMascotas, "SeccionMascotas");
     }
 
     @FXML
     public void mostrarVistaCitas(ActionEvent event) {
+        System.out.println("[VeterinarioController] mostrarVistaCitas() triggered");
         if ("Staff".equalsIgnoreCase(App.getRolUsuario())) {
             navegar(bCitas, "SeccionCitasStaff");
         } else {

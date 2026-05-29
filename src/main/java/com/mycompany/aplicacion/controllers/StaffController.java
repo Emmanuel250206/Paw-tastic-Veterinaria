@@ -40,6 +40,9 @@ public class StaffController implements Initializable {
 
     private static StaffController instance;
 
+    private Button btnEditarStaff;
+    private Button btnDesactivarStaff;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         instance = this;
@@ -160,12 +163,14 @@ public class StaffController implements Initializable {
 
             // Botón de Editar
             Button btnEditar = new Button("Editar");
+            btnEditar.setId("btnEditarStaff");
             btnEditar.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold;");
             btnEditar.setCursor(javafx.scene.Cursor.HAND);
             btnEditar.setOnAction(e -> mostrarDialogoEditar(s));
 
             // Botón de Desactivar
             Button btnEliminar = new Button("Desactivar");
+            btnEliminar.setId("btnDesactivarStaff");
             btnEliminar.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;");
             btnEliminar.setCursor(javafx.scene.Cursor.HAND);
             btnEliminar.setOnAction(e -> {
@@ -186,6 +191,28 @@ public class StaffController implements Initializable {
             VBox accionesContenedor = new VBox(10, btnEditar, btnEliminar);
             accionesContenedor.setAlignment(Pos.CENTER);
             accionesContenedor.setPadding(new Insets(0, 0, 0, 15));
+
+            // Evitar auto-bloqueo: Ocultar y deshabilitar los botones solo si la fila pertenece al usuario logueado
+            String usuarioLogueado = UserSession.getInstance().getUsuario();
+            if (s.getUsuario() != null && s.getUsuario().equalsIgnoreCase(usuarioLogueado)) {
+                btnEditar.setVisible(false);
+                btnEditar.setManaged(false);
+                btnEliminar.setVisible(false);
+                btnEliminar.setManaged(false);
+                accionesContenedor.setVisible(false);
+                accionesContenedor.setManaged(false);
+            } else {
+                // De lo contrario, mantenerlos totalmente visibles y funcionales para otros usuarios
+                btnEditar.setVisible(true);
+                btnEditar.setManaged(true);
+                btnEliminar.setVisible(true);
+                btnEliminar.setManaged(true);
+                accionesContenedor.setVisible(true);
+                accionesContenedor.setManaged(true);
+            }
+
+            btnEditarStaff = btnEditar;
+            btnDesactivarStaff = btnEliminar;
 
             tarjeta.getChildren().addAll(infoPrincipal, spacer, infoContacto, accionesContenedor);
             tarjeta.setMinHeight(Region.USE_PREF_SIZE);

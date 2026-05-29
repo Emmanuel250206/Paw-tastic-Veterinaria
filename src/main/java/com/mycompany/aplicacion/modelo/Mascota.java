@@ -97,6 +97,30 @@ public class Mascota {
         this.historialClinico = historialClinico;
     }
 
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setEspecie(String especie) {
+        this.especie = especie;
+    }
+
+    public void setRaza(String raza) {
+        this.raza = raza;
+    }
+
+    public void setEdad(int edad) {
+        this.edad = edad;
+    }
+
+    public void setNombrePropietario(String nombrePropietario) {
+        this.nombrePropietario = nombrePropietario;
+    }
+
+    public String getPropietario() {
+        return getNombrePropietario();
+    }
+
     @Override
     public String toString() {
         return nombre + " (" + especie + " - " + raza + ")";

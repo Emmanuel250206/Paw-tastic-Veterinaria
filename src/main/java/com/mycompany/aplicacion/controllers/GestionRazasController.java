@@ -1,8 +1,11 @@
 package com.mycompany.aplicacion.controllers;
 
 import com.mycompany.aplicacion.modelo.Especie;
+import com.mycompany.aplicacion.modelo.Raza;
 import com.mycompany.aplicacion.persistencia.MascotaDAO;
 import com.mycompany.aplicacion.util.Toast;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -11,9 +14,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
@@ -28,20 +32,47 @@ public class GestionRazasController {
     @FXML private Button btnGuardar;
     @FXML private Button btnCancelar;
 
+    // Right Side: Registered Breeds Table
+    @FXML private TableView<Raza> tblRazasExistentes;
+    @FXML private TableColumn<Raza, String> colNombre;
+    @FXML private TableColumn<Raza, String> colDescripcion;
+
     @FXML
     public void initialize() {
         cargarEspecies();
+        
+        // Setup table column value factories
+        if (colNombre != null) {
+            colNombre.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNombre()));
+        }
+        if (colDescripcion != null) {
+            colDescripcion.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getDescripcion()));
+        }
+
         cbEspecie.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 txtDescEspecie.setText(newVal.getDescripcion());
+                cargarRazasPorEspecie();
             } else {
                 txtDescEspecie.clear();
+                if (tblRazasExistentes != null) {
+                    tblRazasExistentes.setItems(FXCollections.observableArrayList());
+                }
             }
         });
     }
 
     private void cargarEspecies() {
         cbEspecie.setItems(MascotaDAO.listarEspecies());
+    }
+
+    private void cargarRazasPorEspecie() {
+        Especie especieSeleccionada = cbEspecie.getValue();
+        if (especieSeleccionada != null && tblRazasExistentes != null) {
+            tblRazasExistentes.setItems(MascotaDAO.listarRazasPorEspecie(especieSeleccionada.getId()));
+        } else if (tblRazasExistentes != null) {
+            tblRazasExistentes.setItems(FXCollections.observableArrayList());
+        }
     }
 
     @FXML
@@ -101,8 +132,10 @@ public class GestionRazasController {
 
         boolean ok = MascotaDAO.insertarRaza(nombre, esp.getId(), desc);
         if (ok) {
-            Toast.showToast("Raza guardada con éxito", 2);
-            cerrar(null);
+            Toast.showToast("Raza guardada con éxito 🐾", 2);
+            txtNombreRaza.clear();
+            txtDescRaza.clear();
+            cargarRazasPorEspecie();
         } else {
             Toast.showToast("La raza ya existe o hubo un error", 3);
         }

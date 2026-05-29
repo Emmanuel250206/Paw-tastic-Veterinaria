@@ -5,6 +5,7 @@ import com.mycompany.aplicacion.modelo.Citas;
 import com.mycompany.aplicacion.modelo.Citas.Prioridad;
 import com.mycompany.aplicacion.persistencia.CitasDAO;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
@@ -90,6 +91,9 @@ public class CitasController implements Initializable {
     // ── Estado ────────────────────────────────────────────────────────────────
     private Citas citaSeleccionada;
 
+    /** Lista maestra que alimenta la tabla (se actualiza con setAll para no romper el listener). */
+    private final ObservableList<Citas> masterList = FXCollections.observableArrayList();
+
     /** Lista maestra de reportes guardados para filtrado. */
     private final List<ReporteLocal> listaReportes = new ArrayList<>();
 
@@ -112,6 +116,7 @@ public class CitasController implements Initializable {
         configurarSignosVitales();
         configurarTabla();
         bloquearPanelCentral();
+        cargarHistorialDesdeBD();
     }
 
     private void construirMenuPerfil() {
@@ -252,11 +257,19 @@ public class CitasController implements Initializable {
             }
         });
 
-        // Carga desde BD en hilo de fondo para no bloquear el UI
-        ObservableList<Citas> datos = CitasDAO.getCitasHoy();
-        SortedList<Citas> sorted = new SortedList<>(datos, COMPARADOR_PRIORIDAD);
+        // Enlazar la tabla a la masterList (una sola vez, nunca se cambia el items)
+        SortedList<Citas> sorted = new SortedList<>(masterList, COMPARADOR_PRIORIDAD);
         tablaColaCitas.setItems(sorted);
-        lblContadorCitas.setText(datos.size() + " citas");
+
+        // ── REGISTRAR el listener ANTES de cargar datos ──────────────────────
+        // Si se registra después del primer select(0), la selección inicial no dispara el panel
+        tablaColaCitas.getSelectionModel().selectedItemProperty()
+            .addListener((obs, old, nueva) -> {
+                if (nueva != null) cargarCitaEnPantalla(nueva);
+            });
+
+        // Carga inicial desde BD (ahora el listener ya está activo)
+        refreshTable();
 
         // Filas URGENTE o EN CURSO: Forzado de Estilos con Selección Contrastada
         tablaColaCitas.setRowFactory(tv -> {
@@ -292,14 +305,25 @@ public class CitasController implements Initializable {
 
             return row;
         });
+    }
 
-        // Selección → panel central
-        tablaColaCitas.getSelectionModel().selectedItemProperty()
-            .addListener((obs, old, nueva) -> {
-                if (nueva != null) cargarCitaEnPantalla(nueva);
-            });
-
-        if (!sorted.isEmpty()) {
+    /** Recarga la cola de citas del día desde la BD sin romper el listener de selección. */
+    public void refreshTable() {
+        Citas selActual = tablaColaCitas.getSelectionModel().getSelectedItem();
+        ObservableList<Citas> datos = CitasDAO.getCitasHoy();
+        masterList.setAll(datos);          // actualiza en-place, el SortedList re-ordena solo
+        lblContadorCitas.setText(masterList.size() + " citas");
+        tablaColaCitas.refresh();
+        // Restaurar selección si aún existe, o seleccionar la primera
+        if (selActual != null) {
+            for (Citas c : tablaColaCitas.getItems()) {
+                if (c.getId() == selActual.getId()) {
+                    tablaColaCitas.getSelectionModel().select(c);
+                    return;
+                }
+            }
+        }
+        if (!tablaColaCitas.getItems().isEmpty()) {
             tablaColaCitas.getSelectionModel().select(0);
         }
     }
@@ -360,17 +384,21 @@ public class CitasController implements Initializable {
             return;
         }
 
-        if (estado.equalsIgnoreCase("En Consulta")) {
+        // Estado "En curso" = consulta activa. Finalizar → Completada (ID 16)
+        if (estado.equalsIgnoreCase("En curso")) {
+            boolean ok = guardarReporteEnBD();
             citaSeleccionada.setEstado("Completada");
-            CitasDAO.cambiarEstadoCita(citaSeleccionada.getId(), 16); // 'Completada' (ID 16)
-            guardarReporteAutomatico();
+            CitasDAO.cambiarEstadoCita(citaSeleccionada.getId(), CitasDAO.STATE_COMPLETADA);
             cargarCitaEnPantalla(citaSeleccionada);
+            cargarHistorialDesdeBD();
             mostrarAlerta(Alert.AlertType.INFORMATION,
                 "Consulta Finalizada",
-                "La consulta terminó. El reporte fue guardado automáticamente.");
+                ok ? "La consulta terminó y el diagnóstico fue guardado."
+                   : "La consulta terminó, pero no se pudieron guardar las notas.");
         } else {
-            citaSeleccionada.setEstado("En Consulta");
-            CitasDAO.cambiarEstadoCita(citaSeleccionada.getId(), 15); // Sigue 'En curso' (ID 15)
+            // Pendiente, Confirmada, etc. → Iniciar consulta (En curso = ID 15)
+            citaSeleccionada.setEstado("En curso");
+            CitasDAO.cambiarEstadoCita(citaSeleccionada.getId(), CitasDAO.STATE_EN_CURSO);
             cargarCitaEnPantalla(citaSeleccionada);
         }
 
@@ -439,23 +467,50 @@ public class CitasController implements Initializable {
     // ══ HISTORIAL: GUARDADO Y FILTRADO ═══════════════════════════════════════
 
     /**
-     * Guarda el reporte en memoria y lo renderiza en el historial.
-     * Usa la fecha/hora actual del sistema.
+     * Guarda el diagnóstico en tb_diagnosticos y recarga el historial desde la BD.
+     * @return true si se guardó correctamente.
      */
-    private void guardarReporteAutomatico() {
+    private boolean guardarReporteEnBD() {
         String notas = txtReporteCita.getText().trim();
         if (notas.isEmpty()) notas = "(Sin notas registradas)";
 
-        ReporteLocal reporte = new ReporteLocal(
-            LocalDateTime.now(),
-            citaSeleccionada.getNombreMascota(),
-            citaSeleccionada.getMotivo(),
-            String.format("Temp: %s °C  |  FC: %s ppm  |  FR: %s rpm",
-                textoODefecto(txtTemp), textoODefecto(txtFreqCard), textoODefecto(txtFreqResp)),
-            notas
-        );
+        String tratamiento = String.format("Signos: Temp %s °C | FC %s ppm | FR %s rpm",
+            textoODefecto(txtTemp), textoODefecto(txtFreqCard), textoODefecto(txtFreqResp));
 
-        listaReportes.add(0, reporte); // más reciente primero
+        return CitasDAO.guardarDiagnostico(-1, citaSeleccionada.getId(), notas, tratamiento);
+    }
+
+    /**
+     * Carga los diagnósticos desde tb_diagnosticos y los muestra en el historial.
+     */
+    private void cargarHistorialDesdeBD() {
+        listaReportes.clear();
+        String sql = """
+            SELECT d.descripcion, d.tratamiento, d.fecha_registro,
+                   m.nombre AS mascota, c.motivo
+            FROM tb_diagnosticos d
+            JOIN tb_citas c ON c.id = d.id_cita
+            JOIN tb_mascotas m ON m.id = c.id_mascota
+            ORDER BY d.fecha_registro DESC
+            LIMIT 30
+            """;
+        try (java.sql.Connection con = new com.mycompany.aplicacion.persistencia.Conexion().estableceConexion();
+             java.sql.PreparedStatement ps = con.prepareStatement(sql);
+             java.sql.ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                java.sql.Timestamp ts = rs.getTimestamp("fecha_registro");
+                LocalDateTime ldt = ts != null ? ts.toLocalDateTime() : LocalDateTime.now();
+                listaReportes.add(new ReporteLocal(
+                    ldt,
+                    rs.getString("mascota"),
+                    rs.getString("motivo"),
+                    rs.getString("tratamiento"),
+                    rs.getString("descripcion")
+                ));
+            }
+        } catch (Exception e) {
+            System.err.println("[CitasController] Error cargando historial: " + e.getMessage());
+        }
         renderizarReportes(listaReportes);
     }
 
@@ -615,44 +670,41 @@ public class CitasController implements Initializable {
     // ══ MÉTODOS AUXILIARES ════════════════════════════════════════════════════
 
     private boolean estaTerminada(String estado) {
-        return estado.equalsIgnoreCase("Finalizada")
-            || estado.equalsIgnoreCase("Completada");
+        return estado.equalsIgnoreCase("Completada")
+            || estado.equalsIgnoreCase("Finalizada");
     }
 
     private void actualizarBotonEstado() {
         if (citaSeleccionada == null) return;
 
-        boolean esStaff    = "Staff".equalsIgnoreCase(App.getRolUsuario());
-        String  estado     = citaSeleccionada.getEstado();
-        boolean enConsulta = estado.equalsIgnoreCase("En Consulta");
-        boolean terminada  = estaTerminada(estado);
+        boolean esStaff     = "Staff".equalsIgnoreCase(App.getRolUsuario());
+        String  estado      = citaSeleccionada.getEstado();
+        // "En curso" es el estado activo de consulta (id_state = 15 en BD)
+        boolean enCurso     = estado.equalsIgnoreCase("En curso");
+        boolean terminada   = estaTerminada(estado);
+        boolean esCancelada = estado.equalsIgnoreCase("Cancelada");
+        boolean bloqueado   = terminada || esCancelada;
 
-        boolean esCancelada  = estado.equalsIgnoreCase("Cancelada");
-        boolean esPendiente  = estado.equalsIgnoreCase("Pendiente");
-        boolean bloqueado    = terminada || esCancelada;
-
-        txtReporteCita.setDisable(!enConsulta);
-        txtReporteCita.setPromptText(enConsulta
+        // El editor se habilita cuando la cita está activa (En curso)
+        txtReporteCita.setDisable(!enCurso);
+        txtReporteCita.setPromptText(enCurso
             ? "Escribe las notas médicas de la consulta..."
-            : (esPendiente 
-                ? "La cita está 'Pendiente' de triaje por el Staff."
-                : "El editor se activa al iniciar la consulta."));
+            : (bloqueado
+                ? "Esta cita ya está cerrada."
+                : "Presiona 'Iniciar Consulta' para habilitar el editor."));
 
-        // Signos vitales: siempre deshabilitados (se leen del triaje)
+        // Signos vitales: solo lectura siempre (cargados del triaje del staff)
         setSignosVitalesDisable(true);
         if (bloqueado) clearSignosVitales();
 
-        // Iniciar Consulta se deshabilita si es Staff, si está bloqueado, o si está Pendiente de triaje
-        bAccionCita.setDisable(esStaff || bloqueado || esPendiente);
-        
-        // Cancelar se deshabilita si es Staff o si la cita está terminada/cancelada
+        // Veterinario puede iniciar/finalizar cualquier cita no bloqueada
+        bAccionCita.setDisable(esStaff || bloqueado);
         btnCancelarCita.setDisable(esStaff || bloqueado);
 
         if (esStaff)         estilizarBoton(bAccionCita, "Solo Veterinario",   "#95a5a6");
         else if (esCancelada)estilizarBoton(bAccionCita, "Cita Cancelada",     "#bdc3c7");
         else if (terminada)  estilizarBoton(bAccionCita, "Consulta Terminada", "#bdc3c7");
-        else if (esPendiente)estilizarBoton(bAccionCita, "Iniciar Consulta",   "#95a5a6");
-        else if (enConsulta) estilizarBoton(bAccionCita, "Finalizar Consulta", "#e74c3c");
+        else if (enCurso)    estilizarBoton(bAccionCita, "Finalizar Consulta", "#e74c3c");
         else                 estilizarBoton(bAccionCita, "Iniciar Consulta",   "#3d8d7a");
     }
 

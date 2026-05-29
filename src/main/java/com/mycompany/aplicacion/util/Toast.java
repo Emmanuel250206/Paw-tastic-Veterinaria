@@ -28,7 +28,7 @@ public class Toast {
      * información generada (ej. nombres de usuario asignados automáticamente).
      */
     public static void showToast(String message) {
-        showToast(message, 6);
+        showToast(message, 3);
     }
 
     /**
@@ -40,8 +40,9 @@ public class Toast {
      * @param durationInSeconds Tiempo en segundos que el Toast permanece visible.
      */
     public static void showToast(String message, int durationInSeconds) {
-        // Garantizamos un mínimo razonable para que la animación sea legible
-        final double d = Math.max(1, durationInSeconds);
+        // Garantizamos un mínimo razonable para que la animación sea legible,
+        // aplicando un factor de velocidad (se reduce a la mitad el tiempo en pantalla)
+        final double d = Math.max(0.5, durationInSeconds * 0.5);
 
         Platform.runLater(() -> {
             Stage owner = App.getStage();
@@ -101,10 +102,10 @@ public class Toast {
                 
                 toastStage.setY(startY);
 
-                // 1. Animación de Slide-in manual de la ventana
+                // 1. Animación de Slide-in manual de la ventana (más rápida)
                 Transition slideIn = new Transition() {
                     { 
-                        setCycleDuration(Duration.millis(500)); 
+                        setCycleDuration(Duration.millis(250)); 
                         setInterpolator(Interpolator.EASE_OUT);
                     }
                     @Override
@@ -134,9 +135,9 @@ public class Toast {
                     )
                 );
 
-                // 3. Fade Out Final — se dispara exactamente cuando la barra llega a 0
+                // 3. Fade Out Final — se dispara exactamente cuando la barra llega a 0 (más rápida)
                 Timeline fadeOutTimeline = new Timeline(new KeyFrame(Duration.seconds(d), evt -> {
-                    FadeTransition fadeOut = new FadeTransition(Duration.millis(400), root);
+                    FadeTransition fadeOut = new FadeTransition(Duration.millis(200), root);
                     fadeOut.setFromValue(1.0);
                     fadeOut.setToValue(0.0);
                     fadeOut.setOnFinished(e -> toastStage.close());
@@ -152,7 +153,7 @@ public class Toast {
             root.setOpacity(0);
             toastStage.show();
 
-            FadeTransition fadeIn = new FadeTransition(Duration.millis(500), root);
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(250), root);
             fadeIn.setFromValue(0.0);
             fadeIn.setToValue(1.0);
             fadeIn.play();

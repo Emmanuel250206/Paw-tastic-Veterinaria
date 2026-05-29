@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-05-2026 a las 23:20:39
+-- Tiempo de generación: 29-05-2026 a las 02:24:00
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -78,10 +78,10 @@ CREATE TABLE `tb_citas` (
   `id_usuario_web` int(11) DEFAULT NULL,
   `id_usuario_movil` int(11) DEFAULT NULL,
   `motivo` varchar(100) DEFAULT NULL,
-  `estado` char(1) NOT NULL,
   `fecha` datetime DEFAULT NULL,
   `fecha_reg` datetime NOT NULL,
-  `id_tipo_cita` int(11) DEFAULT NULL
+  `id_tipo_cita` int(11) DEFAULT NULL,
+  `id_state` int(11) NOT NULL DEFAULT 4
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -213,6 +213,15 @@ CREATE TABLE `tb_expediente` (
   `fecha_apertura` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `tb_expediente`
+--
+
+INSERT INTO `tb_expediente` (`id`, `id_mascota`, `historial`, `fecha_apertura`) VALUES
+(1, 1, 'Consulta general. Todo bien.', '2026-05-28 17:04:52'),
+(2, 2, 'Vacunación anual aplicada.', '2026-05-28 17:04:52'),
+(3, 3, 'Revisión de orejas. Tratamiento de ácaros en curso.', '2026-05-28 17:04:52');
+
 -- --------------------------------------------------------
 
 --
@@ -230,6 +239,15 @@ CREATE TABLE `tb_mascotas` (
   `created_at` datetime NOT NULL,
   `descripcion` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tb_mascotas`
+--
+
+INSERT INTO `tb_mascotas` (`id`, `id_propietario`, `nombre`, `id_especie`, `id_raza`, `fecha_nacimiento`, `estado`, `created_at`, `descripcion`) VALUES
+(1, 1, 'Firulais', 1, 1, '2020-05-15', '1', '2026-05-28 17:04:52', 'Perro juguetón'),
+(2, 2, 'Michi', 2, 3, '2021-08-20', '1', '2026-05-28 17:04:52', 'Gato dormilón'),
+(3, 3, 'Tambor', 3, 5, '2022-11-10', '1', '2026-05-28 17:04:52', 'Conejo blanco');
 
 -- --------------------------------------------------------
 
@@ -298,6 +316,15 @@ CREATE TABLE `tb_propietarios` (
   `estado` char(1) NOT NULL,
   `created_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tb_propietarios`
+--
+
+INSERT INTO `tb_propietarios` (`id`, `id_usuario_web`, `id_usuario_movil`, `nombre`, `apellidos`, `telefono`, `direccion`, `estado`, `created_at`) VALUES
+(1, NULL, NULL, 'Juan', 'Pérez', '5551234567', 'Calle Falsa 123', '1', '2026-05-28 17:04:52'),
+(2, NULL, NULL, 'María', 'López', '5559876543', 'Av. Siempre Viva 742', '1', '2026-05-28 17:04:52'),
+(3, NULL, NULL, 'Carlos', 'Gómez', '5551112222', 'Paseo de la Reforma 45', '1', '2026-05-28 17:04:52');
 
 -- --------------------------------------------------------
 
@@ -424,7 +451,7 @@ CREATE TABLE `tb_usuario_web` (
 --
 
 INSERT INTO `tb_usuario_web` (`id`, `id_clinica`, `usuario`, `nombre`, `apellidos`, `tipo_rol`, `especialidad`, `cedula`, `telefono`, `email`, `contrasenia`, `created_at`, `activo`) VALUES
-(6, 4, 'emma', 'Emmanuel', 'Hernandez', 'administrador', NULL, NULL, '225551662', 'emma@gmail.com', '1010', '2026-05-22 23:21:25', 1),
+(6, 4, 'emma', 'Emmanuel', 'Hernandez', 'administrador', NULL, NULL, '225551662', 'emma@gmail.com', '1010', '2026-05-22 23:21:25', 0),
 (7, 4, 'luz', 'Luz', 'Lopez', 'recepcionista', NULL, NULL, '2286045398', 'luz@gmail.com', '2020', '2026-05-28 14:56:52', 1);
 
 -- --------------------------------------------------------
@@ -683,13 +710,13 @@ ALTER TABLE `tb_especie`
 -- AUTO_INCREMENT de la tabla `tb_expediente`
 --
 ALTER TABLE `tb_expediente`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `tb_mascotas`
 --
 ALTER TABLE `tb_mascotas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `tb_perdida`
@@ -707,7 +734,7 @@ ALTER TABLE `tb_producto`
 -- AUTO_INCREMENT de la tabla `tb_propietarios`
 --
 ALTER TABLE `tb_propietarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `tb_raza`

@@ -16,7 +16,7 @@ import com.mycompany.aplicacion.modelo.TipoCita;
  * CORRECCIONES APLICADAS:
  *  - Eliminadas columnas inexistentes: temperatura, frecuencia_cardiaca, frecuencia_respiratoria
  *  - insertarBasico() corregido: usa id_tipo_cita en vez de columna 'tipo'
- *  - cambiarEstado() corregido: usa id_State (FK) en vez de columna 'estado' (char)
+ *  - cambiarEstado() corregido: usa id_state (FK) en vez de columna 'estado' (char)
  */
 public class CitasDAO {
 
@@ -67,6 +67,7 @@ public class CitasDAO {
     // ─── Obtener citas del día actual ────────────────────────────────────────
     public static ObservableList<Citas> getCitasHoy() {
         ObservableList<Citas> lista = FXCollections.observableArrayList();
+
         String sql = """
             SELECT c.id, c.fecha, tc.nombre AS tipo, c.motivo, s.nombre AS estado,
                    m.nombre    AS mascota,
@@ -77,7 +78,7 @@ public class CitasDAO {
             FROM tb_citas c
             JOIN  tb_mascotas    m   ON m.id   = c.id_mascota
             JOIN  tb_tipo_cita   tc  ON tc.id  = c.id_tipo_cita
-            JOIN  tb_state       s   ON s.id   = c.id_State
+            JOIN  tb_state       s   ON s.id   = c.id_state
             LEFT JOIN tb_propietarios p   ON p.id   = m.id_propietario
             LEFT JOIN tb_usuario_web  uw2 ON uw2.id = c.id_usuario_web
             WHERE DATE(c.fecha) = CURDATE()
@@ -97,6 +98,7 @@ public class CitasDAO {
         return lista;
     }
 
+
     // ─── Obtener todas las citas (para historial) ────────────────────────────
     public static ObservableList<Citas> getTodas() {
         ObservableList<Citas> lista = FXCollections.observableArrayList();
@@ -110,7 +112,7 @@ public class CitasDAO {
             FROM tb_citas c
             JOIN  tb_mascotas    m   ON m.id   = c.id_mascota
             JOIN  tb_tipo_cita   tc  ON tc.id  = c.id_tipo_cita
-            JOIN  tb_state       s   ON s.id   = c.id_State
+            JOIN  tb_state       s   ON s.id   = c.id_state
             LEFT JOIN tb_propietarios p   ON p.id   = m.id_propietario
             LEFT JOIN tb_usuario_web  uw2 ON uw2.id = c.id_usuario_web
             ORDER BY c.fecha DESC
@@ -130,11 +132,11 @@ public class CitasDAO {
 
     // ─── Cambiar estado de cita por ID de estado relacional ──────────────────
     /**
-     * Actualiza el estado de una cita usando la FK id_State (tabla tb_state).
+     * Actualiza el estado de una cita usando la FK id_state (tabla tb_state).
      * Usar las constantes STATE_* de esta clase para el parámetro idEstado.
      */
     public static boolean cambiarEstadoCita(int idCita, int idEstado) {
-        String sql = "UPDATE tb_citas SET id_State = ? WHERE id = ?";
+        String sql = "UPDATE tb_citas SET id_state = ? WHERE id = ?";
         try (Connection con = new Conexion().estableceConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -152,7 +154,7 @@ public class CitasDAO {
      * Reprograma una cita: actualiza fecha y estado a Reprogramada.
      */
     public static boolean reprogramarCita(int idCita, String nuevaFechaHora) {
-        String sql = "UPDATE tb_citas SET fecha = ?, id_State = ? WHERE id = ?";
+        String sql = "UPDATE tb_citas SET fecha = ?, id_state = ? WHERE id = ?";
         try (Connection con = new Conexion().estableceConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -168,7 +170,7 @@ public class CitasDAO {
     }
 
     /**
-     * Cancela una cita (id_State = 18 = Cancelada).
+     * Cancela una cita (id_state = 18 = Cancelada).
      */
     public static boolean cancelarCita(int idCita) {
         return cambiarEstadoCita(idCita, STATE_CANCELADA);
@@ -242,7 +244,7 @@ public class CitasDAO {
     public static boolean insertarCitaMascotaRegistrada(
             int idMascota, int idTipoCita, String motivo, String fechaHora, int idUsuarioWeb) {
 
-        String sql = "INSERT INTO tb_citas (id_mascota, id_usuario_web, motivo, fecha, fecha_reg, id_tipo_cita, id_State) VALUES (?, ?, ?, ?, NOW(), ?, ?)";
+        String sql = "INSERT INTO tb_citas (id_mascota, id_usuario_web, motivo, fecha, fecha_reg, id_tipo_cita, id_state) VALUES (?, ?, ?, ?, NOW(), ?, ?)";
         try (Connection con = new Conexion().estableceConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idMascota);
@@ -308,7 +310,7 @@ public class CitasDAO {
             if (idMascota == -1) { con.rollback(); return false; }
 
             // 3. Insertar Cita
-            String sqlCita = "INSERT INTO tb_citas (id_mascota, id_usuario_web, motivo, fecha, fecha_reg, id_tipo_cita, id_State) VALUES (?, ?, ?, ?, NOW(), ?, ?)";
+            String sqlCita = "INSERT INTO tb_citas (id_mascota, id_usuario_web, motivo, fecha, fecha_reg, id_tipo_cita, id_state) VALUES (?, ?, ?, ?, NOW(), ?, ?)";
             try (PreparedStatement psCita = con.prepareStatement(sqlCita)) {
                 psCita.setInt(1, idMascota);
                 psCita.setInt(2, idUsuarioWeb);
@@ -347,8 +349,8 @@ public class CitasDAO {
             JOIN tb_mascotas m ON c.id_mascota = m.id
             LEFT JOIN tb_propietarios p ON m.id_propietario = p.id
             JOIN tb_tipo_cita tc ON c.id_tipo_cita = tc.id
-            JOIN tb_state s ON c.id_State = s.id
-            WHERE DATE(c.fecha) = ? AND s.tipo = 'cita'
+            JOIN tb_state s ON c.id_state = s.id
+            WHERE DATE(c.fecha) = ?
             ORDER BY c.fecha ASC
             """;
 

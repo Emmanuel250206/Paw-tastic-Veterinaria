@@ -289,7 +289,7 @@ public class AgendarCitaModalController {
 
         // Combinar fecha y hora para el formato datetime de la BD
         String fechaHoraStr = fechaCita.toString() + " " + horaCita + ":00";
-        int idUsuarioWebHardcoded = 1; // Hardcoded a ID 1 (JUCA) por bypass temporal
+        int idUsuarioWeb = com.mycompany.aplicacion.modelo.UserSession.getInstance().getUserId();
 
         boolean ok;
 
@@ -307,13 +307,13 @@ public class AgendarCitaModalController {
             ok = CitasDAO.insertarCitaMascotaNueva(
                 mNombre, mFechaNac, idEsp, idRaz, 
                 pNombre, pApellidos, pTelefono, pDireccion, 
-                tipoSeleccionado.getId(), motivoStr, fechaHoraStr, idUsuarioWebHardcoded
+                tipoSeleccionado.getId(), motivoStr, fechaHoraStr, idUsuarioWeb
             );
         } else {
             // Mascota Registrada
             ok = CitasDAO.insertarCitaMascotaRegistrada(
                 mascotaSeleccionadaAutocompletada.getId(), 
-                tipoSeleccionado.getId(), motivoStr, fechaHoraStr, idUsuarioWebHardcoded
+                tipoSeleccionado.getId(), motivoStr, fechaHoraStr, idUsuarioWeb
             );
         }
 

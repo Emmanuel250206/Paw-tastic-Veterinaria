@@ -1,102 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Line?>
 
-<StackPane fx:id="rootPane" alignment="CENTER" style="-fx-background-color: transparent;" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.RecuperarContrasenaController">
+<StackPane fx:id="rootPane" alignment="CENTER" style="-fx-background-color: rgba(0,0,0,0.4);" stylesheets="@estilos.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.RecuperarContrasenaController">
    <children>
-
-      
-      <!-- Floating Recovery Card -->
-      <StackPane fx:id="mainCard" maxHeight="480.0" maxWidth="400.0" prefHeight="480.0" prefWidth="400.0" style="-fx-background-color: white; -fx-background-radius: 25; -fx-border-color: #EAECEE; -fx-border-width: 1; -fx-border-radius: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 10);" StackPane.alignment="CENTER">
-         <cursor>
-            <Cursor fx:constant="MOVE" />
-         </cursor>
+      <StackPane fx:id="mainCard" maxHeight="320.0" maxWidth="450.0" prefHeight="320.0" prefWidth="450.0" style="-fx-background-color: white; -fx-background-radius: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 10);" StackPane.alignment="CENTER">
          <children>
-            <!-- Background Image with "Ghost" Effect -->
-            <ImageView fitWidth="400.0" opacity="0.1" preserveRatio="true" smooth="true" StackPane.alignment="CENTER">
-               <image>
-                  <Image url="@../images/fondoOriginalPatitas.png" />
-               </image>
-            </ImageView>
-            
-            <VBox alignment="CENTER" spacing="25.0">
+            <VBox alignment="CENTER_LEFT" spacing="15.0">
                <padding>
-                  <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+                  <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
                </padding>
                <children>
-                  <ImageView fitWidth="150.0" preserveRatio="true">
-                     <image>
-                        <Image url="@../images/logo_paw.png" />
-                     </image>
-                     <VBox.margin>
-                        <Insets bottom="15.0" />
-                     </VBox.margin>
-                  </ImageView>
-                  
-                  <Label styleClass="titulo-bienvenida" text="Recuperar Acceso" />
-                  
-                  <!-- STEP 1: Email Input -->
-                  <VBox fx:id="emailStep" alignment="CENTER" spacing="20.0">
+                  <!-- HEADER -->
+                  <HBox alignment="CENTER_LEFT" spacing="12.0">
                      <children>
-                        <VBox alignment="CENTER_LEFT" spacing="5.0">
+                        <Label alignment="CENTER" prefHeight="44.0" prefWidth="44.0" style="-fx-background-color: #E9F5F2; -fx-background-radius: 22; -fx-font-size: 20px;" text="🔒" />
+                        <VBox alignment="CENTER_LEFT" spacing="2.0">
                            <children>
-                              <Label text="Correo electrónico o Usuario para recibir código" textFill="#555555" />
-                              <TextField fx:id="txtCorreo" prefHeight="40.0" prefWidth="300.0" promptText="tunombre@ejemplo.com" styleClass="text-field" />
-                              <Line endX="300.0" stroke="#30cd9e" strokeWidth="2.0" />
+                              <Label style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #3D8D7A;" text="Recuperación de Credenciales" />
+                              <Label style="-fx-font-family: 'Segoe UI'; -fx-font-size: 12px; -fx-text-fill: #7f8c8d;" text="Políticas de seguridad de la clínica" />
                            </children>
                         </VBox>
-                        <Button fx:id="btnEnviar" alignment="CENTER" mnemonicParsing="false" prefHeight="45.0" prefWidth="300.0" style="-fx-text-fill: white;" styleClass="boton-verde" text="Enviar Código">
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </Button>
+                     </children>
+                  </HBox>
+                  
+                  <Separator style="-fx-background-color: #E9F5F2;" />
+                  
+                  <!-- DESCRIPTION -->
+                  <VBox spacing="8.0">
+                     <children>
+                        <Label style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-text-fill: #2c3e50; -fx-line-spacing: 3;" text="Por motivos de seguridad y políticas de protección de datos de la clínica, el restablecimiento de contraseñas debe gestionarse de forma manual." wrapText="true" />
                      </children>
                   </VBox>
                   
-                  <!-- STEP 2: Password Reset (Hidden by default) -->
-                  <VBox fx:id="passwordStep" alignment="CENTER" managed="false" spacing="20.0" visible="false">
+                  <!-- SUPPORT SECTION -->
+                  <VBox spacing="6.0" style="-fx-background-color: #E9F5F2; -fx-background-radius: 10; -fx-padding: 12;">
                      <children>
-                        <VBox alignment="CENTER_LEFT" spacing="5.0">
-                           <children>
-                              <Label text="Ingresa tu nueva contraseña" textFill="#555555" />
-                              <PasswordField fx:id="txtNuevaContra" prefHeight="40.0" prefWidth="300.0" promptText="Nueva Contraseña" styleClass="text-field" />
-                              <Line endX="300.0" stroke="#30cd9e" strokeWidth="2.0" />
-                           </children>
-                        </VBox>
-                        <VBox alignment="CENTER_LEFT" spacing="5.0">
-                           <children>
-                              <PasswordField fx:id="txtConfirmaContra" prefHeight="40.0" prefWidth="300.0" promptText="Confirmar Contraseña" styleClass="text-field" />
-                              <Line endX="300.0" stroke="#30cd9e" strokeWidth="2.0" />
-                           </children>
-                        </VBox>
-                        <Button fx:id="btnActualizar" alignment="CENTER" mnemonicParsing="false" prefHeight="45.0" prefWidth="300.0" style="-fx-text-fill: white;" styleClass="boton-verde" text="Actualizar Contraseña">
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </Button>
+                        <Label style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #2A6355;" text="✉  Contacto de Soporte Técnico / Administrador: soporte@pawtastic.com" />
+                        <Label style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #2A6355;" text="📞  Teléfono de Soporte: +52 (XALAPA) EXT-900" />
                      </children>
                   </VBox>
-
-                  <!-- Cancel Button -->
-                  <Button mnemonicParsing="false" onAction="#cerrarAccion" prefHeight="24.0" prefWidth="158.0" style="-fx-background-color: #2A5F52; -fx-text-fill: white;" styleClass="boton-verde" text="Cancelar">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                     <VBox.margin>
-                        <Insets top="20.0" />
-                     </VBox.margin>
-                  </Button>
+                  
+                  <!-- ACTION BUTTON -->
+                  <HBox alignment="CENTER_RIGHT" prefHeight="40.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#handleRegresarClick" styleClass="boton-verde" style="-fx-background-color: #3D8D7A; -fx-text-fill: white; -fx-font-family: 'Segoe UI'; -fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 8 24 8 24; -fx-background-radius: 8; -fx-cursor: hand;" text="Entendido" />
+                     </children>
+                  </HBox>
                </children>
             </VBox>
          </children>

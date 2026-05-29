@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane fx:id="rootWrapper" prefHeight="650.0" prefWidth="950.0" style="-fx-background-color: rgba(0,0,0,0.55);" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.aplicacion.controllers.ModalBitacoraController">
+   <children>
+      <VBox fx:id="bitacoraCard" alignment="CENTER" maxHeight="580.0" maxWidth="880.0" prefHeight="580.0" prefWidth="880.0" spacing="0" style="-fx-background-color: white; -fx-background-radius: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 30, 0, 0, 10);" StackPane.alignment="CENTER">
+         <children>
+            <!-- HEADER -->
+            <HBox fx:id="hboxHeader" alignment="CENTER_LEFT" prefHeight="64" spacing="14" style="-fx-background-color: #E59866; -fx-background-radius: 20 20 0 0; -fx-padding: 0 20 0 20;">
+               <children>
+                  <VBox alignment="CENTER_LEFT" spacing="2" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label style="-fx-text-fill: white; -fx-font-family: 'Segoe UI'; -fx-font-weight: bold; -fx-font-size: 16px;" text="📋 Bitácora de Actividades del Sistema" />
+                        <Label fx:id="lblSubtitulo" style="-fx-text-fill: rgba(255,255,255,0.80); -fx-font-family: 'Segoe UI'; -fx-font-size: 12px;" text="Historial de auditoría y operaciones en el sistema" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            
+            <!-- BODY -->
+            <VBox spacing="15" VBox.vgrow="ALWAYS" style="-fx-padding: 20 20 15 20;">
+               <children>
+                  <TableView fx:id="tblBitacora" focusTraversable="false" styleClass="tabla-mascotas" stylesheets="@estilos.css" VBox.vgrow="ALWAYS">
+                    <columns>
+                      <TableColumn fx:id="colFecha" prefWidth="155.0" text="Fecha / Hora" />
+                      <TableColumn fx:id="colUsuario" prefWidth="190.0" text="Responsable" />
+                      <TableColumn fx:id="colModulo" prefWidth="110.0" text="Módulo" />
+                      <TableColumn fx:id="colDetalle" prefWidth="380.0" text="Detalle de Acción" />
+                    </columns>
+                  </TableView>
+               </children>
+            </VBox>
+            
+            <!-- FOOTER -->
+            <HBox alignment="CENTER_RIGHT" spacing="12" style="-fx-padding: 15 20 20 20; -fx-background-color: #F7FAFA; -fx-background-radius: 0 0 20 20;">
+               <children>
+                  <Button fx:id="btnSalir" mnemonicParsing="false" onAction="#salir" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-color: #e74c3c; -fx-background-radius: 8; -fx-text-fill: white; -fx-padding: 8 20 8 20; -fx-cursor: hand;" text="Salir" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</StackPane>

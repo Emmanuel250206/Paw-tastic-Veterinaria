@@ -1,4 +1,5 @@
 package com.mycompany.aplicacion.controllers;
+
 import com.mycompany.aplicacion.modelo.Staff;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -32,10 +33,14 @@ public class StaffController implements Initializable {
     private VBox vboxContenedor;
 
     // ── Perfil header ───────────────────────────────────────────────────
-    @FXML private ImageView imgPerfilStaff;
-    @FXML private Label     lblNombreStaff;
-    @FXML private Label     lblRolStaff;
-    @FXML private HBox      hboxPerfil;
+    @FXML
+    private ImageView imgPerfilStaff;
+    @FXML
+    private Label lblNombreStaff;
+    @FXML
+    private Label lblRolStaff;
+    @FXML
+    private HBox hboxPerfil;
     private ContextMenu menuPerfil;
 
     private static StaffController instance;
@@ -58,29 +63,31 @@ public class StaffController implements Initializable {
     private void construirMenuPerfil() {
         menuPerfil = new ContextMenu();
         menuPerfil.setStyle(
-            "-fx-background-color: white;" +
-            "-fx-background-radius: 10;" +
-            "-fx-border-color: #3D8D7A;" +
-            "-fx-border-radius: 10;" +
-            "-fx-border-width: 1.2;" +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.14), 14, 0, 0, 5);" +
-            "-fx-padding: 4 0 4 0;"
-        );
+                "-fx-background-color: white;" +
+                        "-fx-background-radius: 10;" +
+                        "-fx-border-color: #3D8D7A;" +
+                        "-fx-border-radius: 10;" +
+                        "-fx-border-width: 1.2;" +
+                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.14), 14, 0, 0, 5);" +
+                        "-fx-padding: 4 0 4 0;");
         Label lbl = new Label("⚙  Configurar Perfil");
         lbl.setMaxWidth(Double.MAX_VALUE);
         lbl.setPrefWidth(185);
         String base = "-fx-font-size:13px;-fx-text-fill:#2C3E50;-fx-padding:9 20 9 20;" +
-                      "-fx-font-family:'Segoe UI';-fx-background-color:transparent;-fx-background-radius:7;-fx-cursor:hand;";
+                "-fx-font-family:'Segoe UI';-fx-background-color:transparent;-fx-background-radius:7;-fx-cursor:hand;";
         String hover = "-fx-font-size:13px;-fx-text-fill:#2E7D6B;-fx-font-weight:bold;-fx-padding:9 20 9 20;" +
-                       "-fx-font-family:'Segoe UI';-fx-background-color:#E9F5F2;-fx-background-radius:7;-fx-cursor:hand;";
+                "-fx-font-family:'Segoe UI';-fx-background-color:#E9F5F2;-fx-background-radius:7;-fx-cursor:hand;";
         lbl.setStyle(base);
         lbl.setOnMouseEntered(e -> lbl.setStyle(hover));
-        lbl.setOnMouseExited(e  -> lbl.setStyle(base));
-        lbl.setOnMouseClicked(e -> { menuPerfil.hide(); ConfigurarPerfilController.abrir(hboxPerfil, () -> {
-            UserSession.loadProfileImage(imgPerfilStaff);
-            lblNombreStaff.setText(UserSession.getInstance().getUserName());
-            lblRolStaff.setText(UserSession.getInstance().getUserRole());
-        }); });
+        lbl.setOnMouseExited(e -> lbl.setStyle(base));
+        lbl.setOnMouseClicked(e -> {
+            menuPerfil.hide();
+            ConfigurarPerfilController.abrir(hboxPerfil, () -> {
+                UserSession.loadProfileImage(imgPerfilStaff);
+                lblNombreStaff.setText(UserSession.getInstance().getUserName());
+                lblRolStaff.setText(UserSession.getInstance().getUserRole());
+            });
+        });
         CustomMenuItem item = new CustomMenuItem(lbl, true);
         item.setMnemonicParsing(false);
         menuPerfil.getItems().add(item);
@@ -88,8 +95,12 @@ public class StaffController implements Initializable {
 
     @FXML
     private void manejarClickPerfil(MouseEvent event) {
-        if (menuPerfil == null) return;
-        if (menuPerfil.isShowing()) { menuPerfil.hide(); return; }
+        if (menuPerfil == null)
+            return;
+        if (menuPerfil.isShowing()) {
+            menuPerfil.hide();
+            return;
+        }
         menuPerfil.show(hboxPerfil, Side.BOTTOM, hboxPerfil.getWidth() - 185, 4);
     }
 
@@ -102,7 +113,8 @@ public class StaffController implements Initializable {
     }
 
     private void cargarPersonalEnPantalla() {
-        if (vboxContenedor == null) return;
+        if (vboxContenedor == null)
+            return;
 
         vboxContenedor.getChildren().clear();
         vboxContenedor.setSpacing(15);
@@ -115,7 +127,24 @@ public class StaffController implements Initializable {
         btnAgregar.setCursor(javafx.scene.Cursor.HAND);
         btnAgregar.setOnAction(e -> mostrarDialogoAgregar());
 
-        HBox headerContainer = new HBox(btnAgregar);
+        btnAgregar.setOnMouseEntered(evt -> btnAgregar.setStyle(
+                "-fx-background-color: #2E7D6B; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-background-radius: 5; -fx-scale-x: 1.03; -fx-scale-y: 1.03;"));
+        btnAgregar.setOnMouseExited(evt -> btnAgregar.setStyle(
+                "-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-background-radius: 5; -fx-scale-x: 1.0; -fx-scale-y: 1.0;"));
+
+        // Botón de Ver Bitácora
+        Button btnBitacora = new Button("📋 Ver Bitácora");
+        btnBitacora.setStyle(
+                "-fx-background-color: #E59866; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-background-radius: 5;");
+        btnBitacora.setCursor(javafx.scene.Cursor.HAND);
+        btnBitacora.setOnAction(evt -> mostrarBitacora());
+
+        btnBitacora.setOnMouseEntered(evt -> btnBitacora.setStyle(
+                "-fx-background-color: #DC7633; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-background-radius: 5; -fx-scale-x: 1.03; -fx-scale-y: 1.03;"));
+        btnBitacora.setOnMouseExited(evt -> btnBitacora.setStyle(
+                "-fx-background-color: #E59866; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 10 20 10 20; -fx-background-radius: 5; -fx-scale-x: 1.0; -fx-scale-y: 1.0;"));
+
+        HBox headerContainer = new HBox(15, btnBitacora, btnAgregar);
         headerContainer.setAlignment(Pos.CENTER_RIGHT);
         headerContainer.setPadding(new Insets(0, 0, 10, 0));
         vboxContenedor.getChildren().add(headerContainer);
@@ -140,7 +169,9 @@ public class StaffController implements Initializable {
             Label lblNombre = new Label(s.getNombre() + " " + s.getApellidos());
             lblNombre.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
 
-            String extraCedula = (s.getCedula() != null && !s.getCedula().trim().isEmpty()) ? " | Cédula: " + s.getCedula() : "";
+            String extraCedula = (s.getCedula() != null && !s.getCedula().trim().isEmpty())
+                    ? " | Cédula: " + s.getCedula()
+                    : "";
             Label lblRol = new Label(s.getRol() + " | Especialidad: " + s.getEspecialidad() + extraCedula);
             lblRol.setStyle("-fx-font-size: 14px; -fx-text-fill: #7f8c8d;");
 
@@ -175,13 +206,14 @@ public class StaffController implements Initializable {
             btnEliminar.setCursor(javafx.scene.Cursor.HAND);
             btnEliminar.setOnAction(e -> {
                 javafx.scene.control.Alert confirmacion = new javafx.scene.control.Alert(
-                    javafx.scene.control.Alert.AlertType.CONFIRMATION);
+                        javafx.scene.control.Alert.AlertType.CONFIRMATION);
                 confirmacion.setTitle("Confirmar desactivación");
                 confirmacion.setHeaderText("¿Desactivar usuario?");
                 confirmacion.setContentText("El usuario \"" + s.getNombre() + " " + s.getApellidos() +
-                    "\" perderá acceso al sistema. Puedes reactivarlo más adelante.");
+                        "\" perderá acceso al sistema. Puedes reactivarlo más adelante.");
                 java.util.Optional<ButtonType> result = confirmacion.showAndWait();
-                if (result.isEmpty() || result.get() != ButtonType.OK) return;
+                if (result.isEmpty() || result.get() != ButtonType.OK)
+                    return;
 
                 boolean ok = com.mycompany.aplicacion.persistencia.StaffDAO.desactivar(s.getId());
                 Toast.showToast(ok ? "Usuario desactivado correctamente." : "No se pudo desactivar el usuario.", 3);
@@ -192,7 +224,8 @@ public class StaffController implements Initializable {
             accionesContenedor.setAlignment(Pos.CENTER);
             accionesContenedor.setPadding(new Insets(0, 0, 0, 15));
 
-            // Evitar auto-bloqueo: Ocultar y deshabilitar los botones solo si la fila pertenece al usuario logueado
+            // Evitar auto-bloqueo: Ocultar y deshabilitar los botones solo si la fila
+            // pertenece al usuario logueado
             String usuarioLogueado = UserSession.getInstance().getUsuario();
             if (s.getUsuario() != null && s.getUsuario().equalsIgnoreCase(usuarioLogueado)) {
                 btnEditar.setVisible(false);
@@ -202,7 +235,8 @@ public class StaffController implements Initializable {
                 accionesContenedor.setVisible(false);
                 accionesContenedor.setManaged(false);
             } else {
-                // De lo contrario, mantenerlos totalmente visibles y funcionales para otros usuarios
+                // De lo contrario, mantenerlos totalmente visibles y funcionales para otros
+                // usuarios
                 btnEditar.setVisible(true);
                 btnEditar.setManaged(true);
                 btnEliminar.setVisible(true);
@@ -223,7 +257,8 @@ public class StaffController implements Initializable {
 
     private void mostrarDialogoAgregar() {
         try {
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/ModalMiembro.fxml"));
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+                    getClass().getResource("/fxml/ModalMiembro.fxml"));
             javafx.scene.Parent root = loader.load();
             ModalMiembroController controller = loader.getController();
 
@@ -308,7 +343,8 @@ public class StaffController implements Initializable {
         errTel.setStyle(styleError);
         errTel.setVisible(false);
 
-        TextField tfContrasena = new TextField(staffAEditar.getContrasenia() != null ? staffAEditar.getContrasenia() : "");
+        TextField tfContrasena = new TextField(
+                staffAEditar.getContrasenia() != null ? staffAEditar.getContrasenia() : "");
         tfContrasena.setStyle(styleTextField);
         Label errContrasena = new Label("Debes rellenar este campo");
         errContrasena.setStyle(styleError);
@@ -326,47 +362,99 @@ public class StaffController implements Initializable {
         errUsuario.setStyle(styleError);
         errUsuario.setVisible(false);
 
+        Label lbl1 = new Label("Nombre:");
+        lbl1.setStyle(styleLabel);
+        Label lbl2 = new Label("Apellidos:");
+        lbl2.setStyle(styleLabel);
+        Label lbl3 = new Label("Rol:");
+        lbl3.setStyle(styleLabel);
+        Label lblCedula = new Label("Cédula:");
+        lblCedula.setStyle(styleLabel);
+        Label lbl4 = new Label("Especialidad:");
+        lbl4.setStyle(styleLabel);
+        Label lbl5 = new Label("Teléfono:");
+        lbl5.setStyle(styleLabel);
+        Label lbl6 = new Label("Contraseña:");
+        lbl6.setStyle(styleLabel);
+        Label lbl7 = new Label("Email:");
+        lbl7.setStyle(styleLabel);
+        Label lbl8 = new Label("Usuario:");
+        lbl8.setStyle(styleLabel);
 
-
-        Label lbl1 = new Label("Nombre:"); lbl1.setStyle(styleLabel);
-        Label lbl2 = new Label("Apellidos:"); lbl2.setStyle(styleLabel);
-        Label lbl3 = new Label("Rol:"); lbl3.setStyle(styleLabel);
-        Label lblCedula = new Label("Cédula:"); lblCedula.setStyle(styleLabel);
-        Label lbl4 = new Label("Especialidad:"); lbl4.setStyle(styleLabel);
-        Label lbl5 = new Label("Teléfono:"); lbl5.setStyle(styleLabel);
-        Label lbl6 = new Label("Contraseña:"); lbl6.setStyle(styleLabel);
-        Label lbl7 = new Label("Email:"); lbl7.setStyle(styleLabel);
-        Label lbl8 = new Label("Usuario:"); lbl8.setStyle(styleLabel);
-
-
-        grid.add(lbl1, 0, 0); grid.add(new VBox(2, tfNombre, errNombre), 1, 0);
-        grid.add(lbl2, 0, 1); grid.add(new VBox(2, tfApellidos, errApellidos), 1, 1);
-        grid.add(lbl3, 0, 2); grid.add(new VBox(2, tfRol, errRol), 1, 2);
-        grid.add(lblCedula, 0, 3); grid.add(new VBox(2, tfCedula, errCedula), 1, 3);
-        grid.add(lbl4, 0, 4); grid.add(new VBox(2, tfEspecialidad, errEspecialidad), 1, 4);
-        grid.add(lbl5, 0, 5); grid.add(new VBox(2, tfTel, errTel), 1, 5);
-        grid.add(lbl6, 0, 6); grid.add(new VBox(2, tfContrasena, errContrasena), 1, 6);
-        grid.add(lbl7, 0, 7); grid.add(new VBox(2, tfEmail, errEmail), 1, 7);
-        grid.add(lbl8, 0, 8); grid.add(new VBox(2, tfUsuario, errUsuario), 1, 8);
+        grid.add(lbl1, 0, 0);
+        grid.add(new VBox(2, tfNombre, errNombre), 1, 0);
+        grid.add(lbl2, 0, 1);
+        grid.add(new VBox(2, tfApellidos, errApellidos), 1, 1);
+        grid.add(lbl3, 0, 2);
+        grid.add(new VBox(2, tfRol, errRol), 1, 2);
+        grid.add(lblCedula, 0, 3);
+        grid.add(new VBox(2, tfCedula, errCedula), 1, 3);
+        grid.add(lbl4, 0, 4);
+        grid.add(new VBox(2, tfEspecialidad, errEspecialidad), 1, 4);
+        grid.add(lbl5, 0, 5);
+        grid.add(new VBox(2, tfTel, errTel), 1, 5);
+        grid.add(lbl6, 0, 6);
+        grid.add(new VBox(2, tfContrasena, errContrasena), 1, 6);
+        grid.add(lbl7, 0, 7);
+        grid.add(new VBox(2, tfEmail, errEmail), 1, 7);
+        grid.add(lbl8, 0, 8);
+        grid.add(new VBox(2, tfUsuario, errUsuario), 1, 8);
 
         dialog.getDialogPane().setContent(grid);
 
         javafx.scene.Node btnGuardarNode = dialog.getDialogPane().lookupButton(btnTypeGuardar);
         if (btnGuardarNode != null && btnGuardarNode instanceof javafx.scene.control.Button) {
             javafx.scene.control.Button btnGuardar = (javafx.scene.control.Button) btnGuardarNode;
-            btnGuardar.setStyle("-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+            btnGuardar.setStyle(
+                    "-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
 
             btnGuardar.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
                 boolean hasError = false;
-                if (tfNombre.getText().trim().isEmpty()) { errNombre.setVisible(true); hasError = true; } else errNombre.setVisible(false);
-                if (tfApellidos.getText().trim().isEmpty()) { errApellidos.setVisible(true); hasError = true; } else errApellidos.setVisible(false);
-                if (tfRol.getText().trim().isEmpty()) { errRol.setVisible(true); hasError = true; } else errRol.setVisible(false);
-                if (tfRol.getText().trim().equalsIgnoreCase("Veterinario") && tfCedula.getText().trim().isEmpty()) { errCedula.setVisible(true); hasError = true; } else errCedula.setVisible(false);
-                if (tfEspecialidad.getText().trim().isEmpty()) { errEspecialidad.setVisible(true); hasError = true; } else errEspecialidad.setVisible(false);
-                if (tfTel.getText().trim().isEmpty()) { errTel.setVisible(true); hasError = true; } else errTel.setVisible(false);
-                if (tfEmail.getText().trim().isEmpty()) { errEmail.setVisible(true); hasError = true; } else errEmail.setVisible(false);
-                if (tfContrasena.getText().trim().isEmpty()) { errContrasena.setVisible(true); hasError = true; } else errContrasena.setVisible(false);
-                if (tfUsuario.getText().trim().isEmpty()) { errUsuario.setVisible(true); hasError = true; } else errUsuario.setVisible(false);
+                if (tfNombre.getText().trim().isEmpty()) {
+                    errNombre.setVisible(true);
+                    hasError = true;
+                } else
+                    errNombre.setVisible(false);
+                if (tfApellidos.getText().trim().isEmpty()) {
+                    errApellidos.setVisible(true);
+                    hasError = true;
+                } else
+                    errApellidos.setVisible(false);
+                if (tfRol.getText().trim().isEmpty()) {
+                    errRol.setVisible(true);
+                    hasError = true;
+                } else
+                    errRol.setVisible(false);
+                if (tfRol.getText().trim().equalsIgnoreCase("Veterinario") && tfCedula.getText().trim().isEmpty()) {
+                    errCedula.setVisible(true);
+                    hasError = true;
+                } else
+                    errCedula.setVisible(false);
+                if (tfEspecialidad.getText().trim().isEmpty()) {
+                    errEspecialidad.setVisible(true);
+                    hasError = true;
+                } else
+                    errEspecialidad.setVisible(false);
+                if (tfTel.getText().trim().isEmpty()) {
+                    errTel.setVisible(true);
+                    hasError = true;
+                } else
+                    errTel.setVisible(false);
+                if (tfEmail.getText().trim().isEmpty()) {
+                    errEmail.setVisible(true);
+                    hasError = true;
+                } else
+                    errEmail.setVisible(false);
+                if (tfContrasena.getText().trim().isEmpty()) {
+                    errContrasena.setVisible(true);
+                    hasError = true;
+                } else
+                    errContrasena.setVisible(false);
+                if (tfUsuario.getText().trim().isEmpty()) {
+                    errUsuario.setVisible(true);
+                    hasError = true;
+                } else
+                    errUsuario.setVisible(false);
 
                 if (hasError) {
                     event.consume();
@@ -376,13 +464,15 @@ public class StaffController implements Initializable {
 
         javafx.scene.Node btnCancelarNode = dialog.getDialogPane().lookupButton(ButtonType.CANCEL);
         if (btnCancelarNode != null) {
-            btnCancelarNode.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+            btnCancelarNode.setStyle(
+                    "-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
         }
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == btnTypeGuardar) {
                 return new Staff(staffAEditar.getId(), tfNombre.getText(), tfApellidos.getText(), tfRol.getText(),
-                        tfEspecialidad.getText(), tfTel.getText(), tfEmail.getText(), tfContrasena.getText(), tfCedula.getText(), tfUsuario.getText());
+                        tfEspecialidad.getText(), tfTel.getText(), tfEmail.getText(), tfContrasena.getText(),
+                        tfCedula.getText(), tfUsuario.getText());
             }
             return null;
         });
@@ -390,20 +480,19 @@ public class StaffController implements Initializable {
         java.util.Optional<Staff> result = dialog.showAndWait();
         result.ifPresent(staffEditado -> {
             boolean ok = com.mycompany.aplicacion.persistencia.StaffDAO.actualizar(
-                staffEditado.getId(),
-                staffEditado.getNombre(),
-                staffEditado.getApellidos(),
-                staffEditado.getRol(),
-                staffEditado.getEspecialidad(),
-                staffEditado.getCedula(),
-                staffEditado.getTelefono(),
-                staffEditado.getEmail()
-            );
+                    staffEditado.getId(),
+                    staffEditado.getNombre(),
+                    staffEditado.getApellidos(),
+                    staffEditado.getRol(),
+                    staffEditado.getEspecialidad(),
+                    staffEditado.getCedula(),
+                    staffEditado.getTelefono(),
+                    staffEditado.getEmail());
             if (ok) {
                 Toast.showToast("Datos del staff actualizados correctamente.", 3);
             } else {
                 javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
-                    javafx.scene.control.Alert.AlertType.ERROR);
+                        javafx.scene.control.Alert.AlertType.ERROR);
                 alert.setTitle("Error");
                 alert.setHeaderText("No se pudieron guardar los cambios");
                 alert.setContentText("Revisa la conexión con la base de datos.");
@@ -411,6 +500,10 @@ public class StaffController implements Initializable {
             }
             cargarPersonalEnPantalla();
         });
+    }
+
+    private void mostrarBitacora() {
+        ModalBitacoraController.abrir(vboxContenedor);
     }
 
 }

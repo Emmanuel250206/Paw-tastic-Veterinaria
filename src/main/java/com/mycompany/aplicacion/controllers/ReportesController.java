@@ -220,9 +220,11 @@ public class ReportesController implements Initializable {
             dialog.getDialogPane().getScene().getWindow().sizeToScene();
         });
 
+        final Mascota[] mascotaSeleccionada = {null};
         lvMascota.setOnMouseClicked(e -> {
             Mascota sel = lvMascota.getSelectionModel().getSelectedItem();
             if (sel != null) {
+                mascotaSeleccionada[0] = sel;
                 // Al seleccionar, se pone en el TextField y se oculta la lista
                 tfBuscarMascota.setText(sel.getNombre());
                 lvMascota.setVisible(false);
@@ -281,17 +283,28 @@ public class ReportesController implements Initializable {
             if (btn == btnConfirmar) {
                 Inventario prod = cbProducto.getValue();
                 if (prod != null && prod.getStock_actual() >= spCantidad.getValue()) {
-                    // Restar stock local
-                    prod.setStock_actual(prod.getStock_actual() - spCantidad.getValue());
+                    int idM = (mascotaSeleccionada[0] != null) ? mascotaSeleccionada[0].getId() : -1;
                     
-                    String nombreMascota = tfBuscarMascota.getText().trim();
-                    if (nombreMascota.isEmpty()) {
-                        nombreMascota = "N/A";
+                    java.util.Map<Integer, Integer> carritoMap = new java.util.HashMap<>();
+                    java.util.Map<Integer, Double> preciosMap = new java.util.HashMap<>();
+                    carritoMap.put(prod.getId(), spCantidad.getValue());
+                    preciosMap.put(prod.getId(), prod.getPrecio_venta());
+                    
+                    boolean ok = VentasDAO.registrarVentaCompleta(idM, 'E', prod.getPrecio_venta() * spCantidad.getValue(), carritoMap, preciosMap);
+                    
+                    if (ok) {
+                        // Restar stock local en memoria
+                        prod.setStock_actual(prod.getStock_actual() - spCantidad.getValue());
+                        
+                        String nombreMascota = tfBuscarMascota.getText().trim();
+                        if (nombreMascota.isEmpty()) {
+                            nombreMascota = "N/A";
+                        }
+                        String concepto = spCantidad.getValue() + "x " + prod.getNombre();
+                        double total = prod.getPrecio_venta() * spCantidad.getValue();
+                        String fecha = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                        return new VentaDTO(fecha, nombreMascota, concepto, total);
                     }
-                    String concepto = spCantidad.getValue() + "x " + prod.getNombre();
-                    double total = prod.getPrecio_venta() * spCantidad.getValue();
-                    String fecha = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-                    return new VentaDTO(fecha, nombreMascota, concepto, total);
                 }
             }
             return null;

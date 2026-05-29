@@ -35,29 +35,44 @@ public class VentasDAO {
         int idStateActiva = buscarIdState("Activa", "venta");
         if (idStateActiva == -1) idStateActiva = 1; // fallback
 
-        // tb_venta.id_cita es NOT NULL en el esquema; usamos una cita genérica de venta directa
-        // Para ventas POS sin cita, el id_cita apuntará a NULL si el esquema lo permite,
-        // o a una cita marcada como "venta directa" si no.
-        // Aquí usamos NULL con columna nullable, si no hay cita ligada.
-        String sqlVenta = """
-            INSERT INTO tb_venta
-                (id_cita, id_usuario_web, metodo_pago, total, fecha, fecha_reg, id_State)
-            VALUES (NULL, ?, ?, ?, NOW(), NOW(), ?)
-            """;
-
         Connection con = new Conexion().estableceConexion();
         if (con == null) return false;
 
         try {
             con.setAutoCommit(false);
 
+            // Buscar id_cita si idMascota > 0
+            Integer idCita = null;
+            if (idMascota > 0) {
+                String sqlCita = "SELECT id FROM tb_citas WHERE id_mascota = ? ORDER BY fecha DESC LIMIT 1";
+                try (PreparedStatement psCita = con.prepareStatement(sqlCita)) {
+                    psCita.setInt(1, idMascota);
+                    try (ResultSet rs = psCita.executeQuery()) {
+                        if (rs.next()) {
+                            idCita = rs.getInt("id");
+                        }
+                    }
+                }
+            }
+
+            String sqlVenta = """
+                INSERT INTO tb_venta
+                    (id_cita, id_usuario_web, metodo_pago, total, fecha, fecha_reg, id_State)
+                VALUES (?, ?, ?, ?, NOW(), NOW(), ?)
+                """;
+
             // 1. Insertar encabezado de venta
             int idVenta = -1;
             try (PreparedStatement ps = con.prepareStatement(sqlVenta, Statement.RETURN_GENERATED_KEYS)) {
-                ps.setInt(1, UserSession.getInstance().getUserId());
-                ps.setString(2, String.valueOf(metodoPago));
-                ps.setDouble(3, total);
-                ps.setInt(4, idStateActiva);
+                if (idCita != null) {
+                    ps.setInt(1, idCita);
+                } else {
+                    ps.setNull(1, Types.INTEGER);
+                }
+                ps.setInt(2, UserSession.getInstance().getUserId());
+                ps.setString(3, String.valueOf(metodoPago));
+                ps.setDouble(4, total);
+                ps.setInt(5, idStateActiva);
                 ps.executeUpdate();
                 ResultSet rs = ps.getGeneratedKeys();
                 if (rs.next()) idVenta = rs.getInt(1);
@@ -151,7 +166,14 @@ public class VentasDAO {
         String sql = """
             SELECT v.total, v.fecha,
                    COALESCE(m.nombre, 'Venta directa') AS mascota_nombre,
-                   s.nombre AS estado
+                   s.nombre AS estado,
+                   COALESCE(
+                       (SELECT GROUP_CONCAT(CONCAT(dv.cantidad, 'x ', p.nombre) SEPARATOR ', ')
+                        FROM tb_detalle_venta dv
+                        JOIN tb_producto p ON dv.id_producto = p.id
+                        WHERE dv.id_venta = v.id),
+                       'Venta / Servicio'
+                   ) AS concepto
             FROM tb_venta v
             LEFT JOIN tb_citas c ON v.id_cita = c.id
             LEFT JOIN tb_mascotas m ON c.id_mascota = m.id
@@ -168,8 +190,8 @@ public class VentasDAO {
                 String fecha   = rs.getTimestamp("fecha") != null ? rs.getTimestamp("fecha").toString() : "—";
                 String mascota = rs.getString("mascota_nombre");
                 double monto   = rs.getDouble("total");
-                String estado  = rs.getString("estado") != null ? rs.getString("estado") : "—";
-                lista.add(new VentaDTO(fecha, mascota, estado, monto));
+                String concepto = rs.getString("concepto") != null ? rs.getString("concepto") : "Venta / Servicio";
+                lista.add(new VentaDTO(fecha, mascota, concepto, monto));
             }
         } catch (Exception e) {
             System.err.println("[VentasDAO] Error al obtener ventas: " + e.getMessage());

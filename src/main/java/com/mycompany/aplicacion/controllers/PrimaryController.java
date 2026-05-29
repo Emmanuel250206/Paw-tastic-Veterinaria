@@ -179,7 +179,10 @@ public class PrimaryController {
             return "CONNECTION_ERROR";
         }
         try {
-            String sql = "SELECT * FROM tb_usuario_web WHERE usuario = ? AND contrasenia = ?";
+            String sql = "SELECT u.*, c.nombre AS clinica_nombre " +
+                         "FROM tb_usuario_web u " +
+                         "INNER JOIN tb_clinicas c ON u.id_clinica = c.id " +
+                         "WHERE u.usuario = ? AND u.contrasenia = ?";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, usuario);
             ps.setString(2, contrasena);
@@ -207,6 +210,7 @@ public class PrimaryController {
                     com.mycompany.aplicacion.modelo.UserSession session = com.mycompany.aplicacion.modelo.UserSession.getInstance();
                     session.setUserId(dbId);
                     session.setClinicId(dbClinicId);
+                    session.setNombreClinica(rs.getString("clinica_nombre"));
                     session.setUserName(nombreCompleto.isEmpty() ? "Usuario sin Nombre" : nombreCompleto);
                     session.setUserAlias(dbUsuario != null ? dbUsuario : "Sin Alias");
                     session.setUserCedula(dbCedula);
@@ -289,7 +293,7 @@ public class PrimaryController {
             javafx.application.Platform.runLater(() -> {
                 Stage s = App.getStage();
                 if (s != null) {
-                    s.setFullScreen(true);
+                    s.setMaximized(true);
                 }
             });
         } else {
@@ -298,5 +302,4 @@ public class PrimaryController {
             txtErrorDatos.setVisible(true);
         }
     }
-
 }

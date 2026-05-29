@@ -242,6 +242,14 @@ public class CitasController implements Initializable {
                             "-fx-font-size: 10px;" +
                             "-fx-background-radius: 8;" +
                             "-fx-padding: 2 6 2 6;");
+                    } else if (item == Prioridad.FINALIZADO) {
+                        badge.setStyle(
+                            "-fx-background-color: #7f8c8d;" +
+                            "-fx-text-fill: white;" +
+                            "-fx-font-weight: bold;" +
+                            "-fx-font-size: 10px;" +
+                            "-fx-background-radius: 8;" +
+                            "-fx-padding: 2 6 2 6;");
                     } else {
                         badge.setStyle(
                             "-fx-background-color: #3d8d7a;" +
@@ -388,6 +396,7 @@ public class CitasController implements Initializable {
         if (estado.equalsIgnoreCase("En curso")) {
             boolean ok = guardarReporteEnBD();
             citaSeleccionada.setEstado("Completada");
+            citaSeleccionada.setPrioridad(Prioridad.FINALIZADO);
             CitasDAO.cambiarEstadoCita(citaSeleccionada.getId(), CitasDAO.STATE_COMPLETADA);
             cargarCitaEnPantalla(citaSeleccionada);
             cargarHistorialDesdeBD();

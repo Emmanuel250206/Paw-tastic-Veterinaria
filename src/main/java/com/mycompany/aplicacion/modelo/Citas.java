@@ -3,7 +3,7 @@ package com.mycompany.aplicacion.modelo;
 public class Citas {
 
     /** Nivel de prioridad de la cita. URGENTE sube al inicio de la cola. */
-    public enum Prioridad { URGENTE, NORMAL }
+    public enum Prioridad { URGENTE, NORMAL, FINALIZADO }
 
     private int id;
     private String fecha;

@@ -188,21 +188,59 @@ public class CitasDAO {
             return false;
         }
 
-        String sql = """
+        String sqlDiag = """
             INSERT INTO tb_diagnosticos (id_expediente, id_cita, descripcion, tratamiento, fecha_registro)
             VALUES (?, ?, ?, ?, NOW())
             """;
-        try (Connection con = new Conexion().estableceConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setInt   (1, idExpediente);
-            ps.setInt   (2, idCita);
-            ps.setString(3, descripcion);
-            ps.setString(4, tratamiento);
-            return ps.executeUpdate() > 0;
-
+        
+        String sqlCitaInfo = "SELECT motivo, fecha FROM tb_citas WHERE id = ?";
+        
+        try (Connection con = new Conexion().estableceConexion()) {
+            con.setAutoCommit(false);
+            
+            try (PreparedStatement psDiag = con.prepareStatement(sqlDiag)) {
+                psDiag.setInt(1, idExpediente);
+                psDiag.setInt(2, idCita);
+                psDiag.setString(3, descripcion);
+                psDiag.setString(4, tratamiento);
+                psDiag.executeUpdate();
+            }
+            
+            String motivo = "Consulta";
+            String fechaCita = "";
+            try (PreparedStatement psC = con.prepareStatement(sqlCitaInfo)) {
+                psC.setInt(1, idCita);
+                try (ResultSet rsC = psC.executeQuery()) {
+                    if (rsC.next()) {
+                        motivo = rsC.getString("motivo");
+                        Timestamp ts = rsC.getTimestamp("fecha");
+                        if (ts != null) {
+                            fechaCita = ts.toLocalDateTime().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+                        }
+                    }
+                }
+            }
+            
+            String notaHistorial = String.format(
+                "\n--- Consulta Finalizada (%s) ---\n" +
+                "  Motivo: %s\n" +
+                "  Diagnóstico/Notas: %s\n" +
+                "  Tratamiento: %s\n",
+                fechaCita.isEmpty() ? "Fecha no especificada" : fechaCita,
+                motivo, descripcion, tratamiento
+            );
+            
+            String sqlExp = "UPDATE tb_expediente SET historial = CONCAT(COALESCE(historial,''), ?) WHERE id = ?";
+            try (PreparedStatement psExp = con.prepareStatement(sqlExp)) {
+                psExp.setString(1, notaHistorial);
+                psExp.setInt(2, idExpediente);
+                psExp.executeUpdate();
+            }
+            
+            con.commit();
+            return true;
         } catch (Exception e) {
-            System.err.println("[CitasDAO] Error al guardar diagnóstico: " + e.getMessage());
+            System.err.println("[CitasDAO] Error al guardar diagnóstico e historial: " + e.getMessage());
             return false;
         }
     }
@@ -433,8 +471,13 @@ public class CitasDAO {
         String estadoDB = rs.getString("estado");
 
         String tipo = rs.getString("tipo");
-        Prioridad prioridad = (tipo != null && tipo.toLowerCase().contains("urgente"))
-            ? Prioridad.URGENTE : Prioridad.NORMAL;
+        Prioridad prioridad;
+        if ("Completada".equalsIgnoreCase(estadoDB) || "Finalizada".equalsIgnoreCase(estadoDB)) {
+            prioridad = Prioridad.FINALIZADO;
+        } else {
+            prioridad = (tipo != null && tipo.toLowerCase().contains("urgente"))
+                ? Prioridad.URGENTE : Prioridad.NORMAL;
+        }
 
         String propietario = rs.getString("propietario");
         String ape = rs.getString("ape_prop");
@@ -476,8 +519,13 @@ public class CitasDAO {
         String estadoNombre   = rs.getString("estado_nombre");
         String motivo         = rs.getString("motivo");
 
-        Prioridad prioridad = (tipoCitaNombre != null && tipoCitaNombre.toLowerCase().contains("urgente"))
-            ? Prioridad.URGENTE : Prioridad.NORMAL;
+        Prioridad prioridad;
+        if ("Completada".equalsIgnoreCase(estadoNombre) || "Finalizada".equalsIgnoreCase(estadoNombre)) {
+            prioridad = Prioridad.FINALIZADO;
+        } else {
+            prioridad = (tipoCitaNombre != null && tipoCitaNombre.toLowerCase().contains("urgente"))
+                ? Prioridad.URGENTE : Prioridad.NORMAL;
+        }
 
         return new Citas(
             rs.getInt("id"),

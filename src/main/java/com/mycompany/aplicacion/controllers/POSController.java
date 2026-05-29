@@ -18,6 +18,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.Priority;
+import javafx.geometry.Pos;
+import javafx.geometry.Insets;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -79,9 +84,50 @@ public class POSController implements Initializable {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
+                    setGraphic(null);
                 } else {
+                    HBox cellLayout = new HBox(10);
+                    cellLayout.setAlignment(Pos.CENTER_LEFT);
+                    cellLayout.setPadding(new Insets(4, 8, 4, 8));
+                    
                     String stockStatus = item.getStock_actual() > item.getStock_minimo() ? "🟢" : (item.getStock_actual() > 0 ? "🟡" : "🔴");
-                    setText(stockStatus + " " + item.getNombre() + " - $" + item.getPrecio_venta() + " (Stock: " + item.getStock_actual() + ")");
+                    Label lblInfo = new Label(stockStatus + " " + item.getNombre() + " - $" + item.getPrecio_venta() + " (Stock: " + item.getStock_actual() + ")");
+                    lblInfo.setStyle("-fx-text-fill: #2c3e50; -fx-font-size: 13px;");
+                    
+                    Region region = new Region();
+                    HBox.setHgrow(region, Priority.ALWAYS);
+                    
+                    Button btnAgregar = new Button("+ Cantidad");
+                    btnAgregar.setStyle(
+                        "-fx-background-color: #3d8d7a;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-background-radius: 12;" +
+                        "-fx-padding: 3 10 3 10;" +
+                        "-fx-cursor: hand;" +
+                        "-fx-font-size: 11px;"
+                    );
+                    
+                    if (item.getStock_actual() == 0) {
+                        btnAgregar.setDisable(true);
+                        btnAgregar.setStyle(
+                            "-fx-background-color: #bdc3c7;" +
+                            "-fx-text-fill: #7f8c8d;" +
+                            "-fx-font-weight: bold;" +
+                            "-fx-background-radius: 12;" +
+                            "-fx-padding: 3 10 3 10;" +
+                            "-fx-font-size: 11px;"
+                        );
+                    }
+                    
+                    btnAgregar.setOnAction(ev -> {
+                        mostrarDialogoCantidad(item);
+                    });
+                    
+                    cellLayout.getChildren().addAll(lblInfo, region, btnAgregar);
+                    
+                    setText(null);
+                    setGraphic(cellLayout);
                     if (item.getStock_actual() == 0) setDisable(true);
                     else setDisable(false);
                 }
@@ -206,14 +252,7 @@ public class POSController implements Initializable {
 
     @FXML
     private void procesarCobro(ActionEvent event) {
-        // 1. Actualizar Stock
-        for (ItemCarrito item : carrito) {
-            Inventario p = item.getProducto();
-            p.setStock_actual(p.getStock_actual() - item.getCantidad());
-            InventarioDAO.actualizar(p);
-        }
-
-        // 2. Registrar Venta en BD
+        // 1. Obtener datos de la venta
         double totalVenta = 0;
         try {
             totalVenta = Double.parseDouble(lblTotal.getText().replace("$", ""));
@@ -223,20 +262,112 @@ public class POSController implements Initializable {
         
         Mascota m = cbMascota.getValue();
         int idM = (m != null) ? m.getId() : -1;
+        char metodoPago = "Tarjeta".equals(cbMetodoPago.getValue()) ? 'T' : 'E';
+
+        java.util.Map<Integer, Integer> carritoMap = new java.util.HashMap<>();
+        java.util.Map<Integer, Double> preciosMap = new java.util.HashMap<>();
+        for (ItemCarrito item : carrito) {
+            carritoMap.put(item.getProducto().getId(), item.getCantidad());
+            preciosMap.put(item.getProducto().getId(), item.getProducto().getPrecio_venta());
+        }
+
+        // 2. Registrar Venta en BD y descontar stock automáticamente
+        boolean ok = VentasDAO.registrarVentaCompleta(idM, metodoPago, totalVenta, carritoMap, preciosMap);
+
+        if (ok) {
+            // Actualizar stock local en memoria para mantener sincronizada la interfaz
+            for (ItemCarrito item : carrito) {
+                Inventario p = item.getProducto();
+                p.setStock_actual(p.getStock_actual() - item.getCantidad());
+            }
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Cobro Exitoso");
+            alert.setHeaderText("Ticket Generado");
+            alert.setContentText("El pago se procesó correctamente y se guardó en la BD real.");
+            alert.showAndWait();
+
+            carrito.clear();
+            catalogoCompleto.clear();
+            catalogoCompleto.addAll(InventarioDAO.getTodos());
+            calcularTotales();
+            tfRecibido.setText("");
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error de Cobro");
+            alert.setContentText("Ocurrió un error al procesar el cobro. Verifique el stock o la conexión.");
+            alert.showAndWait();
+        }
+    }
+
+    private void mostrarDialogoCantidad(Inventario item) {
+        Dialog<Integer> dialog = new Dialog<>();
+        dialog.setTitle("Seleccionar Cantidad");
+        dialog.setHeaderText("¿Cuántas unidades de '" + item.getNombre() + "' deseas agregar?");
         
-        VentasDAO.registrarVenta(totalVenta, idM, "Venta POS");
+        dialog.getDialogPane().setStyle("-fx-background-color: #F0F5F2; -fx-font-family: 'Segoe UI';");
+        ButtonType btnTypeAceptar = new ButtonType("Agregar", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnTypeAceptar, ButtonType.CANCEL);
+        
+        Button aceptarBtn = (Button) dialog.getDialogPane().lookupButton(btnTypeAceptar);
+        if (aceptarBtn != null) {
+            aceptarBtn.setStyle("-fx-background-color: #3d8d7a; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+        }
+        Button cancelarBtn = (Button) dialog.getDialogPane().lookupButton(ButtonType.CANCEL);
+        if (cancelarBtn != null) {
+            cancelarBtn.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
+        }
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Cobro Exitoso");
-        alert.setHeaderText("Ticket Generado");
-        alert.setContentText("El pago se procesó correctamente y se guardó en la BD real.");
-        alert.showAndWait();
+        VBox content = new VBox(10);
+        content.setPadding(new Insets(20));
+        content.setAlignment(Pos.CENTER);
+        
+        Label lblStock = new Label("Stock disponible: " + item.getStock_actual());
+        lblStock.setStyle("-fx-font-style: italic; -fx-text-fill: #7f8c8d;");
+        
+        Spinner<Integer> spinner = new Spinner<>(1, item.getStock_actual(), 1);
+        spinner.setEditable(true);
+        spinner.setPrefWidth(120);
+        
+        content.getChildren().addAll(lblStock, spinner);
+        dialog.getDialogPane().setContent(content);
+        
+        dialog.setResultConverter(btn -> {
+            if (btn == btnTypeAceptar) {
+                return spinner.getValue();
+            }
+            return null;
+        });
+        
+        dialog.showAndWait().ifPresent(cant -> {
+            if (cant > 0) {
+                agregarAlCarritoConCantidad(item, cant);
+            }
+        });
+    }
 
-        carrito.clear();
-        catalogoCompleto.clear();
-        catalogoCompleto.addAll(InventarioDAO.getTodos());
+    private void agregarAlCarritoConCantidad(Inventario p, int cant) {
+        for (ItemCarrito item : carrito) {
+            if (item.getProducto().getId() == p.getId()) {
+                int nuevaCantidad = item.getCantidad() + cant;
+                if (nuevaCantidad <= p.getStock_actual()) {
+                    item.setCantidad(nuevaCantidad);
+                } else {
+                    item.setCantidad(p.getStock_actual());
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Límite de Stock");
+                    alert.setHeaderText("Stock Ajustado");
+                    alert.setContentText("Se ajustó la cantidad al máximo disponible (" + p.getStock_actual() + ").");
+                    alert.showAndWait();
+                }
+                tvCarrito.refresh();
+                calcularTotales();
+                return;
+            }
+        }
+        carrito.add(new ItemCarrito(p, cant));
         calcularTotales();
-        tfRecibido.setText("");
     }
 
     public static class ItemCarrito {

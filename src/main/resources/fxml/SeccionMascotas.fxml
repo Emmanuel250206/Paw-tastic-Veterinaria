@@ -63,7 +63,7 @@
                               <Insets right="100.0" />
                            </HBox.margin>
                            <children>
-                              <TextField fx:id="txtBuscar" prefHeight="35.0" prefWidth="320.0" promptText="🔎 Buscar mascota o escanear collar..." style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-border-width: 0; -fx-font-size: 13px; -fx-font-family: 'Segoe UI';">
+                              <TextField fx:id="txtBuscar" prefHeight="35.0" prefWidth="320.0" promptText="🔎 Buscar Propietario o Mascota" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-border-width: 0; -fx-font-size: 13px; -fx-font-family: 'Segoe UI';">
                                  <cursor>
                                     <Cursor fx:constant="TEXT" />
                                  </cursor>
@@ -130,7 +130,7 @@
                               <!-- Nombre + Badge de estado en la misma fila -->
                               <HBox alignment="CENTER_LEFT" spacing="10.0">
                                  <children>
-                                    <TextField fx:id="txtNombreMascota" prefWidth="250.0" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1A4D42; -fx-background-color: white; -fx-border-color: #3D8D7A; -fx-border-radius: 5; -fx-padding: 3 5 3 5;" text="-" />
+                                    <TextField fx:id="txtNombreMascota" prefWidth="250.0" text="-" />
                                     <Region HBox.hgrow="ALWAYS" />
                                  </children>
                               </HBox>
@@ -155,19 +155,19 @@
                                 </rowConstraints>
                                  <children>
                                     <Label styleClass="ficha-label-key" stylesheets="@estilos.css" text="Especie:" />
-                                    <ComboBox fx:id="comboEspecie" prefWidth="230.0" style="-fx-background-color: white; -fx-border-color: #3D8D7A; -fx-border-radius: 5;" GridPane.columnIndex="1" />
+                                    <ComboBox fx:id="comboEspecie" prefWidth="230.0" GridPane.columnIndex="1" />
 
                                     <Label styleClass="ficha-label-key" stylesheets="@estilos.css" text="Raza:" GridPane.rowIndex="1" />
-                                    <ComboBox fx:id="comboRaza" prefWidth="230.0" style="-fx-background-color: white; -fx-border-color: #3D8D7A; -fx-border-radius: 5;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <ComboBox fx:id="comboRaza" prefWidth="230.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
                                     <Label styleClass="ficha-label-key" stylesheets="@estilos.css" text="Edad:" GridPane.rowIndex="2" />
-                                    <TextField fx:id="txtEdad" style="-fx-background-color: white; -fx-border-color: #3D8D7A; -fx-border-radius: 5; -fx-padding: 3 5 3 5;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <TextField fx:id="txtEdad" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
                                     <Label styleClass="ficha-label-key" stylesheets="@estilos.css" text="Propietario:" GridPane.rowIndex="3" />
-                                    <TextField fx:id="txtPropietario" style="-fx-background-color: white; -fx-border-color: #3D8D7A; -fx-border-radius: 5; -fx-padding: 3 5 3 5;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <TextField fx:id="txtPropietario" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
                                     <Label styleClass="ficha-label-key" stylesheets="@estilos.css" text="ID Mascota:" GridPane.rowIndex="4" />
-                                    <TextField fx:id="txtIdMascota" disable="true" editable="false" style="-fx-background-color: #F0F0F0; -fx-border-color: #CCCCCC; -fx-border-radius: 5; -fx-padding: 3 5 3 5;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                    <TextField fx:id="txtIdMascota" disable="true" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                  </children>
                               </GridPane>
 

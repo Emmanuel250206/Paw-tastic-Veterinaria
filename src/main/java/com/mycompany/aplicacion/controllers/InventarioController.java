@@ -5,6 +5,7 @@ import com.mycompany.aplicacion.modelo.Inventario;
 import com.mycompany.aplicacion.persistencia.InventarioDAO;
 import com.mycompany.aplicacion.modelo.UserSession;
 import com.mycompany.aplicacion.util.Toast;
+import com.mycompany.aplicacion.util.ExitDialog;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,6 +36,7 @@ public class InventarioController implements Initializable {
 
     // --- ELEMENTOS DE VISTA PRINCIPAL (SeccionInventario) ---
     @FXML private TableView<Inventario> tablaInventario;
+    @FXML private TextField txtBuscarProducto;
     @FXML private TableColumn<Inventario, Integer> colCodigo;
     @FXML private TableColumn<Inventario, String> colNombre;
     @FXML private TableColumn<Inventario, String> colCategoria;
@@ -51,6 +53,8 @@ public class InventarioController implements Initializable {
     @FXML private Label lblRolInventario;
     @FXML private HBox hboxPerfil;
     private ContextMenu menuPerfil;
+    private final javafx.collections.ObservableList<Inventario> masterData = javafx.collections.FXCollections.observableArrayList();
+    private javafx.collections.transformation.FilteredList<Inventario> filteredData;
 
     // --- ELEMENTOS DE VISTA REGISTRO (ModalProducto) ---
     @FXML private Label lblSucursalInventario;
@@ -91,6 +95,22 @@ public class InventarioController implements Initializable {
             colCosto.setCellValueFactory(new PropertyValueFactory<>("precio_compra"));
             colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio_venta"));
             colCaducidad.setCellValueFactory(new PropertyValueFactory<>("fecha_caducidad"));
+            
+            // Configurar lista filtrada y asignarla a la tabla
+            filteredData = new javafx.collections.transformation.FilteredList<>(masterData, p -> true);
+            tablaInventario.setItems(filteredData);
+            
+            if (txtBuscarProducto != null) {
+                txtBuscarProducto.textProperty().addListener((observable, oldValue, newValue) -> {
+                    filteredData.setPredicate(producto -> {
+                        if (newValue == null || newValue.isEmpty()) {
+                            return true;
+                        }
+                        String lowerCaseFilter = newValue.toLowerCase().trim();
+                        return producto.getNombre() != null && producto.getNombre().toLowerCase().contains(lowerCaseFilter);
+                    });
+                });
+            }
             
             actualizarTablaInventario();
         }
@@ -193,8 +213,8 @@ public class InventarioController implements Initializable {
     }
 
     private void actualizarTablaInventario() {
-        if (tablaInventario != null) {
-            tablaInventario.setItems(InventarioDAO.getTodos());
+        if (tablaInventario != null && masterData != null) {
+            masterData.setAll(InventarioDAO.getTodos());
         }
     }
 
@@ -231,16 +251,26 @@ public class InventarioController implements Initializable {
     private void eliminarProductoSeleccionado(ActionEvent event) {
         Inventario seleccionado = tablaInventario.getSelectionModel().getSelectedItem();
         if (seleccionado == null) {
-            Toast.show(App.getStage(), "Por favor, seleccione un producto para desactivar.", 2);
+            Toast.show(App.getStage(), "Por favor, seleccione un producto para eliminar.", 2);
             return;
         }
-        boolean ok = InventarioDAO.desactivar(seleccionado.getId());
-        if (ok) {
-            Toast.show(App.getStage(), "¡Producto desactivado exitosamente!", 2);
-            actualizarTablaInventario();
-        } else {
-            Toast.show(App.getStage(), "Error: No se pudo desactivar el producto.", 2);
-        }
+        Stage stage = (Stage) tablaInventario.getScene().getWindow();
+        ExitDialog.mostrar(
+            stage,
+            "¿Eliminar producto?",
+            "Esta acción desactivará el producto '" + seleccionado.getNombre() + "' del inventario.",
+            "SÍ, ELIMINAR",
+            "NO",
+            () -> {
+                boolean ok = InventarioDAO.desactivar(seleccionado.getId());
+                if (ok) {
+                    Toast.show(App.getStage(), "¡Producto eliminado exitosamente!", 2);
+                    actualizarTablaInventario();
+                } else {
+                    Toast.show(App.getStage(), "Error: No se pudo eliminar el producto.", 2);
+                }
+            }
+        );
     }
 
     @FXML

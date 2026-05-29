@@ -128,13 +128,14 @@ public class MascotaDAO {
 
             while (rs.next()) {
                 String propietario = formatearNombre(rs.getString("nom_prop"), rs.getString("ape_prop"));
+                int edadCalculada = calcularEdadEnAnios(rs.getDate("fecha_nacimiento"));
 
                 Mascota m = new Mascota(
                     rs.getInt("id"),
                     rs.getString("nombre"),
                     rs.getString("especie") != null ? rs.getString("especie") : "—",
                     rs.getString("raza")    != null ? rs.getString("raza")    : "—",
-                    0,
+                    edadCalculada,
                     "", // nfc — sin tb_collar en esquema actual
                     propietario,
                     rs.getString("tel_prop"),
@@ -185,11 +186,12 @@ public class MascotaDAO {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 String propietario = formatearNombre(rs.getString("nom_prop"), rs.getString("ape_prop"));
+                int edadCalculada = calcularEdadEnAnios(rs.getDate("fecha_nacimiento"));
                 lista.add(new Mascota(
                     rs.getInt("id"), rs.getString("nombre"),
                     rs.getString("especie") != null ? rs.getString("especie") : "—",
                     rs.getString("raza")    != null ? rs.getString("raza")    : "—",
-                    0, "", propietario,
+                    edadCalculada, "", propietario,
                     rs.getString("tel_prop"), rs.getString("dir_prop"),
                     rs.getString("historial"),
                     rs.getString("desc_especie"),
@@ -515,5 +517,16 @@ public class MascotaDAO {
             }
             return años + " años";
         } catch (Exception e) { return "—"; }
+    }
+
+    private static int calcularEdadEnAnios(java.sql.Date fechaNac) {
+        if (fechaNac == null) return 0;
+        try {
+            java.time.LocalDate fn = fechaNac.toLocalDate();
+            java.time.LocalDate hoy = java.time.LocalDate.now();
+            return (int) java.time.temporal.ChronoUnit.YEARS.between(fn, hoy);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }

@@ -153,6 +153,14 @@ public class CitasStaffController implements Initializable {
                             "-fx-font-size: 11px;" +
                             "-fx-background-radius: 8;" +
                             "-fx-padding: 3 8 3 8;");
+                    } else if (item == Prioridad.FINALIZADO) {
+                        badge.setStyle(
+                            "-fx-background-color: #7f8c8d;" +
+                            "-fx-text-fill: white;" +
+                            "-fx-font-weight: bold;" +
+                            "-fx-font-size: 11px;" +
+                            "-fx-background-radius: 8;" +
+                            "-fx-padding: 3 8 3 8;");
                     } else {
                         badge.setStyle(
                             "-fx-background-color: #3d8d7a;" +

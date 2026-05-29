@@ -524,3 +524,66 @@ Project    : APLICACION Paw-tastic
     -fx-text-fill: #95A5A6;
     -fx-padding: 8 0 4 0;
 }
+
+/* ── Ficha de Detalle: Estilos Premium y Legibilidad de Campos Bloqueados ── */
+
+/* Estilo base (activo) para inputs en la ficha de detalle */
+.detail-card .text-field,
+.detail-card .combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #3D8D7A;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 4 8 4 8;
+    -fx-text-fill: #1A4D42;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 13px;
+}
+
+/* El campo del nombre debe verse más grande y destacado */
+.detail-card #txtNombreMascota {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+/* Evitar el efecto lavado de opacidad 0.4 de JavaFX cuando están deshabilitados o son de solo lectura */
+.detail-card .text-field:disabled,
+.detail-card .text-field:readonly,
+.detail-card .combo-box:disabled {
+    -fx-opacity: 1.0 !important;
+}
+
+/* Forzar el color de texto a verde de alto contraste en estados bloqueados */
+.detail-card .text-field:disabled .text,
+.detail-card .text-field:readonly .text,
+.detail-card .combo-box:disabled .cell,
+.detail-card .combo-box:disabled .label {
+    -fx-text-fill: #1A4D42 !important;
+}
+
+/* Fondo distintivo y premium (un menta extremadamente claro) para campos de solo lectura/deshabilitados */
+.detail-card .text-field:disabled,
+.detail-card .text-field:readonly,
+.detail-card .combo-box:disabled {
+    -fx-background-color: #F4FAF7 !important;
+    -fx-border-color: #3D8D7A !important;
+    -fx-border-width: 1.5 !important;
+}
+
+/* El botón de flecha de los combo boxes deshabilitados debe tener opacidad normal pero no interactuar */
+.detail-card .combo-box:disabled .arrow-button {
+    -fx-background-color: transparent !important;
+    -fx-opacity: 0.65 !important;
+}
+
+/* Tratamiento especial para el ID de la mascota (siempre ineditable y más discreto pero legible) */
+.detail-card #txtIdMascota:disabled {
+    -fx-background-color: #F2F4F3 !important;
+    -fx-border-color: #BDC3C7 !important;
+    -fx-border-width: 1.5 !important;
+}
+
+.detail-card #txtIdMascota:disabled .text {
+    -fx-text-fill: #7F8C8D !important;
+}
